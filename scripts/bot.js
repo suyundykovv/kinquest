@@ -1,6 +1,6 @@
-// Бот-игроки для сквозного теста и записи демо-сессий. Подключаются к настоящему серверу по Socket.IO
-// и проходят экспедицию. Чтобы «знать» верные ответы, бот заглядывает в память сервера (rooms) —
-// так можно только в тесте/симуляции, браузер решений не получает.
+// Bot players for the end-to-end test and demo session recording. They connect to the real server over Socket.IO
+// and play through an expedition. To "know" the right answers, the bot peeks into server memory (rooms) —
+// this is only possible in tests/simulation; the browser never gets solutions.
 'use strict';
 const { io: connect } = require('socket.io-client');
 
@@ -22,7 +22,7 @@ async function waitFor(fn, ms = 8000) {
   }
 }
 
-// profile: вероятности успеха ребёнка по навыкам (0..1) и привычки (rotations, guessy).
+// profile: child's success probabilities by skill (0..1) and habits (rotations, guessy).
 async function playExpedition({ url, rooms, clock, rnd = Math.random, profile = {}, opts = {} }) {
   const p = { logic: 0.8, patterns: 0.8, spatial: 0.8, rotations: 3, guessy: 0.1, why: 0.8, keeper: 0.92, rating: 3, ...profile };
   let virtual = clock ? clock.now() : Date.now();
@@ -31,9 +31,9 @@ async function playExpedition({ url, rooms, clock, rnd = Math.random, profile = 
 
   const host = client(url);
   const kid = client(url);
-  const created = await host.emit('create_room', { parentName: opts.parentName || 'Мама', interest: opts.interest || 'ocean', ageBand: opts.ageBand || '8-10', familyId: opts.familyId || '', familyName: opts.familyName });
+  const created = await host.emit('create_room', { parentName: opts.parentName || 'Mom', interest: opts.interest || 'ocean', ageBand: opts.ageBand || '8-10', familyId: opts.familyId || '', familyName: opts.familyName });
   if (!created.ok) throw new Error(created.error);
-  const joined = await kid.emit('join_room', { code: created.code, name: opts.childName || 'Макс', ageBand: opts.ageBand || '8-10' });
+  const joined = await kid.emit('join_room', { code: created.code, name: opts.childName || 'Max', ageBand: opts.ageBand || '8-10' });
   if (!joined.ok) throw new Error(joined.error);
   const room = rooms.get(created.code);
   const H = (msg) => host.emit('submit', { ...msg, asRole: 'keeper' });
@@ -56,17 +56,17 @@ async function playExpedition({ url, rooms, clock, rnd = Math.random, profile = 
       think(10, 30);
       await H({ action: 'accuse', i: rnd() < p.keeper ? thief : others[0] });
       if (!lock.keys.keeper) { think(10, 20); await H({ action: 'accuse', i: thief }); }
-      // Разведчик вычёркивает невиновных, иногда ошибочно — настоящего вора.
+      // The Scout crosses out the innocent, sometimes wrongly — the real thief.
       for (const i of others.slice(0, 2 + Math.floor(rnd() * 2))) { think(4, 12); await K({ action: 'exclude', i }); }
       if (rnd() > p.logic + 0.1) { think(3, 6); await K({ action: 'exclude', i: thief }); think(2, 4); await K({ action: 'exclude', i: thief }); }
-      // Ребёнок: иногда отвечает наугад быстро, иногда ошибается после раздумий.
+      // Child: sometimes guesses quickly, sometimes errs after thinking.
       let attempts = 0;
       while (!lock.keys.scout && attempts < 4) {
         const right = rnd() < p.logic || attempts >= 2;
         const fast = rnd() < p.guessy;
         think(fast ? 1 : 8, fast ? 4 : 35);
         if (attempts >= 2 && rnd() < 0.6) {
-          room.locks[idx].part.scout.lastProgress -= 91000; // ребёнок долго думал — подсказка доступна
+          room.locks[idx].part.scout.lastProgress -= 91000; // the child thought for a long time — hint available
           await K({ kind: 'hint' });
         }
         const why = rnd() < p.why ? 'all_clues' : rnd() < 0.5 ? 'guess' : 'looks';
@@ -89,7 +89,7 @@ async function playExpedition({ url, rooms, clock, rnd = Math.random, profile = 
           tries++;
           if (tries > 5) break;
         }
-        // Хранитель выбирает ветку правила (иногда сначала ошибается).
+        // The Keeper picks a rule branch (sometimes errs first).
         think(5, 15);
         const wrongBranch = rd.solution.branch === 'then' ? 'else' : 'then';
         if (rnd() > p.keeper) { await H({ action: 'branch', branch: wrongBranch }); think(5, 10); }
@@ -100,12 +100,12 @@ async function playExpedition({ url, rooms, clock, rnd = Math.random, profile = 
     if (lock.type === 'blueprint') {
       const rot = Math.max(0, Math.round(p.rotations + (rnd() - 0.5) * 2));
       for (let i = 0; i < rot; i++) { think(2, 6); await K({ action: 'rotate' }); }
-      // Хранитель отмечает отличия (иногда сначала неполно).
+      // The Keeper marks differences (sometimes incomplete at first).
       const diffs = puz.solution.diffCells;
       for (const c of diffs) { think(5, 15); await H({ action: 'toggle_mark', z: c.z, x: c.x }); }
       if (rnd() > p.keeper && diffs.length > 1) { await H({ action: 'toggle_mark', z: diffs[0].z, x: diffs[0].x }); await H({ action: 'mark' }); await H({ action: 'toggle_mark', z: diffs[0].z, x: diffs[0].x }); }
       await H({ action: 'mark' });
-      // Разведчик правит фигуру. Слабый пространственный навык → пропускает спрятанное отличие и проверяет раньше времени.
+      // The Scout fixes the figure. Weak spatial skill → misses the hidden difference and checks too early.
       const fixes = diffs.map((c) => ({ ...c, delta: Math.sign(puz.target[c.z][c.x] - puz.start[c.z][c.x]) }));
       const miss = rnd() > p.spatial;
       for (const f of miss ? fixes.slice(1) : fixes) { think(5, 15); await K({ action: 'edit', z: f.z, x: f.x, delta: f.delta }); }

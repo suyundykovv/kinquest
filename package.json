@@ -1,7 +1,7 @@
 {
   "name": "kinquest",
   "version": "1.0.0",
-  "description": "Kinquest — ежедневная 10-минутная семейная экспедиция с асимметричными головоломками",
+  "description": "Kinquest: a 10-minute daily co-op puzzle for kids 6-10 and their grown-ups, with asymmetric roles and a weekly skills report",
   "scripts": {
     "test": "node --test test/*.test.js",
     "start": "node server.js",
@@ -9,7 +9,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.8.0",
     "express": "^4.22.3",
     "qrcode": "^1.5.4",
     "socket.io": "^4.8.4",

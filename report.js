@@ -1,11 +1,11 @@
-// Метрики отчёта для родителя. Считаются только из журнала попыток (attempts) — никаких придуманных цифр.
-// Ребёнок сравнивается только с самим собой.
+// Parent report metrics. Computed only from the attempt log — no invented numbers.
+// A child is only ever compared with their own earlier self.
 'use strict';
 const { SKILLS } = require('./activities');
 const { ratingToLevel, SKILL_KEYS } = require('./store');
 
 const LOCK_SKILLS = { detective: ['logic', 'critical'], cipher: ['patterns'], blueprint: ['spatial'] };
-const LOCK_LABEL = { detective: 'Детектив', cipher: 'Шифр храма', blueprint: 'Чертёжная мастерская' };
+const LOCK_LABEL = { detective: 'Detective', cipher: 'Temple Cipher', blueprint: 'Blueprint Workshop' };
 const MIN_PARTS = 3;
 
 const median = (xs) => {
@@ -17,7 +17,7 @@ const median = (xs) => {
 const pct = (a, b) => (b ? Math.round((100 * a) / b) : null);
 const dayKey = (ts) => new Date(ts).toISOString().slice(0, 10);
 
-// Главный ребёнок для отчёта: первый игрок-ребёнок (или переданный nickname).
+// The report's subject: the first child player (or the given nickname).
 function pickSubject(sessions, nickKey) {
   if (nickKey) return nickKey;
   for (const s of sessions) {
@@ -145,7 +145,7 @@ function teamMetrics(sessions) {
   };
 }
 
-// Сильная сторона и зона роста выбираются кодом по цифрам; ИИ потом только пишет текст.
+// Code picks the strength and growth area from the numbers; the AI only writes the text.
 function highlights(skills, lv) {
   const ranked = ['spatial', 'patterns', 'logic', 'critical']
     .filter((sk) => skills[sk].enoughData)
@@ -157,22 +157,23 @@ function highlights(skills, lv) {
   const evidence = (sk) => {
     const m = skills[sk], l = lv[sk];
     const parts = [];
-    parts.push(`${m.firstTryPct}% частей решено с первой попытки (${m.parts} задач)`);
-    if (m.independencePct != null) parts.push(`${m.independencePct}% без подсказок`);
-    if (l.level != null) parts.push(l.levelBefore != null && l.levelBefore !== l.level ? `уровень ${l.levelBefore} → ${l.level}` : `уровень ${l.level}`);
-    if (m.medianSec != null) parts.push(`медианное время ${m.medianSec} с`);
-    if (sk === 'spatial' && skills.spatial.rotationsAvg != null) parts.push(`в среднем ${skills.spatial.rotationsAvg} поворотов фигуры перед ответом`);
-    if (sk === 'logic' && skills.logic.wrongExclusions) parts.push(`${skills.logic.wrongExclusions} раз(а) вычеркнул(а) настоящего вора`);
-    if (sk === 'critical' && skills.critical.whyPct != null) parts.push(`верное объяснение «почему» в ${skills.critical.whyPct}% случаев`);
+    parts.push(`${m.firstTryPct}% solved on the first try (${m.parts} puzzles)`);
+    if (m.independencePct != null) parts.push(`${m.independencePct}% without hints`);
+    if (l.level != null) parts.push(l.levelBefore != null && l.levelBefore !== l.level ? `level ${l.levelBefore} → ${l.level}` : `level ${l.level}`);
+    if (m.medianSec != null) parts.push(`median time ${m.medianSec} sec`);
+    if (sk === 'spatial' && skills.spatial.rotationsAvg != null) parts.push(`${skills.spatial.rotationsAvg} model turns on average before answering`);
+    if (sk === 'logic' && skills.logic.wrongExclusions) parts.push(`crossed out the real thief ${skills.logic.wrongExclusions} time(s)`);
+    if (sk === 'critical' && skills.critical.whyPct != null) parts.push(`picked the right “why” ${skills.critical.whyPct}% of the time`);
     return parts;
   };
 
   const style = [];
   const guess = skills.critical.guessPct;
-  if (guess != null && guess >= 25) style.push(`часто отвечает быстрее 5 секунд и ошибается (${guess}% ответов) — полезно учиться проверять`);
-  else if (guess != null) style.push(`редко отвечает наугад: только ${guess}% быстрых неверных ответов`);
-  if (skills.spatial.rotationsAvg != null) style.push(skills.spatial.rotationsAvg < 2 ? `редко поворачивает 3D-фигуру (в среднем ${skills.spatial.rotationsAvg} раза) — опирается на то, что видно сразу` : `активно вертит фигуру (в среднем ${skills.spatial.rotationsAvg} поворотов) перед ответом`);
-  if (skills.critical.whyPct != null && skills.critical.whyTotal >= 2) style.push(`объясняет свой выбор верно в ${skills.critical.whyPct}% случаев`);
+  if (guess != null && guess >= 25) style.push(`often answers in under 5 seconds and misses (${guess}% of answers), so practicing a quick double-check will help`);
+  else if (guess === 0) style.push('takes a moment before answering: no fast wrong guesses');
+  else if (guess != null) style.push(`rarely guesses: only ${guess}% of answers were fast and wrong`);
+  if (skills.spatial.rotationsAvg) style.push(skills.spatial.rotationsAvg < 2 ? `rarely turns the 3D model (${skills.spatial.rotationsAvg} times on average) and relies on what is visible at first` : `turns the model a lot (${skills.spatial.rotationsAvg} times on average) before answering`);
+  if (skills.critical.whyPct != null && skills.critical.whyTotal >= 2) style.push(`explains their choice correctly ${skills.critical.whyPct}% of the time`);
 
   return {
     strength: strength && { skill: strength, label: SKILLS[strength], evidence: evidence(strength) },

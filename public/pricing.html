@@ -1,43 +1,58 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kinquest — тарифы</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kinquest — Pricing</title>
+  <meta name="description" content="One family plan: a daily expedition, up to 6 players, and a full weekly report for every child. 7-day free trial.">
+  <meta name="theme-color" content="#ffffff">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>">
 </head>
 <body>
+  <a class="skip" href="#main">Skip to Content</a>
   <header class="top">
-    <a class="logo" href="/"><span class="logo-mark">🗝️</span>Kinquest</a>
-    <nav><a href="/">Новая экспедиция</a><a href="/report.html?family=demo">Пример отчёта</a></nav>
+    <div class="wrap">
+      <a class="logo" href="/" translate="no"><span class="logo-mark" aria-hidden="true">🗝️</span>Kinquest</a>
+      <nav aria-label="Main"><a href="/">New Expedition</a><a class="opt" href="/report.html?family=demo">Sample Report</a></nav>
+    </div>
   </header>
-  <main class="wrap">
-    <div class="center">
-      <span class="pill gold">7 дней бесплатно · отмена в один клик</span>
-      <h1 style="margin-top:10px;font-size:clamp(30px,5vw,46px)">10 минут разговора вместо 10 минут ленты</h1>
-      <p class="muted" style="font-size:18px">Одна подписка на всю семью. Без рекламы и покупок внутри игры для ребёнка.</p>
+  <main class="section" id="main" style="padding-top:64px">
+    <div class="wrap">
+      <div class="center narrow">
+        <span class="pill accent">7-day free trial · cancel anytime</span>
+        <h1 style="margin-top:16px">One plan for the whole family</h1>
+        <p class="muted" style="font-size:18px">No ads and no in-app purchases for kids. Grown-ups pay one subscription, and that’s it.</p>
+      </div>
+      <div class="plans">
+        <div class="card plan-card"><h2 style="font-size:22px">Free</h2><div class="price" data-price="0"></div><div class="muted small">forever</div>
+          <ul><li>3 expeditions a week</li><li>2 players</li><li>A one-paragraph weekly summary</li></ul>
+          <a class="btn ghost block" href="/#start">Start Playing</a></div>
+        <div class="card plan-card best"><span class="pill scout" style="align-self:flex-start">Most popular</span><h2 style="font-size:22px">Family</h2><div class="price" data-price="7.99" data-per="mo"></div><div class="muted small" data-year="59.99"></div>
+          <ul><li>An expedition every day</li><li>Saturday boss: 5 locks</li><li>Up to 6 players</li><li>Play across states by room code</li><li>Full weekly report for every child</li></ul>
+          <button class="btn block" data-plan="family">Start Free Trial</button></div>
+        <div class="card plan-card"><h2 style="font-size:22px">Family + Master</h2><div class="price" data-price="11.99" data-per="mo"></div><div class="muted small" data-year="89.99"></div>
+          <ul><li>Everything in Family</li><li>Your own Keeper report</li><li>Unlimited Master Stars</li><li>A 5-minute solo puzzle each night</li><li>Coaching tips and a grown-up league</li></ul>
+          <button class="btn secondary block" data-plan="master">Start Free Trial</button></div>
+        <div class="card plan-card"><h2 style="font-size:22px">🎁 Gift a Year</h2><div class="price" data-price="59.99"></div><div class="muted small">one year</div>
+          <ul><li>Grandparents gift a year of play</li><li>…and join the family as players</li></ul>
+          <button class="btn secondary block" data-plan="gift">Send a Gift</button></div>
+      </div>
+      <p class="center muted small" style="margin-top:28px" aria-live="polite" id="note">Checkout (Stripe in test mode) is the next step for this MVP. Prices are a hypothesis we’re testing.</p>
     </div>
-    <div class="plans">
-      <div class="card plan-card"><h3>Бесплатный</h3><div class="price">$0</div>
-        <ul><li>3 экспедиции в неделю</li><li>2 игрока</li><li>Короткий отчёт — один абзац</li></ul>
-        <a class="btn ghost block" href="/">Начать</a></div>
-      <div class="card plan-card best"><span class="pill teal">Популярный</span><h3>Семья</h3><div class="price">$7,99<span class="small muted">/мес</span></div><div class="muted small">или $59,99 в год</div>
-        <ul><li>Экспедиция каждый день</li><li>Субботний босс на 5 замков</li><li>До 6 участников</li><li>Игра из другого города по коду</li><li>Полный недельный отчёт на каждого ребёнка</li></ul>
-        <button class="btn block" data-plan="family">Попробовать 7 дней</button></div>
-      <div class="card plan-card"><h3>Семья + Мастер</h3><div class="price">$11,99<span class="small muted">/мес</span></div><div class="muted small">или $89,99 в год</div>
-        <ul><li>Всё из «Семьи»</li><li>Отчёт взрослого по роли Хранителя</li><li>Звезда мастера без ограничений</li><li>Соло-головоломка дня</li><li>Советы родителю и лига взрослых</li></ul>
-        <button class="btn gold block" data-plan="master">Попробовать 7 дней</button></div>
-      <div class="card plan-card"><h3>🎁 Подарок</h3><div class="price">$59,99</div><div class="muted small">за год</div>
-        <ul><li>Бабушки и дедушки дарят год игры</li><li>И сами входят в семью как игроки</li></ul>
-        <button class="btn teal block" data-plan="gift">Подарить</button></div>
-    </div>
-    <p class="center muted small" style="margin-top:22px">MVP: экран тарифов статичный — оплата (Stripe Checkout в тестовом режиме) подключается следующим шагом. Цены — гипотеза для проверки.</p>
   </main>
   <script>
-    document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', () => { b.textContent = '✓ Скоро: оплата в разработке'; b.disabled = true; }));
+    const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    document.querySelectorAll('[data-price]').forEach((el) => {
+      el.innerHTML = usd.format(Number(el.dataset.price)) + (el.dataset.per ? `<span class="small muted" style="font-family:var(--font-ui);font-weight:500">/${el.dataset.per}</span>` : '');
+    });
+    document.querySelectorAll('[data-year]').forEach((el) => (el.textContent = `or ${usd.format(Number(el.dataset.year))} a year`));
+    document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', () => {
+      document.getElementById('note').textContent = 'Thanks! Checkout isn’t live in this MVP yet. Stripe test mode is next.';
+    }));
   </script>
 </body>
 </html>

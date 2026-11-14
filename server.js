@@ -1,6 +1,6 @@
-// Kinquest MVP: Express + Socket.IO. Комнаты в памяти, роли, проверка ответов на сервере, журнал попыток.
-// Правило: решение никогда не уходит в браузер — каждый игрок получает только view своей роли.
-// Сообщения браузер ↔ сервер: create_room, join_room, role_view, submit, lock_update.
+// Kinquest MVP: Express + Socket.IO. In-memory rooms, roles, server-side answer checks, attempt log.
+// Rule: the solution never reaches the browser — each player only gets the view for their own role.
+// Browser ↔ server messages: create_room, join_room, role_view, submit, lock_update.
 'use strict';
 const path = require('path');
 const http = require('http');
@@ -17,8 +17,7 @@ const { ACTIVITIES, SKILLS } = require('./activities');
 
 const PORT = Number(process.env.PORT || 3000);
 const LOCK_TYPES = ['detective', 'cipher', 'blueprint'];
-const ROLE_LABEL = { scout: 'Разведчик', keeper: 'Хранитель' };
-const ROLE_GEN = { scout: 'Разведчика', keeper: 'Хранителя' };
+const ROLE_LABEL = { scout: 'Scout', keeper: 'Keeper' };
 const SKILL_OF_LOCK = { detective: 'logic', cipher: 'patterns', blueprint: 'spatial' };
 const ADVANCE_MS = Number(process.env.KQ_ADVANCE_MS || 3200);
 
@@ -32,15 +31,15 @@ const io = new Server(server);
 /** @type {Map<string, any>} */
 const rooms = new Map();
 
-// ---------------------------------------------------------------- утилиты
+// ---------------------------------------------------------------- utils
 function newCode() {
   for (let i = 0; i < 1000; i++) {
     const c = String(Math.floor(1000 + Math.random() * 9000));
     if (!rooms.has(c)) return c;
   }
-  throw new Error('нет свободных кодов');
+  throw new Error('no free room codes');
 }
-// Часы вынесены в объект, чтобы скрипт симуляции мог вести виртуальное время.
+// The clock lives in an object so the simulation script can run on virtual time.
 const clock = { now: () => Date.now() };
 const now = () => clock.now();
 const clean = (s, max = 24) => String(s || '').replace(/[<>{}]/g, '').trim().slice(0, max);
@@ -67,7 +66,7 @@ function log(room, player, lock, action, extra = {}) {
     hint: part ? part.hints : 0,
     ...extra,
   });
-  // «Ответ быстрее 5 секунд» считаем от последнего собственного действия игрока.
+  // "Answered within 5 seconds" is measured from the player's own previous action.
   if (part && action !== 'part_solved') part.lastAnswer = now();
 }
 
@@ -76,7 +75,7 @@ function levelFor(room, player, type) {
   return store.ratingToLevel(r);
 }
 
-// ---------------------------------------------------------------- построение экспедиции
+// ---------------------------------------------------------------- building the expedition
 async function buildExpedition(room) {
   const story = await Promise.race([room.storyPromise, new Promise((res) => setTimeout(() => res(null), 12000))]) || ai.templateStory(room.prefs.interest);
   room.story = story;
@@ -166,7 +165,7 @@ function lockUpdate(room, payload) {
   io.to('room:' + room.code).emit('lock_update', { lockIdx: room.lockIdx, keys: keysView(lock), opened: lock.opened, ...payload });
 }
 
-// ---------------------------------------------------------------- игровая логика
+// ---------------------------------------------------------------- game logic
 function partSolved(room, player, lock, extra = {}) {
   const part = lock.part[player.role];
   const type = lock.type;
@@ -194,7 +193,7 @@ function maybeOpen(room, lock) {
   if (!(lock.keys.scout && lock.keys.keeper) || lock.opened) return;
   lock.opened = true;
   lock.openedAt = now();
-  lockUpdate(room, { event: { kind: 'open', message: 'Дверь открыта!' } });
+  lockUpdate(room, { event: { kind: 'open', message: 'The door is open!' } });
   const idx = room.lockIdx;
   setTimeout(() => {
     if (room.lockIdx !== idx || room.phase !== 'lock') return;
@@ -228,10 +227,10 @@ function handleDetective(room, player, lock, msg) {
     const correct = i === puz.solution.thief;
     log(room, player, lock, 'accuse', { i, correct });
     lock.part[role].lastAnswer = now();
-    if (!correct) return wrong(room, player, lock, `${puz.lineup[i].name} не подходит под все улики. Поговорите ещё!`);
+    if (!correct) return wrong(room, player, lock, `${puz.lineup[i].name} doesn't fit every clue. Talk it through again!`);
     lock.keys[role] = true;
     const deltas = partSolved(room, player, lock);
-    lockUpdate(room, { event: { role, kind: 'key', message: `Ключ ${ROLE_GEN[role]} горит!` }, ratingDelta: { role, deltas } });
+    lockUpdate(room, { event: { role, kind: 'key', message: `The ${ROLE_LABEL[role]}'s key is glowing!` }, ratingDelta: { role, deltas } });
     maybeOpen(room, lock);
   }
 }
@@ -252,16 +251,16 @@ function handleCipher(room, player, lock, msg) {
     log(room, player, lock, 'press', { correct, button: b });
   } else return;
   lock.part[role].lastAnswer = now();
-  if (!correct) return wrong(room, player, lock, role === 'keeper' ? 'Это правило сейчас не работает. Уточните у Разведчика!' : 'Знак не тот — дверь дрогнула, но не открылась.');
+  if (!correct) return wrong(room, player, lock, role === 'keeper' ? 'That rule doesn’t apply this time. Check with the Scout!' : 'Not that symbol. The door shook but stayed shut.');
   lock.roundKeys[role] = true;
   const deltas = partSolved(room, player, lock, { round: lock.round });
-  lockUpdate(room, { event: { role, kind: 'round', message: `${ROLE_LABEL[role]}: верно!` }, ratingDelta: { role, deltas } });
+  lockUpdate(room, { event: { role, kind: 'round', message: `${ROLE_LABEL[role]}: correct!` }, ratingDelta: { role, deltas } });
   if (lock.roundKeys.scout && lock.roundKeys.keeper) {
     if (lock.round + 1 < lock.puzzle.rounds.length) {
       lock.round++;
       lock.roundKeys = { scout: false, keeper: false };
       lock.part = { scout: partState(), keeper: partState() };
-      lockUpdate(room, { event: { kind: 'next_round', message: `Раунд ${lock.round + 1} из ${lock.puzzle.rounds.length}` } });
+      lockUpdate(room, { event: { kind: 'next_round', message: `Round ${lock.round + 1} of ${lock.puzzle.rounds.length}` } });
     } else {
       lock.keys = { scout: true, keeper: true };
       maybeOpen(room, lock);
@@ -280,7 +279,7 @@ function handleBlueprint(room, player, lock, msg) {
     if (h < 0 || h > 4) return;
     const wasRight = lock.grid[z][x] === puz.target[z][x];
     lock.grid[z][x] = h;
-    // Ошибочное изменение: испортили верную башню или ушли дальше от цели.
+    // A wrong edit: broke a correct tower or moved further from the target.
     const good = Math.abs(h - puz.target[z][x]) < Math.abs(h - d - puz.target[z][x]);
     log(room, player, lock, 'edit', { z, x, delta: d, correct: good, brokeRight: wasRight });
     lock.part[role].lastProgress = now();
@@ -296,10 +295,10 @@ function handleBlueprint(room, player, lock, msg) {
     const correct = lock.grid.every((row, z) => row.every((h, x) => h === puz.target[z][x]));
     log(room, player, lock, 'check', { correct, rotations: lock.rotations });
     lock.part[role].lastAnswer = now();
-    if (!correct) return wrong(room, player, lock, 'Деталь пока не совпадает с чертежом. Спроси Хранителя ещё раз!');
+    if (!correct) return wrong(room, player, lock, 'Your model doesn’t match the blueprint yet. Ask the Keeper again!');
     lock.keys.scout = true;
     const deltas = partSolved(room, player, lock);
-    lockUpdate(room, { event: { role, kind: 'key', message: 'Деталь собрана точно по чертежу!' }, ratingDelta: { role, deltas } });
+    lockUpdate(room, { event: { role, kind: 'key', message: 'The model matches the blueprint exactly!' }, ratingDelta: { role, deltas } });
     return maybeOpen(room, lock);
   }
   if (role === 'keeper' && msg.action === 'toggle_mark') {
@@ -316,10 +315,10 @@ function handleBlueprint(room, player, lock, msg) {
     const correct = want.size === got.size && [...want].every((k) => got.has(k));
     log(room, player, lock, 'mark', { correct, marked: got.size });
     lock.part[role].lastAnswer = now();
-    if (!correct) return wrong(room, player, lock, got.size < want.size ? 'Отмечены не все отличия.' : 'Среди отмеченных есть лишние башни.');
+    if (!correct) return wrong(room, player, lock, got.size < want.size ? 'Not every difference is marked yet.' : 'Some marked towers are actually correct.');
     lock.keys.keeper = true;
     const deltas = partSolved(room, player, lock);
-    lockUpdate(room, { event: { role, kind: 'key', message: 'Хранитель нашёл все отличия!' }, ratingDelta: { role, deltas } });
+    lockUpdate(room, { event: { role, kind: 'key', message: 'The Keeper found every difference!' }, ratingDelta: { role, deltas } });
     return maybeOpen(room, lock);
   }
 }
@@ -379,7 +378,7 @@ function finish(room) {
   };
 }
 
-// ---------------------------------------------------------------- сокеты
+// ---------------------------------------------------------------- sockets
 function attach(socket, room, player) {
   player.socketId = socket.id;
   player.connected = true;
@@ -393,7 +392,7 @@ io.on('connection', (socket) => {
     try {
       const mode = data.mode === 'single' ? 'single' : 'multi';
       const fam = store.ensureFamily(clean(data.familyId, 32), clean(data.familyName, 40) || undefined);
-      const parentName = clean(data.parentName) || 'Мама';
+      const parentName = clean(data.parentName) || 'Mom';
       const interest = INTERESTS.includes(data.interest) ? data.interest : 'animals';
       const ageBand = AGE_BANDS.includes(data.ageBand) ? data.ageBand : '8-10';
       const code = newCode();
@@ -402,30 +401,30 @@ io.on('connection', (socket) => {
         prefs: { interest, ageBand }, seed: Math.floor(Math.random() * 2 ** 31), lockIdx: -1, locks: [],
       };
       room.joinUrl = `${publicBase(socket)}/game.html?room=${code}`;
-      room.qrSvg = await QRCode.toString(room.joinUrl, { type: 'svg', margin: 1, color: { dark: '#2b2140', light: '#0000' } });
+      room.qrSvg = await QRCode.toString(room.joinUrl, { type: 'svg', margin: 1, color: { dark: '#222222', light: '#0000' } });
       const host = addPlayer(room, fam, parentName, 'adult', null, 'keeper');
       room.hostId = host.id;
       attach(socket, room, host);
       if (mode === 'single') {
-        const child = addPlayer(room, fam, clean(data.childName) || 'Макс', 'child', ageBand, 'scout');
+        const child = addPlayer(room, fam, clean(data.childName) || 'Max', 'child', ageBand, 'scout');
         attach(socket, room, child);
       }
       store.saveFamily(fam);
-      // Сюжет готовим заранее, пока второй игрок заходит в комнату.
+      // Generate the story up front while the second player is joining.
       room.storyPromise = ai.generateStory({ ageBand, interest, suspects: P.ANIMALS.length });
       rooms.set(code, room);
       ack({ ok: true, code, playerId: host.id, familyId: fam.id, joinUrl: room.joinUrl, playerIds: room.players.map((p) => p.id) });
       broadcast(room);
     } catch (e) {
       console.error(e);
-      ack({ ok: false, error: 'Не удалось создать комнату' });
+      ack({ ok: false, error: 'Couldn’t create a room. Please try again.' });
     }
   });
 
   socket.on('join_room', (data = {}, ack = () => {}) => {
     const room = rooms.get(String(data.code || '').trim());
-    if (!room) return ack({ ok: false, error: 'Комната не найдена. Проверьте код.' });
-    // Переподключение по сохранённому playerId (обновили страницу, сменили сеть).
+    if (!room) return ack({ ok: false, error: 'Room not found. Check the 4-digit code and try again.' });
+    // Reconnect by a saved playerId (page refresh, network switch).
     const ids = Array.isArray(data.playerIds) ? data.playerIds : data.playerId ? [data.playerId] : [];
     const known = room.players.filter((p) => ids.includes(p.id));
     if (known.length) {
@@ -433,11 +432,11 @@ io.on('connection', (socket) => {
       ack({ ok: true, code: room.code, playerIds: known.map((p) => p.id), familyId: room.familyId });
       return broadcast(room);
     }
-    if (room.players.length >= 2) return ack({ ok: false, error: 'В комнате уже два игрока. В MVP играют Разведчик и Хранитель.' });
-    if (room.phase !== 'lobby') return ack({ ok: false, error: 'Экспедиция уже началась.' });
+    if (room.players.length >= 2) return ack({ ok: false, error: 'This room already has two players: a Scout and a Keeper.' });
+    if (room.phase !== 'lobby') return ack({ ok: false, error: 'This expedition has already started.' });
     const name = clean(data.name);
-    if (!name) return ack({ ok: false, error: 'Введите имя' });
-    if (room.players.some((p) => p.key === name.toLowerCase())) return ack({ ok: false, error: 'Такое имя уже есть в комнате' });
+    if (!name) return ack({ ok: false, error: 'Enter your name to join.' });
+    if (room.players.some((p) => p.key === name.toLowerCase())) return ack({ ok: false, error: 'That name is taken in this room. Try another one.' });
     const fam = store.getFamily(room.familyId);
     const ageBand = AGE_BANDS.includes(data.ageBand) ? data.ageBand : room.prefs.ageBand;
     const child = addPlayer(room, fam, name, 'child', ageBand, 'scout');
@@ -449,14 +448,14 @@ io.on('connection', (socket) => {
 
   socket.on('submit', async (msg = {}, ack = () => {}) => {
     const room = rooms.get(socket.data.room);
-    if (!room) return ack({ ok: false, error: 'Нет комнаты' });
+    if (!room) return ack({ ok: false, error: 'Room not found' });
     const mine = room.players.filter((p) => socket.data.players && socket.data.players.has(p.id));
     const player = mine.find((p) => p.role === msg.asRole) || mine[0];
     if (!player) return ack({ ok: false });
 
     if (msg.kind === 'start') {
       if (player.id !== room.hostId || room.phase !== 'lobby') return ack({ ok: false });
-      if (room.players.length < 2) return ack({ ok: false, error: 'Ждём второго игрока' });
+      if (room.players.length < 2) return ack({ ok: false, error: 'Waiting for the second player' });
       room.phase = 'intro';
       room.loadingStory = true;
       broadcast(room);
@@ -508,12 +507,12 @@ function addPlayer(room, fam, nickname, kind, ageBand, role) {
   return p;
 }
 
-// Комнаты старше 6 часов удаляем из памяти.
+// Drop rooms older than 6 hours from memory.
 setInterval(() => {
   for (const [code, r] of rooms) if (now() - r.createdAt > 6 * 3600e3) rooms.delete(code);
 }, 600e3).unref();
 
-// ---------------------------------------------------------------- отчёты
+// ---------------------------------------------------------------- reports
 const reportCache = new Map();
 async function reportFor(sessions, cacheKey, nickKey) {
   const metrics = buildMetrics(sessions, nickKey);
@@ -529,7 +528,7 @@ async function reportFor(sessions, cacheKey, nickKey) {
 
 app.get('/api/report/session/:id', async (req, res) => {
   const s = store.getSession(req.params.id);
-  if (!s) return res.status(404).json({ error: 'Сессия не найдена' });
+  if (!s) return res.status(404).json({ error: 'Session not found' });
   const key = `s:${s.id}:${s.parentRating || 0}`;
   const out = await reportFor([s], key);
   res.json({ kind: 'session', session: { id: s.id, familyId: s.familyId, title: s.story.title, region: s.story.region, startedAt: s.startedAt, players: s.players }, ...out });
@@ -538,10 +537,10 @@ app.get('/api/report/session/:id', async (req, res) => {
 app.get('/api/report/week', async (req, res) => {
   const familyId = String(req.query.family || '');
   const all = store.familySessions(familyId);
-  if (!all.length) return res.status(404).json({ error: 'Пока нет сыгранных экспедиций' });
+  if (!all.length) return res.status(404).json({ error: 'No expeditions played yet' });
   const lastTs = all[all.length - 1].startedAt;
   const week = all.filter((s) => s.startedAt > lastTs - 7 * 86400000);
-  const fam = familyId === 'demo' ? { name: 'Демо-семья' } : store.getFamily(familyId) || {};
+  const fam = familyId === 'demo' ? { name: 'Demo Family' } : store.getFamily(familyId) || {};
   const key = `w:${familyId}:${week.map((s) => s.id + (s.parentRating || 0)).join(',')}`;
   const out = await reportFor(week, key);
   res.json({ kind: 'week', family: { id: familyId, name: fam.name, demo: familyId === 'demo' }, sessionIds: week.map((s) => s.id), ...out });
@@ -562,7 +561,9 @@ app.get('/api/config', (req, res) => res.json({ ai: ai.hasKey(), model: ai.MODEL
 app.get('/healthz', (req, res) => res.send('ok'));
 
 if (require.main === module) {
-  server.listen(PORT, () => console.log(`Kinquest: http://localhost:${PORT}  (Claude: ${ai.hasKey() ? ai.MODEL : 'нет ключа — шаблонные тексты'})`));
+  // Local secrets (GEMINI_API_KEY) live in .env, which is git-ignored. On Railway, set them as variables.
+  try { process.loadEnvFile(path.join(__dirname, '.env')); } catch {}
+  server.listen(PORT, () => console.log(`Kinquest: http://localhost:${PORT}  (Gemini: ${ai.hasKey() ? ai.MODEL : 'no key, using template text'})`));
 }
 
 module.exports = { app, server, io, rooms, clock };

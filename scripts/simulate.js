@@ -1,7 +1,7 @@
-// Записывает демо-неделю для недельного отчёта: 6 экспедиций бот-семьи через настоящий сервер
-// (генераторы, проверка ответов, журнал попыток, рейтинги — всё боевое), время — виртуальное.
-// Результат: seed-sessions.json. Данные помечены simulated: true и показываются с плашкой «демо».
-// Перед питчем замените их на реальные сессии тестовой семьи: npm run record-real (см. README).
+// Records a demo week for the weekly report: 6 expeditions of a bot family through the real server
+// (generators, answer checking, attempt log, ratings — all real), time is virtual.
+// Result: seed-sessions.json. Data is marked simulated: true and shown with a "demo" badge.
+// Before the pitch, replace with real sessions (see README).
 'use strict';
 const fs = require('fs');
 const os = require('os');
@@ -9,15 +9,14 @@ const path = require('path');
 
 process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'kq-sim-'));
 process.env.KQ_ADVANCE_MS = '5';
-delete process.env.ANTHROPIC_API_KEY; // сюжет в демо — шаблонный, чтобы не тратить вызовы
-delete process.env.ANTHROPIC_AUTH_TOKEN;
+delete process.env.GEMINI_API_KEY; // the demo story is templated to avoid spending calls
 
 const P = require('../puzzles');
 const { server, rooms, clock } = require('../server');
 const { playExpedition } = require('./bot');
 const store = require('../store');
 
-// Профиль ребёнка по дням: закономерности сильные, пространство слабое, но растёт к концу недели.
+// Child profile by day: patterns strong, spatial weak but growing toward the end of the week.
 const DAYS = [
   { logic: 0.55, patterns: 0.75, spatial: 0.25, rotations: 1, guessy: 0.35, why: 0.5, rating: 2 },
   { logic: 0.6, patterns: 0.8, spatial: 0.3, rotations: 1, guessy: 0.3, why: 0.6, rating: 2 },
@@ -27,7 +26,7 @@ const DAYS = [
   { logic: 0.75, patterns: 0.95, spatial: 0.6, rotations: 3, guessy: 0.15, why: 0.8, rating: 3 },
 ];
 const INTERESTS = ['ocean', 'ocean', 'space', 'ocean', 'dinosaurs', 'ocean'];
-const START = Date.UTC(2026, 10, 9, 16, 0); // 9 ноября 2026, 19:00 по Москве
+const START = Date.UTC(2026, 10, 9, 16, 0); // November 9, 2026, 7:00 PM Moscow time
 
 server.listen(0, async () => {
   const url = `http://localhost:${server.address().port}`;
@@ -36,14 +35,14 @@ server.listen(0, async () => {
   const ids = [];
   for (let d = 0; d < DAYS.length; d++) {
     clock.now = () => START + d * 86400000 + Math.floor(rnd() * 3600e3);
-    const out = await playExpedition({ url, rooms, clock, rnd, profile: DAYS[d], opts: { parentName: 'Мама', childName: 'Макс', ageBand: '8-10', interest: INTERESTS[d], familyId, familyName: 'Демо-семья' } });
+    const out = await playExpedition({ url, rooms, clock, rnd, profile: DAYS[d], opts: { parentName: 'Mom', childName: 'Max', ageBand: '8-10', interest: INTERESTS[d], familyId, familyName: 'Demo Family' } });
     familyId = out.familyId;
     ids.push(out.sessionId);
-    console.log(`день ${d + 1}: ${out.sessionId}`);
+    console.log(`day ${d + 1}: ${out.sessionId}`);
   }
   const sessions = store.familySessions(familyId).map((s, i) => ({ ...s, id: `demo-${i + 1}`, familyId: 'demo', simulated: true }));
   fs.writeFileSync(path.join(__dirname, '..', 'seed-sessions.json'), JSON.stringify(sessions, null, 1));
-  console.log(`seed-sessions.json: ${sessions.length} сессий, ${sessions.reduce((a, s) => a + s.attempts.length, 0)} попыток`);
+  console.log(`seed-sessions.json: ${sessions.length} sessions, ${sessions.reduce((a, s) => a + s.attempts.length, 0)} attempts`);
   server.close();
   process.exit(0);
 });

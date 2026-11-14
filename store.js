@@ -1,4 +1,4 @@
-// Хранилище MVP: JSON-файлы в data/. Семьи, рейтинги навыков, сыгранные сессии.
+// MVP storage: JSON files in data/. Families, skill ratings, played sessions.
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -12,7 +12,7 @@ fs.mkdirSync(SESS_DIR, { recursive: true });
 
 const SKILL_KEYS = ['spatial', 'patterns', 'logic', 'critical', 'communication'];
 const START_RATING = 1000;
-// Стартовый уровень до калибровки: 6–7 лет → 2, 8–10 лет → 3, взрослый → 5.
+// Starting level before calibration: ages 6–7 → 2, ages 8–10 → 3, adult → 5.
 const startRating = (kind, ageBand) => (kind === 'adult' ? 1200 : ageBand === '6-7' ? 900 : START_RATING);
 
 function readJson(file, fallback) {
@@ -26,7 +26,7 @@ function writeJson(file, data) {
 
 const newId = (n = 8) => crypto.randomBytes(n).toString('hex');
 
-// ---------- семьи ----------
+// ---------- families ----------
 function loadFamilies() { return readJson(FAMILIES, {}); }
 function getFamily(id) { return loadFamilies()[id] || null; }
 function saveFamily(fam) {
@@ -35,7 +35,7 @@ function saveFamily(fam) {
   writeJson(FAMILIES, all);
 }
 function ensureFamily(id, name) {
-  const fam = (id && getFamily(id)) || { id: id && /^[a-f0-9]{16}$/.test(id) ? id : newId(), name: name || 'Наша семья', createdAt: Date.now(), members: {} };
+  const fam = (id && getFamily(id)) || { id: id && /^[a-f0-9]{16}$/.test(id) ? id : newId(), name: name || 'Our Family', createdAt: Date.now(), members: {} };
   if (name) fam.name = name;
   saveFamily(fam);
   return fam;
@@ -50,9 +50,9 @@ function ensureMember(fam, nickname, kind, ageBand) {
   return fam.members[key];
 }
 
-// ---------- рейтинг навыка (как в шахматах) ----------
-// Уровень задачи переводится в «рейтинг задачи»; решил свою часть выше своего уровня — рейтинг растёт сильнее,
-// с ошибками или подсказками — слабее.
+// ---------- skill rating (like in chess) ----------
+// Puzzle level is converted to a "puzzle rating"; solving your part above your level raises the rating more,
+// with mistakes or hints, less.
 const levelToRating = (lvl) => 700 + lvl * 100;
 const ratingToLevel = (r) => Math.max(1, Math.min(10, Math.round((r - 700) / 100)));
 function partScore({ errors, hints }) {
@@ -66,7 +66,7 @@ function updateRating(rating, puzzleLevel, outcome) {
   return Math.round(rating + k * (partScore(outcome) - expected));
 }
 
-// ---------- сессии ----------
+// ---------- sessions ----------
 function saveSession(session) {
   writeJson(path.join(SESS_DIR, session.id + '.json'), session);
 }

@@ -1,100 +1,99 @@
 # Kinquest 🗝️
 
-**Ежедневная 10-минутная экспедиция для семьи.** Каждый игрок видит только свою часть головоломки, и дверь открывается, только когда у каждого горит свой ключ.
+**A 10-minute daily co-op puzzle for kids 6–10 and their grown-ups.** Each player sees only their part of the puzzle on their own device, and the door opens only when every player's key is lit.
 
-> «Duolingo для семейного мышления: 10 минут в день, где ребёнок и родитель решают задачу вместе, а родитель каждую неделю видит, как растут навыки ребёнка».
+> Duolingo for family thinking: 10 minutes a day where a kid and a parent solve a puzzle together, and every week the parent sees which skills are growing.
 
-## Что работает end-to-end
+## What works end to end
 
-| Шаг | Что происходит |
+| Step | What happens |
 |---|---|
-| Комната | Родитель открывает экспедицию → 4-значный код и QR. Ребёнок сканирует QR своим телефоном и вводит ник и возраст |
-| Роли | Хранитель (взрослый) получает правила, условия, чертёж. Разведчик (ребёнок) — улики-картинки, светящиеся знаки, 3D-фигуру. **Решение остаётся на сервере** |
-| Сюжет | Claude пишет сюжет дня под интерес ребёнка (океан, космос, динозавры, животные). Без ключа — шаблон из библиотеки |
-| Замок 1 · Детектив | Логика и критическое мышление: «точно не он», «Это вор!» и вопрос ребёнку «почему ты так думаешь?» |
-| Замок 2 · Шифр храма | Закономерности: Разведчик видит ряд знаков, Хранитель — книгу правил «если… иначе…». 3 раунда |
-| Замок 3 · Чертёжная мастерская | Пространство: Разведчик вращает 3D-фигуру (Three.js) и правит кубики, Хранитель видит план и проекции и отмечает отличия |
-| Подсказки | Лесенка из 3 ступеней после 2 ошибок или 90 секунд: наводящий вопрос → сужение → один шаг. Полного ответа нет никогда |
-| Рейтинг | Рейтинг навыка как в шахматах на каждого игрока; следующая экспедиция собирается под новый уровень |
-| Сундук | Время команды и рекорд семьи, серия дней, карточка разговора без экрана, оценка родителя «как объяснял?» |
-| Отчёт | По журналу попыток этой игры и за неделю: 5 навыков, сильная сторона и зона роста с цифрами, стиль мышления, занятия без экрана из библиотеки |
-| Запасной режим | Игра на одном устройстве со шторкой «передай телефон, не подглядывай» |
+| Room | A grown-up opens an expedition and gets a 4-digit code plus a QR code. The kid scans it on their own phone or tablet and enters a nickname and age group |
+| Roles | The **Keeper** (grown-up) gets rules, witness notes, and blueprints. The **Scout** (kid) gets picture clues, glowing symbols, and a 3D model. **Solutions stay on the server** |
+| Story | Gemini writes the story of the day around the kid's interest (ocean, space, dinosaurs, animals). Without a key, a story from the built-in library is used |
+| Lock 1 · The Detective | Logic and critical thinking: cross out suspects, accuse one, and the kid answers “Why do you think so?” |
+| Lock 2 · The Temple Cipher | Patterns: the Scout sees a row of symbols, the Keeper reads an if/otherwise rule book. 3 rounds |
+| Lock 3 · The Blueprint Workshop | Spatial reasoning: the Scout spins and edits a 3D cube model (Three.js); the Keeper sees the plan and projections and marks the differences |
+| Hints | A 3-step ladder after 2 mistakes or 90 seconds: a leading question → narrowing down → one step. Never the full answer |
+| Ratings | A chess-style skill rating per player; the next expedition is built at the new level |
+| The chest | Team time vs. family record, day streak, an off-screen conversation card, and a one-tap parent rating |
+| Report | Built from the attempt log for one session or a week: 5 skills, a strength and a growth area with numbers, thinking style, and screen-free activities from a curated library |
+| Backup mode | One-device play with a “pass the device, no peeking” curtain between turns |
 
-## Почему задачи честные
+## Why the puzzles are fair
 
-Всё точное делает код, всё живое — ИИ.
+Code handles everything that must be exact; AI handles everything that should feel alive.
 
-- `puzzles.js` — три генератора по зерну (seed) и решатели. Детектив добавляет условия, пока не останется ровно один подозреваемый, и проверяет, что ни Разведчик, ни Хранитель не решат в одиночку. В шифре неверная ветка правила всегда ведёт к другой кнопке, а на панели ровно одна подходящая кнопка.
-- `test/puzzles.test.js` — 200 задач каждого типа на всех 10 уровнях: у каждой ровно одно решение.
-- `test/e2e.test.js` — настоящий сервер и два сокет-клиента проходят экспедицию до сундука и отчёта. Тест проверяет, что ни один view не содержит решения.
+- `puzzles.js` has three seeded generators and solvers. The Detective adds conditions until exactly one suspect remains and checks that neither the Scout nor the Keeper can solve it alone. In the Cipher, the wrong rule branch always leads to a different button, and exactly one button on the panel matches.
+- `test/puzzles.test.js` generates 200 puzzles of each type across all 10 levels: each has exactly one solution.
+- `test/e2e.test.js` runs the real server with two socket clients through a full expedition to the chest and the report, and checks that no view ever contains a solution.
 
 ```bash
 npm test
 ```
 
-## Запуск
+## Run it
 
 ```bash
 npm install
+cp .env.example .env    # add your GEMINI_API_KEY
 npm start               # http://localhost:3000
 ```
 
-Чтобы сюжет и отчёт писал Claude, задайте ключ (без него работает шаблонный текст):
+Without a key everything still works; story and report text come from built-in templates.
 
-```bash
-ANTHROPIC_API_KEY=sk-ant-... npm start
-```
-
-Переменные окружения:
-
-| Переменная | Зачем |
+| Variable | Purpose |
 |---|---|
-| `PORT` | порт (Railway задаёт сам) |
-| `ANTHROPIC_API_KEY` | сюжет дня и текст отчёта от Claude |
-| `CLAUDE_MODEL` | по умолчанию `claude-opus-5-5` |
-| `PUBLIC_URL` | публичный адрес для QR, если сервер стоит за прокси |
-| `DATA_DIR` | где хранить семьи и сессии (по умолчанию `./data`) |
+| `PORT` | port (Railway sets it) |
+| `GEMINI_API_KEY` | story of the day and report text from Gemini |
+| `GEMINI_MODEL` | default `gemini-3.5-flash-lite` (about 1.5 s per call) |
+| `PUBLIC_URL` | public URL for the QR code when behind a proxy |
+| `DATA_DIR` | where families and sessions are stored (default `./data`) |
 
-Проверка у себя: откройте игру в обычном окне и в окне инкогнито (или в двух вкладках) — это два разных игрока. Телефон в той же Wi-Fi-сети подключается по QR с адресом вашего компьютера в локальной сети.
+To try it locally, open the game in a normal window and a private window (or two tabs): those are two players. A phone on the same Wi-Fi can join via the QR code using your computer's LAN address.
 
-## Деплой на Railway
+## Deploy to Railway
 
-1. New Project → Deploy from GitHub repo → этот репозиторий.
-2. Variables: `ANTHROPIC_API_KEY`.
-3. Settings → Networking → Generate Domain — эта ссылка попадёт в QR-код.
-4. Каждый push в `main` деплоится автоматически.
+1. New Project → Deploy from GitHub repo → this repository.
+2. Variables: `GEMINI_API_KEY`.
+3. Settings → Networking → Generate Domain. That URL goes into the QR code.
+4. Every push to `main` redeploys.
 
-Данные в MVP лежат в JSON-файлах (`data/`). На Railway подключите Volume и укажите `DATA_DIR`, иначе сессии сбросятся при передеплое.
+MVP data lives in JSON files (`data/`). On Railway, attach a Volume and set `DATA_DIR`, or sessions reset on redeploy.
 
-## Недельный отчёт: честно о демо-данных
+## The weekly report: about the demo data
 
-За один день недели данных нет. Поэтому `/report.html?family=demo` показывает неделю, которую сыграл **бот-симулятор** (`npm run simulate`): 6 экспедиций через настоящий сервер — генераторы, проверку ответов, журнал попыток и рейтинги. Страница прямо помечает эти данные как демо. Перед питчем замените их на 4–5 сессий реальной тестовой семьи: сыграйте экспедиции, затем скопируйте файлы из `data/sessions/` в `seed-sessions.json` (поле `familyId` → `"demo"`).
+A brand-new install has no week of data. So `/report.html?family=demo` shows a week played by a **bot simulator** (`npm run simulate`): 6 expeditions through the real server, with real generators, answer checks, attempt log, and ratings. The page labels this clearly as demo data. Before a pitch, replace it with 4–5 sessions from a real test family: play the expeditions, then copy files from `data/sessions/` into `seed-sessions.json` (set `familyId` to `"demo"`).
 
-Отчёт по только что сыгранной игре (`/report.html?session=…`) всегда строится по настоящим попыткам.
+The report for a game you just played (`/report.html?session=…`) is always built from real moves.
 
-## Приватность (COPPA)
+## Privacy (COPPA)
 
-- Аккаунт и данные — только у взрослого. У ребёнка — ник и возрастная группа, без голоса и фото.
-- В Claude уходят только возрастная группа, интерес и цифры игры. Имя ребёнка заменяется меткой `{child}` и подставляется в браузере.
-- Советы в отчёте Claude выбирает из библиотеки занятий (`activities.js`) по id и не придумывает новые.
+- Accounts and data belong to grown-ups only. A kid has a nickname and an age group, no voice or photos.
+- Gemini only receives the age group, the interest, and game numbers. The kid's name is replaced with a `{child}` token and filled in by the browser.
+- Report activities are picked by id from a curated library (`activities.js`); the AI can't invent new advice.
 
-## Устройство
+## Design
+
+The visual system lives in [`DESIGN.md`](DESIGN.md): near-white canvas, ink text, one coral accent, Scout teal and Keeper blue, one shadow tier, 44px+ touch targets, visible focus rings, reduced-motion support, and US formats via `Intl`.
+
+## Layout
 
 ```
-server.js        Express + Socket.IO: комнаты, роли, проверка ответов, журнал попыток, рейтинги, API отчётов
-puzzles.js       генераторы «Детектива», «Шифра», «Чертежа» + решатели
-hints.js         лесенка подсказок (шаблоны)
-report.js        метрики отчёта по журналу попыток
-ai.js            2 вызова Claude (сюжет, текст отчёта) с шаблоном на случай ошибки
-activities.js    библиотека занятий без экрана
-store.js         семьи, рейтинги, сессии (JSON-файлы)
-seed-sessions.json  демо-неделя
-public/          index · game · report · pricing; js/blueprint3d.js — 3D-фигура на Three.js
-scripts/         bot.js — бот-игроки; simulate.js — запись демо-недели
+server.js        Express + Socket.IO: rooms, roles, answer checks, attempt log, ratings, report API
+puzzles.js       Detective, Cipher, and Blueprint generators + solvers
+hints.js         hint ladder (templates)
+report.js        report metrics from the attempt log
+ai.js            2 Gemini calls (story, report text) with template fallbacks
+activities.js    screen-free activity library
+store.js         families, ratings, sessions (JSON files)
+seed-sessions.json  demo week
+public/          index · game · report · pricing; js/blueprint3d.js is the Three.js cube model
+scripts/         bot.js: bot players; simulate.js: records the demo week
 ```
 
-Сообщения браузер ↔ сервер: `create_room`, `join_room`, `role_view`, `submit`, `lock_update`.
+Browser ↔ server messages: `create_room`, `join_room`, `role_view`, `submit`, `lock_update`.
 
-## Что дальше (не в MVP)
+## Not in the MVP yet
 
-Аккаунты и вход через Google, режим 3–5 игроков (Связной, Советник), смена ролей, субботний босс и атлас регионов, Stripe Checkout, письмо с отчётом через Resend, ИИ-подсказки, «Kinquest Мастер».
+Accounts and Google sign-in, 3–5 players (Liaison and Advisor roles), role swaps, the Saturday boss and the region atlas, Stripe Checkout, report emails via Resend, AI-written hints, and the Master add-on.

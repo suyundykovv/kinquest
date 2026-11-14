@@ -1,4 +1,4 @@
-// 3D-фигура Разведчика для «Чертёжной мастерской»: вращение пальцем, добавить/убрать кубик касанием.
+// The Scout's 3D model for the Blueprint Workshop: drag to rotate, tap to add or remove a cube.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
@@ -26,7 +26,7 @@ export function createBlueprintStage(container, { onEdit, onRotate }) {
   controls.maxPolarAngle = Math.PI * 0.49;
   controls.target.set(0, 0.8, 0);
 
-  // Считаем «поворот», если за один жест камера повернулась больше чем на 20°.
+  // Count a "turn" when one gesture rotates the camera by more than ~20°.
   let startAz = 0, startPol = 0;
   controls.addEventListener('start', () => { startAz = controls.getAzimuthalAngle(); startPol = controls.getPolarAngle(); });
   controls.addEventListener('end', () => {
@@ -49,14 +49,14 @@ export function createBlueprintStage(container, { onEdit, onRotate }) {
     pickables = [];
     const { w, d, grid, highlight } = state;
     const ox = (w - 1) / 2, oz = (d - 1) / 2;
-    // Подставка с меткой «ПЕРЕД», чтобы Разведчик и Хранитель смотрели с одной стороны.
+    // A base with a FRONT mark so the Scout and the Keeper look from the same side.
     const base = new THREE.Mesh(new THREE.BoxGeometry(w + 0.6, 0.2, d + 0.6), new THREE.MeshLambertMaterial({ color: 0xc8a27a }));
     base.position.y = -0.14;
     group.add(base);
     const front = new THREE.Mesh(new THREE.BoxGeometry(w + 0.6, 0.22, 0.32), new THREE.MeshLambertMaterial({ color: 0xffc531 }));
     front.position.set(0, -0.12, oz + 0.62);
     group.add(front);
-    group.add(makeLabel('ПЕРЕД', 0, 0.05, oz + 0.95));
+    group.add(makeLabel('FRONT', 0, 0.05, oz + 0.95));
     for (let z = 0; z < d; z++) {
       for (let x = 0; x < w; x++) {
         const isHi = highlight && highlight.z === z && highlight.x === x;
@@ -71,7 +71,7 @@ export function createBlueprintStage(container, { onEdit, onRotate }) {
           const m = new THREE.Mesh(cubeGeo, new THREE.MeshLambertMaterial({ color }));
           m.position.set(x - ox, 0.52 + y, z - oz);
           m.userData = { x, z, y };
-          const edges = new THREE.LineSegments(edgeGeo, new THREE.LineBasicMaterial({ color: 0x2b2140, transparent: true, opacity: 0.35 }));
+          const edges = new THREE.LineSegments(edgeGeo, new THREE.LineBasicMaterial({ color: 0x222222, transparent: true, opacity: 0.35 }));
           m.add(edges);
           group.add(m);
           pickables.push(m);
@@ -84,8 +84,8 @@ export function createBlueprintStage(container, { onEdit, onRotate }) {
     const c = document.createElement('canvas');
     c.width = 256; c.height = 64;
     const g = c.getContext('2d');
-    g.fillStyle = '#2b2140';
-    g.font = 'bold 40px Rubik, sans-serif';
+    g.fillStyle = '#222222';
+    g.font = '700 40px Inter, sans-serif';
     g.textAlign = 'center';
     g.textBaseline = 'middle';
     g.fillText(text, 128, 34);
@@ -96,7 +96,7 @@ export function createBlueprintStage(container, { onEdit, onRotate }) {
     return mesh;
   }
 
-  // Касание без перетаскивания = правка кубика.
+  // A tap without a drag edits a cube.
   const ray = new THREE.Raycaster();
   let down = null;
   renderer.domElement.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY }; });
@@ -121,7 +121,7 @@ export function createBlueprintStage(container, { onEdit, onRotate }) {
     frame();
   }
 
-  // Камера отодвигается так, чтобы фигура целиком помещалась и в узком (телефон), и в широком окне.
+  // Pull the camera back so the whole model fits both narrow (phone) and wide screens.
   let framedFor = '';
   function frame() {
     const key = `${state.w}x${state.d}:${camera.aspect.toFixed(2)}`;

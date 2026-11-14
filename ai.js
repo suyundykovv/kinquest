@@ -1,65 +1,64 @@
-// Два вызова Claude: сюжет дня и текст отчёта. Оба с шаблоном на случай ошибки или отсутствия ключа.
-// Приватность: в модель уходят только возрастная группа, интерес и цифры игры. Имя ребёнка — никогда:
-// модель пишет метку {child}, а ник подставляется в браузере.
+// Two Gemini calls: the story of the day and the report text. Both fall back to a template on any error
+// or when no key is set.
+// Privacy: only the age band, the interest and game numbers reach the model. Never the child's name —
+// the model writes the {child} token and the browser fills in the nickname.
 'use strict';
-const Anthropic = require('@anthropic-ai/sdk');
 const { ACTIVITIES, SKILLS } = require('./activities');
 
-const MODEL = process.env.CLAUDE_MODEL || 'claude-opus-5-5';
-const TIMEOUT_MS = Number(process.env.CLAUDE_TIMEOUT_MS || 20000);
-const hasKey = () => Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN);
-let client = null;
-const getClient = () => (client ||= new Anthropic({ timeout: TIMEOUT_MS, maxRetries: 1 }));
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+const TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 20000);
+const API = 'https://generativelanguage.googleapis.com/v1beta/models';
+const hasKey = () => Boolean(process.env.GEMINI_API_KEY);
 
-// ---------- регионы и шаблонные сюжеты ----------
+// ---------- regions and template stories ----------
 const REGIONS = {
   ocean: {
-    region: 'Подводное царство',
+    region: 'Undersea Kingdom',
     cast: [
-      { emoji: '🐙', name: 'Осьминог Окто' }, { emoji: '🦀', name: 'Краб Клешня' }, { emoji: '🐠', name: 'Рыбка Искра' },
-      { emoji: '🐢', name: 'Черепаха Тиша' }, { emoji: '🐬', name: 'Дельфин Плюх' }, { emoji: '🦭', name: 'Тюлень Пузо' },
-      { emoji: '🐡', name: 'Ёрш Колюч' }, { emoji: '🦑', name: 'Кальмар Чернил' }, { emoji: '🐳', name: 'Кит Бульк' },
+      { emoji: '🐙', name: 'Ollie Octopus' }, { emoji: '🦀', name: 'Pinch the Crab' }, { emoji: '🐠', name: 'Sparky Fish' },
+      { emoji: '🐢', name: 'Shelly Turtle' }, { emoji: '🐬', name: 'Splash Dolphin' }, { emoji: '🦭', name: 'Pudge the Seal' },
+      { emoji: '🐡', name: 'Puff the Blowfish' }, { emoji: '🦑', name: 'Inky Squid' }, { emoji: '🐳', name: 'Big Blue Whale' },
     ],
-    title: 'Затонувший храм осьминога',
-    intro: 'Команда {child} ныряет к затонувшему храму. Кто-то стащил волшебную жемчужину осьминога Окто, и без неё вода вокруг храма мутнеет. Найдём вора, откроем двери храма и починим старый мост!',
-    lock_names: ['Кто взял жемчужину?', 'Двери храма', 'Коралловый мост'],
-    card: 'Как думаешь, зачем осьминогу целых три сердца?',
+    title: 'The Sunken Octopus Temple',
+    intro: "Team {child} dives down to a sunken temple. Someone took Ollie Octopus's magic pearl, and the water around the temple is getting cloudy. Let's find who took it, open the temple doors, and fix the old coral bridge!",
+    lock_names: ['Who Took the Pearl?', 'The Temple Doors', 'The Coral Bridge'],
+    card: 'Why do you think an octopus needs three hearts?',
   },
   space: {
-    region: 'Космическая станция',
+    region: 'Star Station',
     cast: [
-      { emoji: '👽', name: 'Зелёный Зиг' }, { emoji: '🤖', name: 'Робот Болтик' }, { emoji: '🐶', name: 'Собака Белка' },
-      { emoji: '🐱', name: 'Кот Комета' }, { emoji: '🦊', name: 'Лиса Орбита' }, { emoji: '🐼', name: 'Панда Луна' },
-      { emoji: '🐧', name: 'Пингвин Ракета' }, { emoji: '🐹', name: 'Хомяк Метеор' }, { emoji: '🦉', name: 'Сова Звёздочка' },
+      { emoji: '👽', name: 'Zig the Alien' }, { emoji: '🤖', name: 'Bolt the Robot' }, { emoji: '🐶', name: 'Laika the Pup' },
+      { emoji: '🐱', name: 'Comet Cat' }, { emoji: '🦊', name: 'Orbit Fox' }, { emoji: '🐼', name: 'Luna Panda' },
+      { emoji: '🐧', name: 'Rocket Penguin' }, { emoji: '🐹', name: 'Meteor Hamster' }, { emoji: '🦉', name: 'Twinkle Owl' },
     ],
-    title: 'Пропавший звёздный ключ',
-    intro: 'Команда {child} прилетает на станцию «Полярная». Кто-то утащил звёздный ключ, и станция не может включить свет. Найдём пропажу, разгадаем шифр шлюза и соберём антенну по чертежу!',
-    lock_names: ['Кто унёс ключ?', 'Шлюз станции', 'Антенна связи'],
-    card: 'Если бы ты жил на космической станции, по чему бы ты скучал больше всего?',
+    title: 'The Missing Star Key',
+    intro: "Team {child} lands on Polaris Station. Someone ran off with the star key, and the station can't turn its lights on. Let's find it, crack the airlock code, and build the antenna from the blueprint!",
+    lock_names: ['Who Took the Key?', 'The Airlock', 'The Radio Antenna'],
+    card: 'If you lived on a space station, what would you miss most from home?',
   },
   dinosaurs: {
-    region: 'Долина динозавров',
+    region: 'Dino Valley',
     cast: [
-      { emoji: '🦕', name: 'Диплодок Дима' }, { emoji: '🦖', name: 'Рекс Рык' }, { emoji: '🐊', name: 'Крок Хвост' },
-      { emoji: '🦎', name: 'Ящерка Шустрик' }, { emoji: '🐢', name: 'Черепаха Панцирь' }, { emoji: '🦤', name: 'Птица Додо' },
-      { emoji: '🐸', name: 'Лягушка Прыг' }, { emoji: '🦔', name: 'Ёж Иголкин' }, { emoji: '🐿️', name: 'Белка Орешек' },
+      { emoji: '🦕', name: 'Dottie Diplodocus' }, { emoji: '🦖', name: 'Rex the Roarer' }, { emoji: '🐊', name: 'Croc Tail' },
+      { emoji: '🦎', name: 'Zippy Lizard' }, { emoji: '🐢', name: 'Shell Turtle' }, { emoji: '🦤', name: 'Dodo Bird' },
+      { emoji: '🐸', name: 'Hoppy Frog' }, { emoji: '🦔', name: 'Prickles' }, { emoji: '🐿️', name: 'Nutty Squirrel' },
     ],
-    title: 'Тайна пропавшего яйца',
-    intro: 'Команда {child} отправляется в Долину динозавров. Из гнезда пропало золотое яйцо! Найдём, кто его унёс, откроем ворота пещеры и построим мост через реку.',
-    lock_names: ['Кто унёс яйцо?', 'Ворота пещеры', 'Мост через реку'],
-    card: 'Какой динозавр тебе больше нравится и почему — большой и медленный или маленький и быстрый?',
+    title: 'The Mystery of the Golden Egg',
+    intro: "Team {child} heads into Dino Valley. The golden egg is missing from its nest! Let's find who carried it off, open the cave gate, and build a bridge across the river.",
+    lock_names: ['Who Took the Egg?', 'The Cave Gate', 'The River Bridge'],
+    card: 'Would you rather be a big, slow dinosaur or a small, fast one? Why?',
   },
   animals: {
-    region: 'Волшебный лес',
+    region: 'Whispering Woods',
     cast: [
-      { emoji: '🦊', name: 'Лиса Луша' }, { emoji: '🐰', name: 'Заяц Тим' }, { emoji: '🦉', name: 'Сова Фила' },
-      { emoji: '🐻', name: 'Медвежонок Бо' }, { emoji: '🐿️', name: 'Белка Рыжик' }, { emoji: '🦔', name: 'Ёжик Колюч' },
-      { emoji: '🐸', name: 'Лягушонок Ква' }, { emoji: '🐢', name: 'Черепаха Тиша' }, { emoji: '🦝', name: 'Енот Шмыг' },
+      { emoji: '🦊', name: 'Foxy Fern' }, { emoji: '🐰', name: 'Tim the Rabbit' }, { emoji: '🦉', name: 'Wise Owl Ada' },
+      { emoji: '🐻', name: 'Bo the Bear Cub' }, { emoji: '🐿️', name: 'Rusty Squirrel' }, { emoji: '🦔', name: 'Spike Hedgehog' },
+      { emoji: '🐸', name: 'Croaky Frog' }, { emoji: '🐢', name: 'Slowpoke Turtle' }, { emoji: '🦝', name: 'Rocky Raccoon' },
     ],
-    title: 'Пропавший жёлудь мудрости',
-    intro: 'Команда {child} идёт в Волшебный лес. С вершины старого дуба исчез жёлудь мудрости! Найдём вора, разгадаем шифр на двери дупла и починим мостик через ручей.',
-    lock_names: ['Кто взял жёлудь?', 'Дверь в дупло', 'Мостик через ручей'],
-    card: 'Если бы ты мог поговорить с любым животным из леса, что бы ты у него спросил?',
+    title: 'The Lost Acorn of Wisdom',
+    intro: "Team {child} sets off into the Whispering Woods. The acorn of wisdom has vanished from the old oak tree! Let's find who took it, crack the code on the hollow's door, and fix the bridge over the creek.",
+    lock_names: ['Who Took the Acorn?', 'The Hollow Door', 'The Creek Bridge'],
+    card: 'If you could talk to any animal in the woods, what would you ask it?',
   },
 };
 const regionFor = (interest) => REGIONS[interest] || REGIONS.animals;
@@ -69,33 +68,43 @@ function templateStory(interest) {
   return { title: r.title, intro: r.intro, lock_names: r.lock_names, conversation_card: r.card, region: r.region, cast: r.cast, source: 'template' };
 }
 
-function textOf(resp) {
-  return resp.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
-}
-
-async function callJson({ system, prompt, schema, maxTokens = 2000 }) {
-  const resp = await getClient().beta.messages.create({
-    model: MODEL,
-    max_tokens: maxTokens,
-    betas: ['server-side-fallback-2026-07-01'],
-    fallbacks: 'default',
-    output_config: { effort: 'low', format: { type: 'json_schema', schema } },
-    system,
-    messages: [{ role: 'user', content: prompt }],
-  });
-  if (resp.stop_reason === 'refusal') throw new Error('refusal');
-  if (resp.stop_reason === 'max_tokens') throw new Error('max_tokens');
-  return JSON.parse(textOf(resp));
+async function callJson({ system, prompt, schema, thinking = 'minimal' }) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetch(`${API}/${encodeURIComponent(MODEL)}:generateContent`, {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: { 'content-type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: system }] },
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          responseJsonSchema: schema,
+          thinkingConfig: { thinkingLevel: thinking },
+        },
+      }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(`Gemini ${res.status}: ${(body.error && body.error.message) || 'request failed'}`);
+    const cand = body.candidates && body.candidates[0];
+    if (!cand || cand.finishReason === 'SAFETY' || cand.finishReason === 'MAX_TOKENS') throw new Error(`Gemini finish: ${cand ? cand.finishReason : 'no candidate'}`);
+    const text = (cand.content.parts || []).filter((p) => p.text && !p.thought).map((p) => p.text).join('');
+    return JSON.parse(text);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 const shortStr = (s, max) => typeof s === 'string' && s.trim().length > 0 && s.length <= max;
 
-// ---------- 1. сюжет дня ----------
+// ---------- 1. story of the day ----------
 async function generateStory({ ageBand, interest, suspects }) {
   const base = templateStory(interest);
   if (!hasKey()) return base;
   const schema = {
-    type: 'object', additionalProperties: false,
+    type: 'object',
     required: ['title', 'intro', 'lock_names', 'suspect_names', 'conversation_card'],
     properties: {
       title: { type: 'string' },
@@ -105,21 +114,21 @@ async function generateStory({ ageBand, interest, suspects }) {
       conversation_card: { type: 'string' },
     },
   };
-  const prompt = `Семья: ребёнок {child} (${ageBand || '6–10'} лет, любит: ${base.region}) и взрослый. Регион недели: ${base.region}.
-Замки дня по порядку: detective (найти, кто из ${suspects} жителей что-то стащил), cipher (шифр из светящихся знаков на двери), blueprint (собрать деталь из кубиков по чертежу, чтобы починить мост или механизм).
-Персонажи-подозреваемые — это животные: ${base.cast.slice(0, suspects).map((c) => c.emoji).join(' ')} (ровно в этом порядке).
-Верни JSON:
-- title: название экспедиции (до 6 слов);
-- intro: до 3 коротких предложений простыми словами, обращаясь к «команде {child}»; объясни, куда идём и зачем;
-- lock_names: ровно 3 коротких названия замков в порядке detective, cipher, blueprint;
-- suspect_names: ровно ${suspects} добрых имён для животных в том же порядке, формат «Вид Имя», до 20 символов каждое;
-- conversation_card: один открытый вопрос по теме дня для разговора без экрана.
-Без насилия, без страшных персонажей. Вор — не злодей, а проказник.`;
+  const prompt = `Family: a child {child} (age ${ageBand || '6-10'}) and a grown-up. This week's region: ${base.region}.
+Today's locks, in order: detective (find which of ${suspects} animal neighbors took something), cipher (a code of glowing symbols on a door), blueprint (build a part from cubes to fix a bridge or a machine).
+The suspects are animals, in exactly this order: ${base.cast.slice(0, suspects).map((c) => c.emoji).join(' ')}.
+Return JSON:
+- title: expedition name, 6 words max;
+- intro: up to 3 short sentences in simple words that start with "Team {child}"; say where the team is going and why;
+- lock_names: exactly 3 short, story-themed names for the locks, in order: the mystery (who took it?), the coded door, the thing to rebuild. Example for a forest: "Who Took the Acorn?", "The Hollow Door", "The Creek Bridge";
+- suspect_names: exactly ${suspects} friendly names for the animals in the same order, like "Ollie Octopus", 20 characters max each;
+- conversation_card: one open question about today's theme to talk about off-screen.
+Write the placeholder {child} literally, with the curly braces, exactly where the child's name goes. Never invent a name for the child.
+US English. No violence, nothing scary. The culprit is a prankster, not a villain.`;
   try {
-    const out = await callJson({
-      system: 'Ты — автор добрых детских приключений для семейной игры. Пишешь по-русски, коротко и тепло.',
-      prompt, schema,
-    });
+    const out = await callJson({ system: 'You write warm, short adventures for a family puzzle game for kids 6-10. Plain US English.', prompt, schema, thinking: 'low' });
+    if (!String(out.intro).includes('{child}')) throw new Error('intro has no {child} placeholder');
+    if (out.lock_names.some((n) => /^(detective|cipher|blueprint)$/i.test(String(n).trim()))) throw new Error('lock names are type ids');
     if (!shortStr(out.title, 80) || !shortStr(out.intro, 450) || !shortStr(out.conversation_card, 220)) throw new Error('bad story fields');
     if (!Array.isArray(out.lock_names) || out.lock_names.length !== 3 || !out.lock_names.every((s) => shortStr(s, 40))) throw new Error('bad lock names');
     const names = Array.isArray(out.suspect_names) && out.suspect_names.length >= suspects && out.suspect_names.every((s) => shortStr(s, 24)) ? out.suspect_names : null;
@@ -127,7 +136,7 @@ async function generateStory({ ageBand, interest, suspects }) {
       title: out.title, intro: out.intro, lock_names: out.lock_names, conversation_card: out.conversation_card,
       region: base.region,
       cast: base.cast.map((c, i) => ({ emoji: c.emoji, name: (names && i < suspects && names[i]) || c.name })),
-      source: 'claude',
+      source: 'gemini',
     };
   } catch (e) {
     console.warn('[ai] story fallback:', e.message);
@@ -135,9 +144,8 @@ async function generateStory({ ageBand, interest, suspects }) {
   }
 }
 
-// ---------- 2. текст отчёта ----------
-// Винительный падеж для фраз «задачи на …».
-const SKILL_ACC = { spatial: 'пространственное мышление', patterns: 'закономерности', logic: 'логику', critical: 'критическое мышление', communication: 'общение' };
+// ---------- 2. report text ----------
+const SKILL_NOUN = { spatial: 'spatial reasoning', patterns: 'pattern', logic: 'logic', critical: 'critical-thinking', communication: 'communication' };
 
 function templateReport(m) {
   const h = m.highlights;
@@ -148,13 +156,15 @@ function templateReport(m) {
   recs.push(...pickFor('communication', 1));
   const t = m.team;
   return {
-    headline: `${t.locks} замков за ${t.minutes} мин вместе — команда {child} растёт!`,
-    strength: h.strength ? `Лучше всего у {child} получаются задачи на ${SKILL_ACC[h.strength.skill]} — вот что это показывает:` : 'Пока мало данных, чтобы назвать сильную сторону: нужно хотя бы 3 задачи одного типа.',
-    growth: h.growth ? `Больше всего места для роста — задачи на ${SKILL_ACC[h.growth.skill]}. Это не слабость, а следующий шаг:` : 'Пока мало данных для зоны роста — сыграйте ещё пару экспедиций.',
-    style: h.style.length ? h.style : ['Пока мало данных о стиле мышления.'],
+    headline: `${t.locks} locks opened in ${t.minutes} minutes together. Team {child} is on a roll!`,
+    strength: h.strength ? `{child} shines at ${SKILL_NOUN[h.strength.skill]} puzzles. Here is what shows it:` : 'Not enough data yet to name a strength: we need at least 3 puzzles of one kind.',
+    growth: h.growth ? `The biggest room to grow is in ${SKILL_NOUN[h.growth.skill]} puzzles. Not a weakness, just the next step:` : 'Not enough data yet for a growth area. Play a couple more expeditions.',
+    style: h.style.length ? h.style : ['Not enough data yet about thinking style.'],
     activity_ids: recs.map((a) => a.id),
-    next_week: h.growth ? `Kinquest добавит больше задач на ${SKILL_ACC[h.growth.skill]} на комфортном уровне.` : 'Kinquest продолжит подбирать задачи так, чтобы {child} решал(а) примерно 3 из 4 сам(а).',
-    team: t.firstTryLocks ? `С первой попытки открыто ${t.firstTryLocks} из ${t.locks} замков.${t.stuckOn ? ` Чаще всего задерживались на «${t.stuckOn}».` : ''}` : `Замков открыто: ${t.locks}.${t.stuckOn ? ` Больше всего обсуждали «${t.stuckOn}».` : ''}`,
+    next_week: h.growth ? `Kinquest will add more ${SKILL_NOUN[h.growth.skill]} puzzles at a comfortable level.` : 'Kinquest will keep tuning puzzles so {child} solves about 3 out of 4 alone.',
+    team: t.firstTryLocks
+      ? `You opened ${t.firstTryLocks} of ${t.locks} locks on the first try.${t.stuckOn ? ` You spent the most time talking through “${t.stuckOn}.”` : ''}`
+      : `Locks opened: ${t.locks}.${t.stuckOn ? ` You talked the most through “${t.stuckOn}.”` : ''}`,
     source: 'template',
   };
 }
@@ -164,7 +174,7 @@ async function writeReport(metrics) {
   if (!hasKey()) return base;
   const ids = ACTIVITIES.map((a) => a.id);
   const schema = {
-    type: 'object', additionalProperties: false,
+    type: 'object',
     required: ['headline', 'strength', 'growth', 'style', 'activity_ids', 'next_week', 'team'],
     properties: {
       headline: { type: 'string' }, strength: { type: 'string' }, growth: { type: 'string' },
@@ -173,25 +183,25 @@ async function writeReport(metrics) {
       next_week: { type: 'string' }, team: { type: 'string' },
     },
   };
-  const safe = { ...metrics, subject: { ageBand: metrics.subject.ageBand, kind: metrics.subject.kind } }; // без ника
-  const prompt = `Вот метрики ребёнка {child} из семейной игры Kinquest (JSON):\n${JSON.stringify(safe)}\n
-Библиотека занятий без экрана (выбирай только отсюда, по id):\n${ACTIVITIES.map((a) => `${a.id} [${a.skill}]: ${a.text}`).join('\n')}\n
-Навыки: ${Object.entries(SKILLS).map(([k, v]) => `${k}=${v}`).join(', ')}.
-Напиши отчёт для родителя по-русски. Правила:
-- каждый вывод опирается на цифру из метрик; цифр, которых нет в JSON, не придумывай;
-- если у навыка enoughData=false, пиши «пока мало данных»;
-- наблюдения, а не диагнозы; без IQ, «гениев» и сравнения с другими детьми;
-- называй ребёнка только меткой {child};
-- headline — одна фраза; strength и growth — 1–2 предложения с доказательством (используй highlights);
-- style — 1–3 коротких наблюдения о поведении в игре;
-- activity_ids — 2–3 id из библиотеки под зону роста;
-- next_week — что Kinquest сам изменит на следующей неделе (одно предложение);
-- team — одно предложение о том, как семья работала вместе.`;
+  const safe = { ...metrics, subject: { ageBand: metrics.subject.ageBand, kind: metrics.subject.kind } }; // no nickname
+  const prompt = `Here are the game metrics for child {child} from the family game Kinquest (JSON):\n${JSON.stringify(safe)}\n
+Off-screen activity library (pick only from here, by id):\n${ACTIVITIES.map((a) => `${a.id} [${a.skill}]: ${a.text}`).join('\n')}\n
+Skills: ${Object.entries(SKILLS).map(([k, v]) => `${k}=${v}`).join(', ')}.
+Write a report for the parent in plain US English. Rules:
+- every claim rests on a number from the metrics; never invent numbers that are not in the JSON;
+- if a skill has enoughData=false, say "not enough data yet";
+- observations, not diagnoses; no IQ, no "genius", no comparison with other kids;
+- refer to the child only as {child};
+- headline: one sentence; strength and growth: 1-2 sentences each, with evidence (use highlights);
+- style: 1-3 short observations about behavior in the game;
+- activity_ids: 2-3 ids from the library that fit the growth area;
+- next_week: one sentence on what Kinquest itself will change next week;
+- team: one sentence on how the family worked together.`;
   try {
-    const out = await callJson({ system: 'Ты пишешь тёплые и честные отчёты для родителей о развитии навыков ребёнка в игре.', prompt, schema, maxTokens: 3000 });
+    const out = await callJson({ system: 'You write warm, honest reports for parents about how their child plays and grows in a puzzle game.', prompt, schema });
     const activity_ids = (out.activity_ids || []).filter((id) => ids.includes(id)).slice(0, 3);
     if (!shortStr(out.headline, 200) || !shortStr(out.strength, 600) || !shortStr(out.growth, 600) || activity_ids.length < 1) throw new Error('bad report fields');
-    return { ...out, style: (out.style || []).filter((s) => shortStr(s, 300)).slice(0, 3), activity_ids, source: 'claude' };
+    return { ...out, style: (out.style || []).filter((s) => shortStr(s, 300)).slice(0, 3), activity_ids, source: 'gemini' };
   } catch (e) {
     console.warn('[ai] report fallback:', e.message);
     return base;

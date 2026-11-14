@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Kinquest — экспедиция</title>
+  <title>Kinquest — Expedition</title>
+  <meta name="theme-color" content="#ffffff">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>">
   <script type="importmap">
@@ -13,14 +15,17 @@
   </script>
 </head>
 <body>
+  <a class="skip" href="#app">Skip to Game</a>
   <header class="top">
-    <a class="logo" href="/"><span class="logo-mark">🗝️</span>Kinquest</a>
-    <div id="topRight" class="row"></div>
+    <div class="wrap">
+      <a class="logo" href="/" translate="no"><span class="logo-mark" aria-hidden="true">🗝️</span>Kinquest</a>
+      <div id="topRight" class="row"></div>
+    </div>
   </header>
-  <main class="wrap" id="app">
-    <div class="card center narrow" style="margin:40px auto"><div class="chest">🧭</div><p>Подключаемся к экспедиции…</p></div>
+  <main class="wrap game" id="app" tabindex="-1">
+    <div class="card center narrow" style="margin-top:40px"><div class="chest" aria-hidden="true">🧭</div><p>Connecting to the expedition…</p></div>
   </main>
-  <div id="toast" class="toast"></div>
+  <div class="toast-region" aria-live="polite" aria-atomic="true"><div id="toast" class="toast"></div></div>
   <div id="overlay"></div>
   <script src="/socket.io/socket.io.js"></script>
   <script type="module" src="/js/game.js"></script>

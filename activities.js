@@ -1,42 +1,41 @@
-// Библиотека занятий без экрана. ИИ только выбирает отсюда по id и может мягко переформулировать —
-// придумывать новые советы ему нельзя.
+// Library of off-screen activities. The AI only picks from here by id; it may not invent new advice.
 'use strict';
 
 const ACTIVITIES = [
-  // Пространство
-  { id: 'lego_top', skill: 'spatial', text: 'Постройте из LEGO или кубиков башню, а ребёнок нарисует, как она выглядит сверху. Потом поменяйтесь.' },
-  { id: 'what_changed', skill: 'spatial', text: 'Игра «что изменилось?»: разложите 5 предметов на столе, ребёнок отворачивается, вы меняете один местами.' },
-  { id: 'shadow', skill: 'spatial', text: 'Вечером с фонариком угадывайте предмет по тени и поворачивайте его так, чтобы тень стала другой.' },
-  { id: 'map_room', skill: 'spatial', text: 'Нарисуйте вместе карту комнаты сверху и спрячьте на ней «клад», который другой должен найти.' },
-  { id: 'fold_paper', skill: 'spatial', text: 'Сложите лист бумаги вдвое, вырежьте фигуру и попросите угадать, что получится, когда развернёте.' },
-  // Закономерности
-  { id: 'bead_pattern', skill: 'patterns', text: 'Нанизывайте бусины или раскладывайте пуговицы по правилу, а другой продолжает ряд и называет правило.' },
-  { id: 'clap_rhythm', skill: 'patterns', text: 'Прохлопайте ритм из 3–4 хлопков и топов, ребёнок повторяет и придумывает свой.' },
-  { id: 'car_numbers', skill: 'patterns', text: 'В дороге ищите номера машин с повторяющимися цифрами и придумывайте, какое правило у ряда.' },
-  { id: 'odd_one', skill: 'patterns', text: 'Игра «что лишнее»: назовите 4 слова, одно из которых не подходит, и пусть ребёнок объяснит почему.' },
-  { id: 'calendar', skill: 'patterns', text: 'Посмотрите на календарь: в какие дни недели бывают тренировки, гости, пицца? Есть ли правило?' },
-  // Логика
-  { id: 'twenty_q', skill: 'logic', text: 'Сыграйте в «20 вопросов»: загадайте предмет, ребёнок задаёт вопросы только с ответом «да/нет».' },
-  { id: 'who_where', skill: 'logic', text: 'Мини-загадка за ужином: «Папа сидит не у окна, мама — рядом с папой. Где сидит бабушка?»' },
-  { id: 'sort_rules', skill: 'logic', text: 'Сортируйте носки, игрушки или карточки по двум правилам сразу: «красные И мягкие».' },
-  { id: 'chess_puzzle', skill: 'logic', text: 'Сыграйте партию в крестики-нолики 4×4 и после каждого хода спрашивайте «а что сделает соперник?».' },
-  // Критическое мышление
-  { id: 'fact_or_guess', skill: 'critical', text: 'Игра «факт или догадка»: по очереди говорите фразы про день, другой решает, что это — факт или догадка, и почему.' },
-  { id: 'check_before', skill: 'critical', text: 'Перед ответом на загадку договоритесь считать до пяти и проверять свою версию вслух.' },
-  { id: 'two_truths', skill: 'critical', text: 'Сыграйте в «две правды и одна ложь» о прошедшем дне — ищите, где неправда.' },
-  { id: 'detective_story', skill: 'critical', text: 'Читая книгу на ночь, остановитесь и спросите: «А откуда мы это знаем? Это сказал герой или так было на самом деле?»' },
-  // Коммуникация
-  { id: 'blind_draw', skill: 'communication', text: 'Рисунок вслепую: один описывает картинку, другой рисует, не видя её. Потом сравните.' },
-  { id: 'directions', skill: 'communication', text: 'Попросите ребёнка словами провести вас от кухни до его кровати, а вы выполняете буквально.' },
-  { id: 'ask_more', skill: 'communication', text: 'После рассказа ребёнка задайте один уточняющий вопрос, а потом пусть он задаст вопрос вам.' },
+  // Spatial
+  { id: 'lego_top', skill: 'spatial', text: 'Build a tower from LEGO or blocks and have your child draw what it looks like from the top. Then switch roles.' },
+  { id: 'what_changed', skill: 'spatial', text: 'Play “What changed?”: set 5 objects on the table, your child looks away, and you swap two of them.' },
+  { id: 'shadow', skill: 'spatial', text: 'At night, use a flashlight to guess objects by their shadow, then turn them so the shadow changes.' },
+  { id: 'map_room', skill: 'spatial', text: 'Draw a map of a room from above together and hide a “treasure” on it for the other person to find.' },
+  { id: 'fold_paper', skill: 'spatial', text: 'Fold a sheet of paper in half, cut out a shape, and ask what it will look like once unfolded.' },
+  // Patterns
+  { id: 'bead_pattern', skill: 'patterns', text: 'String beads or line up buttons by a rule; the other person continues the row and names the rule.' },
+  { id: 'clap_rhythm', skill: 'patterns', text: 'Clap a rhythm of 3–4 claps and stomps; your child repeats it, then makes up their own.' },
+  { id: 'car_plates', skill: 'patterns', text: 'On a drive, look for license plates with repeating digits and guess the rule behind them.' },
+  { id: 'odd_one', skill: 'patterns', text: 'Play “Odd one out”: name 4 words where one does not fit, and let your child explain why.' },
+  { id: 'calendar', skill: 'patterns', text: 'Look at the family calendar: which days have practice, guests, or pizza? Is there a rule?' },
+  // Logic
+  { id: 'twenty_q', skill: 'logic', text: 'Play 20 Questions: think of an object; your child may only ask yes-or-no questions.' },
+  { id: 'who_where', skill: 'logic', text: 'Dinner-table riddle: “Dad is not by the window, Mom sits next to Dad. Where does Grandma sit?”' },
+  { id: 'sort_rules', skill: 'logic', text: 'Sort socks, toys, or cards by two rules at once: “red AND soft.”' },
+  { id: 'tic_tac', skill: 'logic', text: 'Play 4×4 tic-tac-toe and after each move ask, “What will the other player do next?”' },
+  // Critical thinking
+  { id: 'fact_or_guess', skill: 'critical', text: 'Play “Fact or guess?”: take turns saying things about your day; the other decides which it is and why.' },
+  { id: 'check_before', skill: 'critical', text: 'Before answering a riddle, agree to count to five and check your idea out loud.' },
+  { id: 'two_truths', skill: 'critical', text: 'Play “Two truths and a lie” about your day and hunt for the one that is not true.' },
+  { id: 'detective_story', skill: 'critical', text: 'During a bedtime story, pause and ask: “How do we know that? Did a character say it, or did it really happen?”' },
+  // Communication
+  { id: 'blind_draw', skill: 'communication', text: 'Blind drawing: one person describes a picture, the other draws it without seeing it. Then compare.' },
+  { id: 'directions', skill: 'communication', text: 'Ask your child to guide you from the kitchen to their bed using only words while you follow them literally.' },
+  { id: 'ask_more', skill: 'communication', text: 'After your child tells a story, ask one follow-up question, then let them ask you one.' },
 ];
 
 const SKILLS = {
-  spatial: 'Пространственное мышление',
-  patterns: 'Закономерности',
-  logic: 'Логика',
-  critical: 'Критическое мышление',
-  communication: 'Коммуникация',
+  spatial: 'Spatial Reasoning',
+  patterns: 'Patterns',
+  logic: 'Logic',
+  critical: 'Critical Thinking',
+  communication: 'Communication',
 };
 
 module.exports = { ACTIVITIES, SKILLS };

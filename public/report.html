@@ -1,21 +1,27 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kinquest — отчёт для родителя</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kinquest — Parent Report</title>
+  <meta name="description" content="Your child's Kinquest skills report: five skills, a strength, a growth area, and screen-free activities for the week.">
+  <meta name="theme-color" content="#ffffff">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 </head>
 <body>
+  <a class="skip" href="#app">Skip to Report</a>
   <header class="top">
-    <a class="logo" href="/"><span class="logo-mark">🗝️</span>Kinquest</a>
-    <nav><a href="/">Новая экспедиция</a><a href="/report.html?family=demo">Пример отчёта</a><a href="/pricing.html">Тарифы</a></nav>
+    <div class="wrap">
+      <a class="logo" href="/" translate="no"><span class="logo-mark" aria-hidden="true">🗝️</span>Kinquest</a>
+      <nav aria-label="Main"><a href="/">New Expedition</a><a class="opt" href="/report.html?family=demo">Sample Report</a><a class="opt" href="/pricing.html">Pricing</a></nav>
+    </div>
   </header>
-  <main class="wrap" id="app" style="max-width:900px">
-    <div class="card center"><div class="chest">📊</div><p>Считаем метрики и пишем отчёт…</p></div>
+  <main class="wrap report" id="app" style="max-width:920px" aria-busy="true">
+    <div class="card center"><div class="chest" aria-hidden="true">📊</div><p>Crunching the numbers and writing your report…</p></div>
   </main>
   <script src="/js/report.js"></script>
 </body>

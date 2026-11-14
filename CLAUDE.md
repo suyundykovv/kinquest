@@ -1,19 +1,21 @@
-# Kinquest — контекст для Claude Code
+# Kinquest — context for Claude Code
 
-Семейная 10-минутная экспедиция с асимметрией информации: Разведчик (ребёнок 6–10) видит объекты, Хранитель (взрослый) знает правила. Замок открывается, только когда у обоих горит ключ.
+A 10-minute family expedition built on information asymmetry: the Scout (kid, 6–10) sees objects, the Keeper (grown-up) knows the rules. A lock opens only when both keys are lit. The product targets the US: all UI and copy are in US English.
 
-## Жёсткие правила
-- **Решение никогда не уходит в браузер.** Клиент получает только view своей роли (`puzzles.js` → `*Views`). e2e-тест это проверяет.
-- Задачи собирает генератор в коде, решатель проверяет единственность ответа. ИИ не придумывает головоломки и логику улик.
-- ИИ (Claude, `ai.js`) — только сюжет дня и текст отчёта, всегда с шаблоном на случай ошибки. Имя ребёнка в ИИ не отправляем: метка `{child}`.
-- Отчёт строится только по журналу попыток (`room.attempts`). Не выдумывать цифры; меньше 3 задач по навыку — «мало данных».
-- Демо-неделя (`seed-sessions.json`) сыграна ботом — в интерфейсе это всегда помечено.
-- Ровно пять сообщений сокета: `create_room`, `join_room`, `role_view`, `submit`, `lock_update`.
+## Hard rules
+- **The solution never reaches the browser.** Clients only get their own role's view (`puzzles.js` → `*Views`). The e2e test checks this.
+- Generators in code build the puzzles; solvers check the answer is unique. The AI never invents puzzles or clue logic.
+- The AI (Gemini, `ai.js`) only writes the story of the day and the report text, always with a template fallback. Never send the kid's name to the AI: use the `{child}` token.
+- Reports are built only from the attempt log (`room.attempts`). Never invent numbers; under 3 puzzles in a skill means "not enough data."
+- The demo week (`seed-sessions.json`) was played by a bot, and the UI always says so.
+- Exactly five socket messages: `create_room`, `join_room`, `role_view`, `submit`, `lock_update`.
+- UI follows `DESIGN.md` (no violet, one accent, `Intl` formats, visible focus, reduced motion).
+- `GEMINI_API_KEY` lives in `.env` (git-ignored). Never commit it.
 
-## Чего НЕ делаем в MVP
-Аккаунты, 3+ игроков, Stripe, письма, атлас, ИИ-подсказки, режим «Мастер».
+## Not in the MVP
+Accounts, 3+ players, Stripe, emails, the atlas, AI hints, the Master add-on.
 
-## Команды
-- `npm start` — сервер (PORT, по умолчанию 3000)
-- `npm test` — 200 задач каждого типа + сквозной тест двух клиентов
-- `npm run simulate` — пересобрать демо-неделю
+## Commands
+- `npm start` — server (PORT, default 3000; loads `.env`)
+- `npm test` — 200 puzzles of each type + an end-to-end two-client test
+- `npm run simulate` — rebuild the demo week
