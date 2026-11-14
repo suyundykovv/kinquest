@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kinquest — 10 минут, где семья думает вместе</title>
+  <meta name="description" content="Ежедневная 10-минутная экспедиция для семьи: у каждого свой ключ, и дверь открывается только вместе.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>">
+</head>
+<body>
+  <header class="top">
+    <a class="logo" href="/"><span class="logo-mark">🗝️</span>Kinquest</a>
+    <nav>
+      <a href="#start">Начать</a>
+      <a href="/report.html?family=demo">Пример отчёта</a>
+      <a id="myReport" class="hidden" href="#">Отчёт нашей семьи</a>
+      <a href="/pricing.html">Тарифы</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <span class="pill gold">10 минут в день · для детей 6–10 лет и их взрослых</span>
+        <h1>Дверь открывается, только когда <em>у каждого</em> горит свой ключ</h1>
+        <p class="lead">Ребёнок видит улики и предметы, взрослый знает правила. Никто не решит в одиночку — приходится разговаривать и думать вместе. А в воскресенье вы получаете отчёт: что у ребёнка стало получаться лучше.</p>
+        <div class="row">
+          <a class="btn" href="#start">🧭 Начать экспедицию</a>
+          <a class="btn ghost" href="#join">У меня есть код</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="door-art">
+          <div class="holes">
+            <div class="keyhole lit">🗝️</div>
+            <div class="keyhole">🔒</div>
+          </div>
+        </div>
+        <span class="float" style="left:2%;top:10%">🐙</span>
+        <span class="float" style="right:0;top:2%;animation-delay:.7s">🦊</span>
+        <span class="float" style="left:0;bottom:6%;animation-delay:1.2s">🧩</span>
+        <span class="float" style="right:4%;bottom:0;animation-delay:.3s">💎</span>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="card"><div class="ico">🔑</div><h3>У каждого свой ключ</h3><p class="muted">Разведчик видит, Хранитель знает правила. Говорить можно, показывать экран — нельзя.</p></div>
+      <div class="card"><div class="ico">🎯</div><h3>Своя сложность для каждого</h3><p class="muted">Задачи собирает генератор в коде, решатель проверяет, что ответ один. Уровень подстраивается под каждого игрока.</p></div>
+      <div class="card"><div class="ico">📈</div><h3>Отчёт для родителя</h3><p class="muted">Пять навыков, сильная сторона и зона роста с цифрами из игры — и занятия без экрана.</p></div>
+    </section>
+
+    <section class="grid2" id="start">
+      <form class="card" id="createForm" autocomplete="off">
+        <h2>🧭 Новая экспедиция</h2>
+        <p class="muted small">Вы — Хранитель. Ребёнок подключится со своего устройства по QR-коду.</p>
+        <label class="f" for="parentName">Ваше имя в игре</label>
+        <input type="text" id="parentName" maxlength="24" placeholder="Мама" required>
+        <label class="f">Возраст ребёнка</label>
+        <div class="chips" data-name="ageBand">
+          <button type="button" class="chip" data-v="6-7">6–7 лет</button>
+          <button type="button" class="chip on" data-v="8-10">8–10 лет</button>
+        </div>
+        <label class="f">Чем увлекается ребёнок?</label>
+        <div class="chips" data-name="interest">
+          <button type="button" class="chip on" data-v="ocean">🐙 Океан</button>
+          <button type="button" class="chip" data-v="space">🚀 Космос</button>
+          <button type="button" class="chip" data-v="dinosaurs">🦖 Динозавры</button>
+          <button type="button" class="chip" data-v="animals">🦊 Животные</button>
+        </div>
+        <label class="f">Как играем?</label>
+        <div class="chips" data-name="mode">
+          <button type="button" class="chip on" data-v="multi">📱📱 На двух устройствах</button>
+          <button type="button" class="chip" data-v="single">📱 На одном (передаём по очереди)</button>
+        </div>
+        <div id="childNameBox" class="hidden">
+          <label class="f" for="childName">Имя ребёнка (ник)</label>
+          <input type="text" id="childName" maxlength="24" placeholder="Макс">
+        </div>
+        <div style="margin-top:18px"><button class="btn block" type="submit">Открыть комнату</button></div>
+        <p class="muted small" style="margin-top:10px">Аккаунт и данные — только у взрослого. У ребёнка — ник и возрастная группа, его имя не уходит в ИИ.</p>
+      </form>
+
+      <form class="card" id="joinForm" autocomplete="off">
+        <h2 id="join">🔑 Войти по коду</h2>
+        <p class="muted small">Взрослый видит 4-значный код и QR на своём экране.</p>
+        <label class="f" for="code">Код комнаты</label>
+        <input type="tel" id="code" class="code-input" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="0000" required>
+        <div style="margin-top:18px"><button class="btn teal block" type="submit">Войти</button></div>
+        <hr style="border:0;border-top:2px dashed var(--line);margin:22px 0">
+        <h3>Как это выглядит</h3>
+        <ol class="muted" style="line-height:1.7;padding-left:20px;margin:0">
+          <li>Сюжет дня на 15 секунд</li>
+          <li>Три замка: Детектив, Шифр храма, Чертёжная мастерская</li>
+          <li>Сундук, вопрос для разговора без экрана — и до завтра</li>
+        </ol>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const chips = {};
+    document.querySelectorAll('.chips').forEach((box) => {
+      const name = box.dataset.name;
+      chips[name] = box.querySelector('.chip.on').dataset.v;
+      box.addEventListener('click', (e) => {
+        const b = e.target.closest('.chip');
+        if (!b) return;
+        box.querySelectorAll('.chip').forEach((c) => c.classList.toggle('on', c === b));
+        chips[name] = b.dataset.v;
+        if (name === 'mode') document.getElementById('childNameBox').classList.toggle('hidden', chips.mode !== 'single');
+      });
+    });
+    const ls = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+    const saved = ls.get('kq_parentName');
+    if (saved) document.getElementById('parentName').value = saved;
+    const fam = ls.get('kq_familyId');
+    if (fam) { const a = document.getElementById('myReport'); a.href = '/report.html?family=' + fam; a.classList.remove('hidden'); }
+
+    document.getElementById('createForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const parentName = document.getElementById('parentName').value.trim() || 'Мама';
+      ls.set('kq_parentName', parentName);
+      const opts = { parentName, ageBand: chips.ageBand, interest: chips.interest, mode: chips.mode, childName: document.getElementById('childName').value.trim(), familyId: ls.get('kq_familyId') || '' };
+      try { sessionStorage.setItem('kq_create', JSON.stringify(opts)); } catch {}
+      location.href = '/game.html?create=1';
+    });
+    document.getElementById('joinForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = document.getElementById('code').value.replace(/\D/g, '');
+      if (code.length === 4) location.href = '/game.html?room=' + code;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kinquest — экспедиция</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>">
+  <script type="importmap">
+    { "imports": { "three": "/vendor/three/build/three.module.js", "three/addons/": "/vendor/three/examples/jsm/" } }
+  </script>
+</head>
+<body>
+  <header class="top">
+    <a class="logo" href="/"><span class="logo-mark">🗝️</span>Kinquest</a>
+    <div id="topRight" class="row"></div>
+  </header>
+  <main class="wrap" id="app">
+    <div class="card center narrow" style="margin:40px auto"><div class="chest">🧭</div><p>Подключаемся к экспедиции…</p></div>
+  </main>
+  <div id="toast" class="toast"></div>
+  <div id="overlay"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="module" src="/js/game.js"></script>
+</body>
+</html>

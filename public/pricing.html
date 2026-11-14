@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kinquest — тарифы</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>">
+</head>
+<body>
+  <header class="top">
+    <a class="logo" href="/"><span class="logo-mark">🗝️</span>Kinquest</a>
+    <nav><a href="/">Новая экспедиция</a><a href="/report.html?family=demo">Пример отчёта</a></nav>
+  </header>
+  <main class="wrap">
+    <div class="center">
+      <span class="pill gold">7 дней бесплатно · отмена в один клик</span>
+      <h1 style="margin-top:10px;font-size:clamp(30px,5vw,46px)">10 минут разговора вместо 10 минут ленты</h1>
+      <p class="muted" style="font-size:18px">Одна подписка на всю семью. Без рекламы и покупок внутри игры для ребёнка.</p>
+    </div>
+    <div class="plans">
+      <div class="card plan-card"><h3>Бесплатный</h3><div class="price">$0</div>
+        <ul><li>3 экспедиции в неделю</li><li>2 игрока</li><li>Короткий отчёт — один абзац</li></ul>
+        <a class="btn ghost block" href="/">Начать</a></div>
+      <div class="card plan-card best"><span class="pill teal">Популярный</span><h3>Семья</h3><div class="price">$7,99<span class="small muted">/мес</span></div><div class="muted small">или $59,99 в год</div>
+        <ul><li>Экспедиция каждый день</li><li>Субботний босс на 5 замков</li><li>До 6 участников</li><li>Игра из другого города по коду</li><li>Полный недельный отчёт на каждого ребёнка</li></ul>
+        <button class="btn block" data-plan="family">Попробовать 7 дней</button></div>
+      <div class="card plan-card"><h3>Семья + Мастер</h3><div class="price">$11,99<span class="small muted">/мес</span></div><div class="muted small">или $89,99 в год</div>
+        <ul><li>Всё из «Семьи»</li><li>Отчёт взрослого по роли Хранителя</li><li>Звезда мастера без ограничений</li><li>Соло-головоломка дня</li><li>Советы родителю и лига взрослых</li></ul>
+        <button class="btn gold block" data-plan="master">Попробовать 7 дней</button></div>
+      <div class="card plan-card"><h3>🎁 Подарок</h3><div class="price">$59,99</div><div class="muted small">за год</div>
+        <ul><li>Бабушки и дедушки дарят год игры</li><li>И сами входят в семью как игроки</li></ul>
+        <button class="btn teal block" data-plan="gift">Подарить</button></div>
+    </div>
+    <p class="center muted small" style="margin-top:22px">MVP: экран тарифов статичный — оплата (Stripe Checkout в тестовом режиме) подключается следующим шагом. Цены — гипотеза для проверки.</p>
+  </main>
+  <script>
+    document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', () => { b.textContent = '✓ Скоро: оплата в разработке'; b.disabled = true; }));
+  </script>
+</body>
+</html>

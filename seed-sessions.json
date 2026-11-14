@@ -1,0 +1,3038 @@
+[
+ {
+  "id": "demo-1",
+  "familyId": "demo",
+  "code": "4125",
+  "mode": "multi",
+  "startedAt": 1794240983294,
+  "endedAt": 1794241218880,
+  "story": {
+   "title": "Затонувший храм осьминога",
+   "region": "Подводное царство",
+   "source": "template"
+  },
+  "players": [
+   {
+    "key": "мама",
+    "nickname": "Мама",
+    "kind": "adult",
+    "ageBand": null,
+    "role": "keeper"
+   },
+   {
+    "key": "макс",
+    "nickname": "Макс",
+    "kind": "child",
+    "ageBand": "8-10",
+    "role": "scout"
+   }
+  ],
+  "locks": [
+   {
+    "type": "detective",
+    "levels": {
+     "scout": 3,
+     "keeper": 5
+    },
+    "opened": true,
+    "errors": 1,
+    "hints": 0,
+    "ms": 84712
+   },
+   {
+    "type": "cipher",
+    "levels": {
+     "scout": 3,
+     "keeper": 5
+    },
+    "opened": true,
+    "errors": 1,
+    "hints": 0,
+    "ms": 71574
+   },
+   {
+    "type": "blueprint",
+    "levels": {
+     "scout": 3,
+     "keeper": 5
+    },
+    "opened": true,
+    "errors": 1,
+    "hints": 1,
+    "ms": 45528
+   }
+  ],
+  "attempts": [
+   {
+    "t": 1794241018057,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "accuse",
+    "ms": 11733,
+    "hint": 0,
+    "i": 2,
+    "correct": true
+   },
+   {
+    "t": 1794241018057,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 11733,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794241023488,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 17164,
+    "hint": 0,
+    "i": 0,
+    "correct": true
+   },
+   {
+    "t": 1794241035434,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 11946,
+    "hint": 0,
+    "i": 1,
+    "correct": true
+   },
+   {
+    "t": 1794241040783,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 5349,
+    "hint": 0,
+    "i": 2,
+    "correct": false
+   },
+   {
+    "t": 1794241043267,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "unexclude",
+    "ms": 2484,
+    "hint": 0,
+    "i": 2
+   },
+   {
+    "t": 1794241065899,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "why",
+    "ms": 22632,
+    "hint": 0,
+    "correct": false,
+    "choice": "guess"
+   },
+   {
+    "t": 1794241065899,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 0,
+    "i": 5,
+    "correct": false
+   },
+   {
+    "t": 1794241091036,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "why",
+    "ms": 25137,
+    "hint": 0,
+    "correct": true,
+    "choice": "all_clues"
+   },
+   {
+    "t": 1794241091036,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 0,
+    "i": 2,
+    "correct": true
+   },
+   {
+    "t": 1794241091036,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 84712,
+    "hint": 0,
+    "errors": 1,
+    "hints": 0,
+    "level": 3
+   },
+   {
+    "t": 1794241098587,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 3643,
+    "hint": 0,
+    "correct": true,
+    "button": 3
+   },
+   {
+    "t": 1794241098587,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 3643,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 3
+   },
+   {
+    "t": 1794241105438,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 10494,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794241105438,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 10494,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794241116723,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 11285,
+    "hint": 0,
+    "correct": true,
+    "button": 4
+   },
+   {
+    "t": 1794241116723,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 11285,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 3
+   },
+   {
+    "t": 1794241127877,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 22439,
+    "hint": 0,
+    "correct": true,
+    "choice": "then"
+   },
+   {
+    "t": 1794241127877,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 22439,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794241151318,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 23441,
+    "hint": 0,
+    "correct": true,
+    "button": 5
+   },
+   {
+    "t": 1794241151318,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 23441,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 3
+   },
+   {
+    "t": 1794241160011,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 32134,
+    "hint": 0,
+    "correct": false,
+    "choice": "then"
+   },
+   {
+    "t": 1794241166518,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 6507,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794241166518,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 38641,
+    "hint": 0,
+    "errors": 1,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794241173544,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 3799,
+    "hint": 0,
+    "n": 1
+   },
+   {
+    "t": 1794241177567,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 4023,
+    "hint": 0,
+    "n": 2
+   },
+   {
+    "t": 1794241189531,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "mark",
+    "ms": 19786,
+    "hint": 0,
+    "correct": true,
+    "marked": 1
+   },
+   {
+    "t": 1794241189531,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 19786,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794241191743,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "check",
+    "ms": 14176,
+    "hint": 0,
+    "correct": false,
+    "rotations": 2
+   },
+   {
+    "t": 1794241191743,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "hint",
+    "ms": 0,
+    "hint": 1,
+    "level": 1
+   },
+   {
+    "t": 1794241208991,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 17248,
+    "hint": 1,
+    "n": 3
+   },
+   {
+    "t": 1794241208991,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "edit",
+    "ms": 0,
+    "hint": 1,
+    "z": 2,
+    "x": 0,
+    "delta": -1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794241215273,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "check",
+    "ms": 6282,
+    "hint": 1,
+    "correct": true,
+    "rotations": 3
+   },
+   {
+    "t": 1794241215273,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 45528,
+    "hint": 1,
+    "errors": 1,
+    "hints": 1,
+    "level": 3,
+    "rotations": 3
+   }
+  ],
+  "ratings": {
+   "мама": {
+    "before": {
+     "spatial": 1200,
+     "patterns": 1200,
+     "logic": 1200,
+     "critical": 1200,
+     "communication": 1200
+    },
+    "after": {
+     "spatial": 1224,
+     "patterns": 1260,
+     "logic": 1224,
+     "critical": 1224,
+     "communication": 1200
+    }
+   },
+   "макс": {
+    "before": {
+     "spatial": 1000,
+     "patterns": 1000,
+     "logic": 1000,
+     "critical": 1000,
+     "communication": 1000
+    },
+    "after": {
+     "spatial": 1005,
+     "patterns": 1067,
+     "logic": 1017,
+     "critical": 1017,
+     "communication": 1000
+    }
+   }
+  },
+  "parentRating": 2,
+  "simulated": true
+ },
+ {
+  "id": "demo-2",
+  "familyId": "demo",
+  "code": "4650",
+  "mode": "multi",
+  "startedAt": 1794326710203,
+  "endedAt": 1794326973265,
+  "story": {
+   "title": "Затонувший храм осьминога",
+   "region": "Подводное царство",
+   "source": "template"
+  },
+  "players": [
+   {
+    "key": "мама",
+    "nickname": "Мама",
+    "kind": "adult",
+    "ageBand": null,
+    "role": "keeper"
+   },
+   {
+    "key": "макс",
+    "nickname": "Макс",
+    "kind": "child",
+    "ageBand": "8-10",
+    "role": "scout"
+   }
+  ],
+  "locks": [
+   {
+    "type": "detective",
+    "levels": {
+     "scout": 3,
+     "keeper": 5
+    },
+    "opened": true,
+    "errors": 2,
+    "hints": 1,
+    "ms": 117910
+   },
+   {
+    "type": "cipher",
+    "levels": {
+     "scout": 4,
+     "keeper": 6
+    },
+    "opened": true,
+    "errors": 1,
+    "hints": 0,
+    "ms": 63670
+   },
+   {
+    "type": "blueprint",
+    "levels": {
+     "scout": 3,
+     "keeper": 5
+    },
+    "opened": true,
+    "errors": 1,
+    "hints": 0,
+    "ms": 50655
+   }
+  ],
+  "attempts": [
+   {
+    "t": 1794326754758,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "accuse",
+    "ms": 24458,
+    "hint": 0,
+    "i": 0,
+    "correct": true
+   },
+   {
+    "t": 1794326754758,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 24458,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794326765116,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 34816,
+    "hint": 0,
+    "i": 1,
+    "correct": true
+   },
+   {
+    "t": 1794326772370,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 7254,
+    "hint": 0,
+    "i": 2,
+    "correct": true
+   },
+   {
+    "t": 1794326781541,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 9171,
+    "hint": 0,
+    "i": 3,
+    "correct": true
+   },
+   {
+    "t": 1794326787206,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 5665,
+    "hint": 0,
+    "i": 0,
+    "correct": false
+   },
+   {
+    "t": 1794326790247,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "unexclude",
+    "ms": 3041,
+    "hint": 0,
+    "i": 0
+   },
+   {
+    "t": 1794326813833,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "why",
+    "ms": 23586,
+    "hint": 0,
+    "correct": true,
+    "choice": "all_clues"
+   },
+   {
+    "t": 1794326813833,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 0,
+    "i": 6,
+    "correct": false
+   },
+   {
+    "t": 1794326845830,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "why",
+    "ms": 31997,
+    "hint": 0,
+    "correct": true,
+    "choice": "all_clues"
+   },
+   {
+    "t": 1794326845830,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 0,
+    "i": 5,
+    "correct": false
+   },
+   {
+    "t": 1794326848210,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "hint",
+    "ms": 2380,
+    "hint": 1,
+    "level": 1
+   },
+   {
+    "t": 1794326848210,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "why",
+    "ms": 0,
+    "hint": 1,
+    "correct": false,
+    "choice": "guess"
+   },
+   {
+    "t": 1794326848210,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 1,
+    "i": 0,
+    "correct": true
+   },
+   {
+    "t": 1794326848210,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 117910,
+    "hint": 1,
+    "errors": 2,
+    "hints": 1,
+    "level": 3
+   },
+   {
+    "t": 1794326854082,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 2291,
+    "hint": 0,
+    "correct": true,
+    "button": 5
+   },
+   {
+    "t": 1794326854082,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 2291,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 4
+   },
+   {
+    "t": 1794326861388,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 9597,
+    "hint": 0,
+    "correct": false,
+    "choice": "else"
+   },
+   {
+    "t": 1794326868012,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 6624,
+    "hint": 0,
+    "correct": true,
+    "choice": "then"
+   },
+   {
+    "t": 1794326868012,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 16221,
+    "hint": 0,
+    "errors": 1,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794326887317,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 19305,
+    "hint": 0,
+    "correct": true,
+    "button": 0
+   },
+   {
+    "t": 1794326887317,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 19305,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 4
+   },
+   {
+    "t": 1794326894217,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 26205,
+    "hint": 0,
+    "correct": true,
+    "choice": "then"
+   },
+   {
+    "t": 1794326894217,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 26205,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794326909034,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 14817,
+    "hint": 0,
+    "correct": true,
+    "button": 4
+   },
+   {
+    "t": 1794326909034,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 14817,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 4
+   },
+   {
+    "t": 1794326915461,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 21244,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794326915461,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 21244,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794326922520,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 3357,
+    "hint": 0,
+    "n": 1
+   },
+   {
+    "t": 1794326924879,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 2359,
+    "hint": 0,
+    "n": 2
+   },
+   {
+    "t": 1794326939739,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "mark",
+    "ms": 20576,
+    "hint": 0,
+    "correct": true,
+    "marked": 1
+   },
+   {
+    "t": 1794326939739,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 20576,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794326942027,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "check",
+    "ms": 17148,
+    "hint": 0,
+    "correct": false,
+    "rotations": 2
+   },
+   {
+    "t": 1794326965688,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 23661,
+    "hint": 0,
+    "n": 3
+   },
+   {
+    "t": 1794326965688,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "edit",
+    "ms": 0,
+    "hint": 0,
+    "z": 0,
+    "x": 1,
+    "delta": 1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794326969818,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "check",
+    "ms": 4130,
+    "hint": 0,
+    "correct": true,
+    "rotations": 3
+   },
+   {
+    "t": 1794326969818,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 50655,
+    "hint": 0,
+    "errors": 1,
+    "hints": 0,
+    "level": 3,
+    "rotations": 3
+   }
+  ],
+  "ratings": {
+   "мама": {
+    "before": {
+     "spatial": 1224,
+     "patterns": 1260,
+     "logic": 1224,
+     "critical": 1224,
+     "communication": 1200
+    },
+    "after": {
+     "spatial": 1246,
+     "patterns": 1329,
+     "logic": 1246,
+     "critical": 1246,
+     "communication": 1200
+    }
+   },
+   "макс": {
+    "before": {
+     "spatial": 1005,
+     "patterns": 1067,
+     "logic": 1017,
+     "critical": 1017,
+     "communication": 1000
+    },
+    "after": {
+     "spatial": 1021,
+     "patterns": 1140,
+     "logic": 1021,
+     "critical": 1021,
+     "communication": 1000
+    }
+   }
+  },
+  "parentRating": 2,
+  "simulated": true
+ },
+ {
+  "id": "demo-3",
+  "familyId": "demo",
+  "code": "7962",
+  "mode": "multi",
+  "startedAt": 1794413430723,
+  "endedAt": 1794413585282,
+  "story": {
+   "title": "Пропавший звёздный ключ",
+   "region": "Космическая станция",
+   "source": "template"
+  },
+  "players": [
+   {
+    "key": "мама",
+    "nickname": "Мама",
+    "kind": "adult",
+    "ageBand": null,
+    "role": "keeper"
+   },
+   {
+    "key": "макс",
+    "nickname": "Макс",
+    "kind": "child",
+    "ageBand": "8-10",
+    "role": "scout"
+   }
+  ],
+  "locks": [
+   {
+    "type": "detective",
+    "levels": {
+     "scout": 3,
+     "keeper": 5
+    },
+    "opened": true,
+    "errors": 0,
+    "hints": 0,
+    "ms": 50370
+   },
+   {
+    "type": "cipher",
+    "levels": {
+     "scout": 4,
+     "keeper": 6
+    },
+    "opened": true,
+    "errors": 1,
+    "hints": 0,
+    "ms": 35487
+   },
+   {
+    "type": "blueprint",
+    "levels": {
+     "scout": 3,
+     "keeper": 5
+    },
+    "opened": true,
+    "errors": 1,
+    "hints": 0,
+    "ms": 41623
+   }
+  ],
+  "attempts": [
+   {
+    "t": 1794413460074,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "accuse",
+    "ms": 12804,
+    "hint": 0,
+    "i": 1,
+    "correct": true
+   },
+   {
+    "t": 1794413460074,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 12804,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794413470469,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 23199,
+    "hint": 0,
+    "i": 0,
+    "correct": true
+   },
+   {
+    "t": 1794413478293,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 7824,
+    "hint": 0,
+    "i": 2,
+    "correct": true
+   },
+   {
+    "t": 1794413497640,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "why",
+    "ms": 19347,
+    "hint": 0,
+    "correct": true,
+    "choice": "all_clues"
+   },
+   {
+    "t": 1794413497640,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 0,
+    "i": 1,
+    "correct": true
+   },
+   {
+    "t": 1794413497640,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 50370,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 3
+   },
+   {
+    "t": 1794413503034,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 1829,
+    "hint": 0,
+    "correct": false,
+    "button": 2
+   },
+   {
+    "t": 1794413505296,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 2262,
+    "hint": 0,
+    "correct": true,
+    "button": 4
+   },
+   {
+    "t": 1794413505296,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 4091,
+    "hint": 0,
+    "errors": 1,
+    "hints": 0,
+    "level": 4
+   },
+   {
+    "t": 1794413511870,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 10665,
+    "hint": 0,
+    "correct": true,
+    "choice": "then"
+   },
+   {
+    "t": 1794413511870,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 10665,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794413518052,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 6182,
+    "hint": 0,
+    "correct": true,
+    "button": 4
+   },
+   {
+    "t": 1794413518052,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 6182,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 4
+   },
+   {
+    "t": 1794413524737,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 12867,
+    "hint": 0,
+    "correct": true,
+    "choice": "then"
+   },
+   {
+    "t": 1794413524737,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 12867,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794413528713,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 3976,
+    "hint": 0,
+    "correct": true,
+    "button": 4
+   },
+   {
+    "t": 1794413528713,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 3976,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 4
+   },
+   {
+    "t": 1794413536692,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 11955,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794413536692,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 11955,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794413543078,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 2726,
+    "hint": 0,
+    "n": 1
+   },
+   {
+    "t": 1794413548236,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 5158,
+    "hint": 0,
+    "n": 2
+   },
+   {
+    "t": 1794413561945,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "mark",
+    "ms": 21593,
+    "hint": 0,
+    "correct": true,
+    "marked": 1
+   },
+   {
+    "t": 1794413561945,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 21593,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794413564234,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "check",
+    "ms": 15998,
+    "hint": 0,
+    "correct": false,
+    "rotations": 2
+   },
+   {
+    "t": 1794413578429,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 14195,
+    "hint": 0,
+    "n": 3
+   },
+   {
+    "t": 1794413578429,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "edit",
+    "ms": 0,
+    "hint": 0,
+    "z": 2,
+    "x": 2,
+    "delta": -1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794413581975,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "check",
+    "ms": 3546,
+    "hint": 0,
+    "correct": true,
+    "rotations": 3
+   },
+   {
+    "t": 1794413581975,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 41623,
+    "hint": 0,
+    "errors": 1,
+    "hints": 0,
+    "level": 3,
+    "rotations": 3
+   }
+  ],
+  "ratings": {
+   "мама": {
+    "before": {
+     "spatial": 1246,
+     "patterns": 1329,
+     "logic": 1246,
+     "critical": 1246,
+     "communication": 1200
+    },
+    "after": {
+     "spatial": 1267,
+     "patterns": 1391,
+     "logic": 1267,
+     "critical": 1267,
+     "communication": 1200
+    }
+   },
+   "макс": {
+    "before": {
+     "spatial": 1021,
+     "patterns": 1140,
+     "logic": 1021,
+     "critical": 1021,
+     "communication": 1000
+    },
+    "after": {
+     "spatial": 1036,
+     "patterns": 1193,
+     "logic": 1044,
+     "critical": 1044,
+     "communication": 1000
+    }
+   }
+  },
+  "parentRating": 3,
+  "simulated": true
+ },
+ {
+  "id": "demo-4",
+  "familyId": "demo",
+  "code": "2515",
+  "mode": "multi",
+  "startedAt": 1794500192441,
+  "endedAt": 1794500415317,
+  "story": {
+   "title": "Затонувший храм осьминога",
+   "region": "Подводное царство",
+   "source": "template"
+  },
+  "players": [
+   {
+    "key": "мама",
+    "nickname": "Мама",
+    "kind": "adult",
+    "ageBand": null,
+    "role": "keeper"
+   },
+   {
+    "key": "макс",
+    "nickname": "Макс",
+    "kind": "child",
+    "ageBand": "8-10",
+    "role": "scout"
+   }
+  ],
+  "locks": [
+   {
+    "type": "detective",
+    "levels": {
+     "scout": 3,
+     "keeper": 6
+    },
+    "opened": true,
+    "errors": 1,
+    "hints": 0,
+    "ms": 97223
+   },
+   {
+    "type": "cipher",
+    "levels": {
+     "scout": 5,
+     "keeper": 7
+    },
+    "opened": true,
+    "errors": 0,
+    "hints": 0,
+    "ms": 66283
+   },
+   {
+    "type": "blueprint",
+    "levels": {
+     "scout": 3,
+     "keeper": 6
+    },
+    "opened": true,
+    "errors": 0,
+    "hints": 0,
+    "ms": 30005
+   }
+  ],
+  "attempts": [
+   {
+    "t": 1794500237287,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "accuse",
+    "ms": 25732,
+    "hint": 0,
+    "i": 2,
+    "correct": true
+   },
+   {
+    "t": 1794500237287,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 25732,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794500243123,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 31568,
+    "hint": 0,
+    "i": 0,
+    "correct": true
+   },
+   {
+    "t": 1794500248781,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 5658,
+    "hint": 0,
+    "i": 1,
+    "correct": true
+   },
+   {
+    "t": 1794500260592,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 11811,
+    "hint": 0,
+    "i": 3,
+    "correct": true
+   },
+   {
+    "t": 1794500286246,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "why",
+    "ms": 25654,
+    "hint": 0,
+    "correct": true,
+    "choice": "all_clues"
+   },
+   {
+    "t": 1794500286246,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 0,
+    "i": 5,
+    "correct": false
+   },
+   {
+    "t": 1794500308778,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "why",
+    "ms": 22532,
+    "hint": 0,
+    "correct": true,
+    "choice": "all_clues"
+   },
+   {
+    "t": 1794500308778,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 0,
+    "i": 2,
+    "correct": true
+   },
+   {
+    "t": 1794500308778,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 97223,
+    "hint": 0,
+    "errors": 1,
+    "hints": 0,
+    "level": 3
+   },
+   {
+    "t": 1794500313119,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 1318,
+    "hint": 0,
+    "correct": true,
+    "button": 3
+   },
+   {
+    "t": 1794500313119,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 1318,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794500325358,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 13557,
+    "hint": 0,
+    "correct": true,
+    "choice": "then"
+   },
+   {
+    "t": 1794500325358,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 13557,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 7
+   },
+   {
+    "t": 1794500335283,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 9925,
+    "hint": 0,
+    "correct": true,
+    "button": 1
+   },
+   {
+    "t": 1794500335283,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 9925,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794500346972,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 21614,
+    "hint": 0,
+    "correct": true,
+    "choice": "then"
+   },
+   {
+    "t": 1794500346972,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 21614,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 7
+   },
+   {
+    "t": 1794500368805,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 21833,
+    "hint": 0,
+    "correct": true,
+    "button": 1
+   },
+   {
+    "t": 1794500368805,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 21833,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794500378084,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 31112,
+    "hint": 0,
+    "correct": true,
+    "choice": "then"
+   },
+   {
+    "t": 1794500378084,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 31112,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 7
+   },
+   {
+    "t": 1794500387257,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 5235,
+    "hint": 0,
+    "n": 1
+   },
+   {
+    "t": 1794500391767,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 4510,
+    "hint": 0,
+    "n": 2
+   },
+   {
+    "t": 1794500401286,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "mark",
+    "ms": 19264,
+    "hint": 0,
+    "correct": true,
+    "marked": 1
+   },
+   {
+    "t": 1794500401286,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 19264,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794500408200,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "edit",
+    "ms": 16433,
+    "hint": 0,
+    "z": 2,
+    "x": 0,
+    "delta": -1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794500412027,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "check",
+    "ms": 3827,
+    "hint": 0,
+    "correct": true,
+    "rotations": 2
+   },
+   {
+    "t": 1794500412027,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 30005,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 3,
+    "rotations": 2
+   }
+  ],
+  "ratings": {
+   "мама": {
+    "before": {
+     "spatial": 1267,
+     "patterns": 1391,
+     "logic": 1267,
+     "critical": 1267,
+     "communication": 1200
+    },
+    "after": {
+     "spatial": 1293,
+     "patterns": 1460,
+     "logic": 1293,
+     "critical": 1293,
+     "communication": 1200
+    }
+   },
+   "макс": {
+    "before": {
+     "spatial": 1036,
+     "patterns": 1193,
+     "logic": 1044,
+     "critical": 1044,
+     "communication": 1000
+    },
+    "after": {
+     "spatial": 1058,
+     "patterns": 1261,
+     "logic": 1058,
+     "critical": 1058,
+     "communication": 1000
+    }
+   }
+  },
+  "parentRating": 2,
+  "simulated": true
+ },
+ {
+  "id": "demo-5",
+  "familyId": "demo",
+  "code": "6098",
+  "mode": "multi",
+  "startedAt": 1794588908662,
+  "endedAt": 1794589163384,
+  "story": {
+   "title": "Тайна пропавшего яйца",
+   "region": "Долина динозавров",
+   "source": "template"
+  },
+  "players": [
+   {
+    "key": "мама",
+    "nickname": "Мама",
+    "kind": "adult",
+    "ageBand": null,
+    "role": "keeper"
+   },
+   {
+    "key": "макс",
+    "nickname": "Макс",
+    "kind": "child",
+    "ageBand": "8-10",
+    "role": "scout"
+   }
+  ],
+  "locks": [
+   {
+    "type": "detective",
+    "levels": {
+     "scout": 4,
+     "keeper": 6
+    },
+    "opened": true,
+    "errors": 0,
+    "hints": 0,
+    "ms": 77463
+   },
+   {
+    "type": "cipher",
+    "levels": {
+     "scout": 6,
+     "keeper": 8
+    },
+    "opened": true,
+    "errors": 0,
+    "hints": 0,
+    "ms": 84278
+   },
+   {
+    "type": "blueprint",
+    "levels": {
+     "scout": 4,
+     "keeper": 6
+    },
+    "opened": true,
+    "errors": 1,
+    "hints": 1,
+    "ms": 59960
+   }
+  ],
+  "attempts": [
+   {
+    "t": 1794588959543,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "accuse",
+    "ms": 27297,
+    "hint": 0,
+    "i": 5,
+    "correct": true
+   },
+   {
+    "t": 1794588959543,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 27297,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794588965382,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 33136,
+    "hint": 0,
+    "i": 0,
+    "correct": true
+   },
+   {
+    "t": 1794588974409,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 9027,
+    "hint": 0,
+    "i": 1,
+    "correct": true
+   },
+   {
+    "t": 1794588979345,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 4936,
+    "hint": 0,
+    "i": 2,
+    "correct": true
+   },
+   {
+    "t": 1794589009709,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "why",
+    "ms": 30364,
+    "hint": 0,
+    "correct": true,
+    "choice": "all_clues"
+   },
+   {
+    "t": 1794589009709,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 0,
+    "i": 5,
+    "correct": true
+   },
+   {
+    "t": 1794589009709,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 77463,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 4
+   },
+   {
+    "t": 1794589033845,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 20855,
+    "hint": 0,
+    "correct": true,
+    "button": 2
+   },
+   {
+    "t": 1794589033845,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 20855,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794589046160,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 33170,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794589046160,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 33170,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 8
+   },
+   {
+    "t": 1794589061019,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 14859,
+    "hint": 0,
+    "correct": true,
+    "button": 5
+   },
+   {
+    "t": 1794589061019,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 14859,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794589066849,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 20689,
+    "hint": 0,
+    "correct": true,
+    "choice": "then"
+   },
+   {
+    "t": 1794589066849,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 20689,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 8
+   },
+   {
+    "t": 1794589087049,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 20200,
+    "hint": 0,
+    "correct": true,
+    "button": 3
+   },
+   {
+    "t": 1794589087049,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 20200,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794589097268,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 30419,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794589097268,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 30419,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 8
+   },
+   {
+    "t": 1794589104599,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 4275,
+    "hint": 0,
+    "n": 1
+   },
+   {
+    "t": 1794589109449,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 4850,
+    "hint": 0,
+    "n": 2
+   },
+   {
+    "t": 1794589129465,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "mark",
+    "ms": 29141,
+    "hint": 0,
+    "correct": true,
+    "marked": 2
+   },
+   {
+    "t": 1794589129465,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 29141,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794589142865,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "edit",
+    "ms": 33416,
+    "hint": 0,
+    "z": 0,
+    "x": 0,
+    "delta": -1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794589145091,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "check",
+    "ms": 2226,
+    "hint": 0,
+    "correct": false,
+    "rotations": 2
+   },
+   {
+    "t": 1794589145091,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "hint",
+    "ms": 0,
+    "hint": 1,
+    "level": 1
+   },
+   {
+    "t": 1794589155472,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 10381,
+    "hint": 1,
+    "n": 3
+   },
+   {
+    "t": 1794589155472,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "edit",
+    "ms": 0,
+    "hint": 1,
+    "z": 2,
+    "x": 1,
+    "delta": -1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794589160284,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "check",
+    "ms": 4812,
+    "hint": 1,
+    "correct": true,
+    "rotations": 3
+   },
+   {
+    "t": 1794589160284,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 59960,
+    "hint": 1,
+    "errors": 1,
+    "hints": 1,
+    "level": 4,
+    "rotations": 3
+   }
+  ],
+  "ratings": {
+   "мама": {
+    "before": {
+     "spatial": 1293,
+     "patterns": 1460,
+     "logic": 1293,
+     "critical": 1293,
+     "communication": 1200
+    },
+    "after": {
+     "spatial": 1317,
+     "patterns": 1535,
+     "logic": 1317,
+     "critical": 1317,
+     "communication": 1200
+    }
+   },
+   "макс": {
+    "before": {
+     "spatial": 1058,
+     "patterns": 1261,
+     "logic": 1058,
+     "critical": 1058,
+     "communication": 1000
+    },
+    "after": {
+     "spatial": 1066,
+     "patterns": 1336,
+     "logic": 1085,
+     "critical": 1085,
+     "communication": 1000
+    }
+   }
+  },
+  "parentRating": 3,
+  "simulated": true
+ },
+ {
+  "id": "demo-6",
+  "familyId": "demo",
+  "code": "6038",
+  "mode": "multi",
+  "startedAt": 1794674324558,
+  "endedAt": 1794674534176,
+  "story": {
+   "title": "Затонувший храм осьминога",
+   "region": "Подводное царство",
+   "source": "template"
+  },
+  "players": [
+   {
+    "key": "мама",
+    "nickname": "Мама",
+    "kind": "adult",
+    "ageBand": null,
+    "role": "keeper"
+   },
+   {
+    "key": "макс",
+    "nickname": "Макс",
+    "kind": "child",
+    "ageBand": "8-10",
+    "role": "scout"
+   }
+  ],
+  "locks": [
+   {
+    "type": "detective",
+    "levels": {
+     "scout": 4,
+     "keeper": 6
+    },
+    "opened": true,
+    "errors": 0,
+    "hints": 0,
+    "ms": 65853
+   },
+   {
+    "type": "cipher",
+    "levels": {
+     "scout": 6,
+     "keeper": 8
+    },
+    "opened": true,
+    "errors": 1,
+    "hints": 0,
+    "ms": 58820
+   },
+   {
+    "type": "blueprint",
+    "levels": {
+     "scout": 4,
+     "keeper": 6
+    },
+    "opened": true,
+    "errors": 0,
+    "hints": 0,
+    "ms": 54500
+   }
+  ],
+  "attempts": [
+   {
+    "t": 1794674360378,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "accuse",
+    "ms": 15145,
+    "hint": 0,
+    "i": 3,
+    "correct": true
+   },
+   {
+    "t": 1794674360378,
+    "lock": 0,
+    "type": "detective",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 15145,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794674371881,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 26648,
+    "hint": 0,
+    "i": 0,
+    "correct": true
+   },
+   {
+    "t": 1794674383137,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 11256,
+    "hint": 0,
+    "i": 1,
+    "correct": true
+   },
+   {
+    "t": 1794674391243,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 8106,
+    "hint": 0,
+    "i": 2,
+    "correct": true
+   },
+   {
+    "t": 1794674411086,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "why",
+    "ms": 19843,
+    "hint": 0,
+    "correct": true,
+    "choice": "all_clues"
+   },
+   {
+    "t": 1794674411086,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 0,
+    "i": 3,
+    "correct": true
+   },
+   {
+    "t": 1794674411086,
+    "lock": 0,
+    "type": "detective",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 65853,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 4
+   },
+   {
+    "t": 1794674417923,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 3789,
+    "hint": 0,
+    "correct": true,
+    "button": 0
+   },
+   {
+    "t": 1794674417923,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 3789,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794674430481,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 16347,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794674430481,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 16347,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 8
+   },
+   {
+    "t": 1794674440271,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 9790,
+    "hint": 0,
+    "correct": true,
+    "button": 2
+   },
+   {
+    "t": 1794674440271,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 9790,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794674450298,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 19817,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794674450298,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 19817,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 8
+   },
+   {
+    "t": 1794674462379,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 12081,
+    "hint": 0,
+    "correct": false,
+    "button": 2
+   },
+   {
+    "t": 1794674465425,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "press",
+    "ms": 3046,
+    "hint": 0,
+    "correct": true,
+    "button": 0
+   },
+   {
+    "t": 1794674465425,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 15127,
+    "hint": 0,
+    "errors": 1,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794674472954,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 22656,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794674472954,
+    "lock": 1,
+    "type": "cipher",
+    "round": 2,
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 22656,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 8
+   },
+   {
+    "t": 1794674480862,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 4632,
+    "hint": 0,
+    "n": 1
+   },
+   {
+    "t": 1794674485413,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 4551,
+    "hint": 0,
+    "n": 2
+   },
+   {
+    "t": 1794674490115,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 4702,
+    "hint": 0,
+    "n": 3
+   },
+   {
+    "t": 1794674507921,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "mark",
+    "ms": 31691,
+    "hint": 0,
+    "correct": true,
+    "marked": 2
+   },
+   {
+    "t": 1794674507921,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "мама",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 31691,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794674518990,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "edit",
+    "ms": 28875,
+    "hint": 0,
+    "z": 0,
+    "x": 2,
+    "delta": 1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794674525750,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "edit",
+    "ms": 6760,
+    "hint": 0,
+    "z": 0,
+    "x": 0,
+    "delta": 1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794674530730,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "check",
+    "ms": 4980,
+    "hint": 0,
+    "correct": true,
+    "rotations": 3
+   },
+   {
+    "t": 1794674530730,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "макс",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 54500,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 4,
+    "rotations": 3
+   }
+  ],
+  "ratings": {
+   "мама": {
+    "before": {
+     "spatial": 1317,
+     "patterns": 1535,
+     "logic": 1317,
+     "critical": 1317,
+     "communication": 1200
+    },
+    "after": {
+     "spatial": 1340,
+     "patterns": 1596,
+     "logic": 1340,
+     "critical": 1340,
+     "communication": 1200
+    }
+   },
+   "макс": {
+    "before": {
+     "spatial": 1066,
+     "patterns": 1336,
+     "logic": 1085,
+     "critical": 1085,
+     "communication": 1000
+    },
+    "after": {
+     "spatial": 1092,
+     "patterns": 1390,
+     "logic": 1110,
+     "critical": 1110,
+     "communication": 1000
+    }
+   }
+  },
+  "parentRating": 3,
+  "simulated": true
+ }
+]
