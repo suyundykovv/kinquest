@@ -13,7 +13,8 @@ const H = require('./hints');
 const store = require('./store');
 const ai = require('./ai');
 const { buildMetrics, LOCK_SKILLS } = require('./report');
-const { ACTIVITIES, SKILLS } = require('./activities');
+const { ACTIVITIES, SKILLS, MISSIONS } = require('./activities');
+const { focusFor, FOCUS } = require('./focus');
 
 const PORT = Number(process.env.PORT || 3000);
 const LOCK_TYPES = ['detective', 'cipher', 'blueprint'];
@@ -81,8 +82,11 @@ async function buildExpedition(room) {
   room.story = story;
   const scout = room.players.find((p) => p.role === 'scout');
   const keeper = room.players.find((p) => p.role === 'keeper');
+  // Next-mission rules (focus.js): a mix-up seen in earlier sessions shapes one of today's locks.
+  const focus = focusFor(store.familySessions(room.familyId), scout.key).next;
   room.locks = LOCK_TYPES.map((type, i) => {
     const opts = { levelScout: levelFor(room, scout, type), levelKeeper: levelFor(room, keeper, type), cast: story.cast };
+    if (focus && focus.lock === type && focus.attr && focus.stage === 'scaffold') opts.focusAttr = focus.attr;
     const seed = (room.seed + i * 7919) >>> 0;
     const puzzle = type === 'detective' ? P.generateDetective(seed, opts) : type === 'cipher' ? P.generateCipher(seed, opts) : P.generateBlueprint(seed, opts);
     return {
@@ -93,7 +97,10 @@ async function buildExpedition(room) {
       round: 0, roundKeys: { scout: false, keeper: false },
       grid: type === 'blueprint' ? puzzle.start.map((r) => r.slice()) : null,
       rotations: 0, marks: [],
-      why: type === 'detective' ? P.detectiveWhyOptions(seed) : null,
+      predicted: false,
+      viewQ: type === 'blueprint' ? { ...P.viewQuestion(puzzle.start, seed), answered: null } : null,
+      focus: focus && focus.lock === type ? { id: focus.id, stage: focus.stage, reason: focus.reason || null } : null,
+      coach: null,
       totals: { errors: 0, hints: 0 },
     };
   });
@@ -105,6 +112,13 @@ function startLock(room, idx) {
   const lock = room.locks[idx];
   lock.startedAt = now();
   lock.part = { scout: partState(), keeper: partState() };
+  if (lock.focus) {
+    const kid = scoutName(room);
+    const f = FOCUS[lock.focus.id];
+    coach(room, lock, lock.focus.stage === 'scaffold'
+      ? `Today’s focus is “${f.title}”. ${kid} gets ${f.tool}. Let ${kid} lead. ${f.parentTip}`
+      : `Last time ${kid} practiced “${f.title}” with a helper. Today there’s none: see if ${kid} does it on their own.`);
+  }
 }
 
 // ---------------------------------------------------------------- views
@@ -118,17 +132,21 @@ function lockView(room, lock, role) {
     keys: keysView(lock), opened: lock.opened,
     hints: part.hintTexts, hintLevel: part.hints, hintReadyIn: hintReadyAt ? Math.max(0, hintReadyAt - now()) : 0, hintMax: 3,
     errors: part.errors, solved: lock.keys[role],
+    focus: lock.focus ? { ...lock.focus, title: FOCUS[lock.focus.id].title, goal: FOCUS[lock.focus.id].goal, attr: FOCUS[lock.focus.id].attr || null } : null,
+    coach: role === 'keeper' ? lock.coach : null,
   };
   if (lock.type === 'detective') {
     const v = P.detectiveViews(puz)[role];
-    return { ...base, ...v, excluded: lock.excluded[role], why: role === 'scout' ? lock.why : null };
+    return { ...base, ...v, excluded: lock.excluded[role], checkTool: role === 'scout' && !!lock.focus && lock.focus.stage === 'scaffold' };
   }
   if (lock.type === 'cipher') {
     const v = P.cipherViews(puz, lock.round)[role];
-    return { ...base, ...v, roundSolved: lock.roundKeys[role] };
+    // The prediction step comes first; the panel opens once the row holder got it right.
+    const needPredict = v.view === 'row' && v.predict && !lock.predicted;
+    return { ...base, ...v, predict: needPredict ? v.predict : null, predicted: lock.predicted, panel: needPredict ? null : v.panel, roundSolved: lock.roundKeys[role] };
   }
   const v = P.blueprintViews(puz)[role];
-  if (role === 'scout') return { ...base, ...v, grid: lock.grid, highlight: part.highlight };
+  if (role === 'scout') return { ...base, ...v, grid: lock.grid, highlight: part.highlight, viewQ: lock.viewQ && lock.viewQ.answered == null ? { options: lock.viewQ.options } : null, viewQDone: lock.viewQ ? lock.viewQ.answered : null };
   return { ...base, ...v, marks: lock.marks };
 }
 
@@ -153,7 +171,7 @@ function roleView(room, player) {
   if (room.story) v.story = { title: room.story.title, intro: room.story.intro, region: room.story.region, lockNames: room.story.lock_names, source: room.story.source };
   if (room.phase === 'lock' && room.locks[room.lockIdx]) v.lock = lockView(room, room.locks[room.lockIdx], player.role);
   if (room.phase === 'lock' || room.phase === 'chest') v.locksDone = room.locks.map((l) => l.opened);
-  if (room.phase === 'chest') v.chest = room.chest;
+  if (room.phase === 'chest') { v.chest = room.chest; v.solo = soloView(room, player); }
   return v;
 }
 
@@ -203,31 +221,90 @@ function maybeOpen(room, lock) {
   }, ADVANCE_MS);
 }
 
+const scoutName = (room) => (room.players.find((p) => p.role === 'scout') || {}).nickname || 'Your Scout';
+
+// A line for the grown-up's screen: how to help the kid reason, never the answer.
+// It must not reveal the Scout's picture clues either: the two halves are shared by talking.
+function coach(room, lock, text) {
+  lock.coach = { text, t: now() };
+}
+
+// Every clue checked against one suspect, as short words for the log and the report.
+function mixupOf(puz, i) {
+  const checks = P.checkSuspect(puz, i);
+  return {
+    name: puz.lineup[i].name,
+    fits: checks.filter((c) => c.holds).map((c) => c.short),
+    breaks: checks.filter((c) => !c.holds).map((c) => c.short),
+    breaksWho: [...new Set(checks.filter((c) => !c.holds).map((c) => c.who))],
+    checks,
+  };
+}
+
 function handleDetective(room, player, lock, msg) {
   const puz = lock.puzzle;
   const role = player.role;
+  const kid = scoutName(room);
   if (msg.action === 'exclude') {
     const i = Number(msg.i);
     if (!(i >= 0 && i < puz.lineup.length)) return;
     const list = lock.excluded[role];
     const at = list.indexOf(i);
-    if (at >= 0) { list.splice(at, 1); log(room, player, lock, 'unexclude', { i }); }
-    else { list.push(i); log(room, player, lock, 'exclude', { i, correct: i !== puz.solution.thief }); }
+    if (at >= 0) { list.splice(at, 1); log(room, player, lock, 'unexclude', { i }); lock.part[role].lastProgress = now(); return; }
+    // The Scout may tie a cross-out to one of their own picture clues. The server checks the link:
+    // a clue that fits this suspect can't rule them out, so the cross-out is refused with the reason.
+    let clue = null;
+    if (role === 'scout' && msg.clue === 'keeper') clue = 'keeper';
+    else if (role === 'scout' && Number.isInteger(msg.clue) && msg.clue >= 0 && msg.clue < puz.scoutClues.length) clue = msg.clue;
+    if (typeof clue === 'number') {
+      const e = P.explainClue(puz.lineup, i, puz.scoutClues[clue]);
+      if (e.holds) {
+        log(room, player, lock, 'exclude_link', { i, clue, valid: false, name: puz.lineup[i].name, short: e.short });
+        coach(room, lock, `${kid} tried to cross out ${puz.lineup[i].name} with one of their clues, but that clue fits ${puz.lineup[i].name}. Ask: “Show me how that clue rules ${puz.lineup[i].name} out.”`);
+        lockUpdate(room, { event: { role, kind: 'look_again', message: `Look again: ${e.text} So this clue can’t rule ${puz.lineup[i].name} out.` } });
+        return { linkValid: false };
+      }
+    }
+    list.push(i);
+    log(room, player, lock, 'exclude', { i, correct: i !== puz.solution.thief, clue, linkValid: typeof clue === 'number' ? true : undefined });
     lock.part[role].lastProgress = now();
-    return;
+    return { linkValid: typeof clue === 'number' ? true : null };
+  }
+  // Check tool (focus "Two Clues", scaffold stage): the Scout says whether a suspect matches each of
+  // their own clues before accusing. The server answers right or "look again" with the reason.
+  if (msg.action === 'check_clue' && role === 'scout' && lock.focus && lock.focus.stage === 'scaffold') {
+    const i = Number(msg.i), k = Number(msg.k);
+    if (!(i >= 0 && i < puz.lineup.length && k >= 0 && k < puz.scoutClues.length) || typeof msg.answer !== 'boolean') return;
+    const e = P.explainClue(puz.lineup, i, puz.scoutClues[k]);
+    const correct = msg.answer === e.holds;
+    log(room, player, lock, 'check_clue', { i, k, answer: msg.answer, correct });
+    lock.part[role].lastProgress = now();
+    return { correct, text: correct ? null : `Look again: ${e.text}` };
   }
   if (msg.action === 'accuse') {
     if (lock.keys[role]) return;
     const i = Number(msg.i);
     if (!(i >= 0 && i < puz.lineup.length)) return;
-    if (role === 'scout' && lock.why) {
-      const opt = ['all_clues', 'looks', 'guess'].includes(msg.why) ? msg.why : null;
-      if (opt) log(room, player, lock, 'why', { correct: opt === 'all_clues', choice: opt });
-    }
     const correct = i === puz.solution.thief;
-    log(room, player, lock, 'accuse', { i, correct });
+    const m = correct ? null : mixupOf(puz, i);
+    log(room, player, lock, 'accuse', { i, correct, checked: msg.checked === true || undefined, ...(m ? { name: m.name, fits: m.fits, breaks: m.breaks, breaksWho: m.breaksWho } : {}) });
     lock.part[role].lastAnswer = now();
-    if (!correct) return wrong(room, player, lock, `${puz.lineup[i].name} doesn't fit every clue. Talk it through again!`);
+    if (!correct) {
+      const name = puz.lineup[i].name;
+      const own = m.checks.find((c) => c.who === role && !c.holds);
+      let text;
+      if (own) text = `${own.text} Try someone else!`;
+      else text = role === 'scout'
+        ? `${name} fits your clues, but not one of the Keeper’s notes. Ask the Keeper to check ${name} with you.`
+        : `${name} fits your notes, but not one of the Scout’s clues. Ask the Scout to check ${name} with you.`;
+      if (role === 'scout') {
+        const k = m.checks.filter((c) => c.who === 'keeper').findIndex((c) => !c.holds);
+        coach(room, lock, k >= 0
+          ? `${kid} picked ${name}, who breaks your note ${k + 1}. Ask: “Let’s check ${name} against my notes, one by one.”`
+          : `${kid} picked ${name}, who breaks one of ${kid}’s own picture clues. Ask: “Which clue could prove your answer wrong?”`);
+      }
+      return wrong(room, player, lock, text);
+    }
     lock.keys[role] = true;
     const deltas = partSolved(room, player, lock);
     lockUpdate(room, { event: { role, kind: 'key', message: `The ${ROLE_LABEL[role]}'s key is glowing!` }, ratingDelta: { role, deltas } });
@@ -235,32 +312,71 @@ function handleDetective(room, player, lock, msg) {
   }
 }
 
+const swapWords = (t) => t.replace(/Scout|Keeper/g, (w) => (w === 'Scout' ? 'Keeper' : 'Scout'));
+
 function handleCipher(room, player, lock, msg) {
   const role = player.role;
   const rd = lock.puzzle.rounds[lock.round];
+  const presser = P.cipherPresser(rd);
+  const ruler = presser === 'scout' ? 'keeper' : 'scout';
+  const kid = scoutName(room);
   if (lock.roundKeys[role]) return;
+  // Round 1: the row holder first predicts the next symbol and says which features change.
+  if (msg.action === 'predict' && role === presser && rd.predict && !lock.predicted) {
+    const k = Number(msg.choice);
+    if (!(k >= 0 && k < rd.predict.options.length)) return;
+    const correct = k === rd.solution.predict;
+    const want = rd.predict.options[rd.solution.predict], got = rd.predict.options[k];
+    const off = correct ? undefined : ['shape', 'color', 'dots'].filter((a) => want[a] !== got[a]);
+    const said = Array.isArray(msg.changes) ? ['shape', 'color', 'dots'].filter((a) => msg.changes.includes(a)) : [];
+    const changesCorrect = said.length === rd.solution.changes.length && said.every((a) => rd.solution.changes.includes(a));
+    log(room, player, lock, 'predict', { correct, off, changes: said, changesCorrect, actual: rd.solution.changes });
+    lock.part[role].lastProgress = now();
+    const words = (xs) => xs.map((a) => (a === 'dots' ? 'the dots' : `the ${a}`)).join(' and ');
+    const changesNote = changesCorrect ? `Yes: along this row, ${words(rd.solution.changes)} change${rd.solution.changes.length > 1 ? '' : 's'}.` : `Look closer: along this row, ${words(rd.solution.changes)} change${rd.solution.changes.length > 1 ? '' : 's'}.`;
+    if (!correct) {
+      const hint = off.length === 1 ? `Almost! Check the ${off[0] === 'dots' ? 'number of dots' : off[0]}.` : 'Not that one. Look at how the row repeats.';
+      if (off.length === 1) coach(room, lock, `${kid}’s prediction was right except for the ${off[0] === 'dots' ? 'number of dots' : off[0]}. Ask: “Say the row out loud. What comes next?”`);
+      lockUpdate(room, { event: { role, kind: 'look_again', message: hint } });
+      return { correct: false, changesNote };
+    }
+    lock.predicted = true;
+    coach(room, lock, `${kid} predicted what comes next in the row. Your rule may need it: ask “What did you predict comes next?”`);
+    lockUpdate(room, { event: { role, kind: 'round', message: 'Prediction locked in! Now the rule decides what to press.' } });
+    return { correct: true, changesNote };
+  }
   let correct;
-  if (role === 'keeper' && msg.action === 'branch') {
+  if (role === ruler && msg.action === 'branch') {
     if (!['then', 'else'].includes(msg.branch)) return;
     correct = msg.branch === rd.solution.branch;
-    log(room, player, lock, 'branch', { correct, choice: msg.branch });
-  } else if (role === 'scout' && msg.action === 'press') {
+    log(room, player, lock, 'branch', { correct, choice: msg.branch, swapped: rd.swapped || undefined });
+    if (!correct && rd.swapped) coach(room, lock, `${kid} holds the rule this round. Ask: “What does your rule need to know about the row? I’ll tell you.”`);
+  } else if (role === presser && msg.action === 'press') {
+    if (rd.predict && !lock.predicted) return;
     const b = Number(msg.button);
     if (!(b >= 0 && b < rd.panel.length)) return;
     correct = b === rd.solution.button;
-    log(room, player, lock, 'press', { correct, button: b });
+    const want = rd.panel[rd.solution.button], got = rd.panel[b];
+    const off = correct ? undefined : ['shape', 'color', 'dots'].filter((a) => want[a] !== got[a]);
+    log(room, player, lock, 'press', { correct, button: b, off, swapped: rd.swapped || undefined });
+    if (off && off.length === 1 && role === 'scout') coach(room, lock, `${kid} pressed a symbol with the wrong ${off[0] === 'dots' ? 'number of dots' : off[0]}, and everything else was right. Ask: “What ${off[0] === 'dots' ? 'number of dots' : off[0]} does the row need next?”`);
   } else return;
   lock.part[role].lastAnswer = now();
-  if (!correct) return wrong(room, player, lock, role === 'keeper' ? 'That rule doesn’t apply this time. Check with the Scout!' : 'Not that symbol. The door shook but stayed shut.');
+  if (!correct) {
+    const other = ROLE_LABEL[role === 'scout' ? 'keeper' : 'scout'];
+    return wrong(room, player, lock, role === ruler ? `That rule doesn’t apply this time. Check with the ${other}!` : 'Not that symbol. The door shook but stayed shut.');
+  }
   lock.roundKeys[role] = true;
-  const deltas = partSolved(room, player, lock, { round: lock.round });
+  const deltas = partSolved(room, player, lock, { round: lock.round, swapped: rd.swapped || undefined });
   lockUpdate(room, { event: { role, kind: 'round', message: `${ROLE_LABEL[role]}: correct!` }, ratingDelta: { role, deltas } });
   if (lock.roundKeys.scout && lock.roundKeys.keeper) {
     if (lock.round + 1 < lock.puzzle.rounds.length) {
       lock.round++;
       lock.roundKeys = { scout: false, keeper: false };
       lock.part = { scout: partState(), keeper: partState() };
-      lockUpdate(room, { event: { kind: 'next_round', message: `Round ${lock.round + 1} of ${lock.puzzle.rounds.length}` } });
+      const next = lock.puzzle.rounds[lock.round];
+      if (next.swapped) coach(room, lock, `Role swap! This round ${kid} holds the rule book and you see the symbols. Describe each symbol and let ${kid} decide which rule applies.`);
+      lockUpdate(room, { event: { kind: 'next_round', message: next.swapped ? `Round ${lock.round + 1}: Role swap! The Scout holds the rule.` : `Round ${lock.round + 1} of ${lock.puzzle.rounds.length}` } });
     } else {
       lock.keys = { scout: true, keeper: true };
       maybeOpen(room, lock);
@@ -286,6 +402,17 @@ function handleBlueprint(room, player, lock, msg) {
     if (lock.part[role].highlight && lock.part[role].highlight.z === z && lock.part[role].highlight.x === x && h === puz.target[z][x]) lock.part[role].highlight = null;
     return;
   }
+  // Before turning the model: "How does it look from the right side?" One try, then turn to check.
+  if (role === 'scout' && msg.action === 'predict_view' && lock.viewQ && lock.viewQ.answered == null) {
+    const skip = msg.choice === 'skip';
+    const k = Number(msg.choice);
+    if (!skip && !(k >= 0 && k < lock.viewQ.options.length)) return;
+    const correct = !skip && k === lock.viewQ.answer;
+    lock.viewQ.answered = skip ? 'skipped' : correct;
+    log(room, player, lock, 'predict_view', { correct: skip ? undefined : correct, skipped: skip || undefined, rotationsBefore: lock.rotations });
+    if (!skip && !correct) coach(room, lock, `${scoutName(room)} guessed the right-side view of their model before turning it, and it didn’t match. Ask: “Turn it to the right side. What’s different from what you picked?”`);
+    return { correct: skip ? null : correct };
+  }
   if (role === 'scout' && msg.action === 'rotate') {
     lock.rotations++;
     log(room, player, lock, 'rotate', { n: lock.rotations });
@@ -295,7 +422,10 @@ function handleBlueprint(room, player, lock, msg) {
     const correct = lock.grid.every((row, z) => row.every((h, x) => h === puz.target[z][x]));
     log(room, player, lock, 'check', { correct, rotations: lock.rotations });
     lock.part[role].lastAnswer = now();
-    if (!correct) return wrong(room, player, lock, 'Your model doesn’t match the blueprint yet. Ask the Keeper again!');
+    if (!correct) {
+      coach(room, lock, `${scoutName(room)}’s model isn’t right yet. Ask: “Turn the model around. What can you see from the back?”`);
+      return wrong(room, player, lock, 'Your model doesn’t match the blueprint yet. Ask the Keeper again!');
+    }
     lock.keys.scout = true;
     const deltas = partSolved(room, player, lock);
     lockUpdate(room, { event: { role, kind: 'key', message: 'The model matches the blueprint exactly!' }, ratingDelta: { role, deltas } });
@@ -332,7 +462,11 @@ function handleHint(room, player, lock) {
   part.hints++;
   let h;
   if (lock.type === 'detective') h = H.detectiveHint(lock.puzzle, role, part.hints, lock.puzzle.seed % 97);
-  else if (lock.type === 'cipher') h = H.cipherHint(lock.puzzle, lock.round, role, part.hints);
+  else if (lock.type === 'cipher') {
+    const sw = lock.puzzle.rounds[lock.round].swapped;
+    h = H.cipherHint(lock.puzzle, lock.round, sw ? (role === 'scout' ? 'keeper' : 'scout') : role, part.hints);
+    if (sw) h = swapWords(h);
+  }
   else h = H.blueprintHint(lock.puzzle, role, part.hints, lock.grid);
   const text = typeof h === 'string' ? h : h.text;
   if (h && h.highlight) part.highlight = h.highlight;
@@ -354,10 +488,12 @@ function finish(room) {
     startedAt: room.startedAt, endedAt: room.endedAt,
     story: { title: room.story.title, region: room.story.region, source: room.story.source },
     players: room.players.map((p) => ({ key: p.key, nickname: p.nickname, kind: p.kind, ageBand: p.ageBand, role: p.role })),
-    locks: room.locks.map((l) => ({ type: l.type, levels: l.puzzle.levels, opened: l.opened, errors: l.totals.errors, hints: l.totals.hints, ms: (l.openedAt || now()) - (l.startedAt || now()) })),
+    locks: room.locks.map((l) => ({ type: l.type, levels: l.puzzle.levels, opened: l.opened, errors: l.totals.errors, hints: l.totals.hints, ms: (l.openedAt || now()) - (l.startedAt || now()), focus: l.focus || undefined })),
     attempts: room.attempts,
     ratings: room.ratings,
     parentRating: null,
+    solo: null,
+    offscreen: null,
   };
   store.saveSession(session);
   room.sessionId = sessionId;
@@ -369,13 +505,112 @@ function finish(room) {
   const days = [...new Set(all.map((s) => new Date(s.startedAt).toISOString().slice(0, 10)))].sort();
   let streak = 1;
   for (let i = days.length - 1; i > 0; i--) { if ((new Date(days[i]) - new Date(days[i - 1])) / 86400000 === 1) streak++; else break; }
+  const scout = room.players.find((p) => p.role === 'scout');
+  const det = room.locks.find((l) => l.type === 'detective');
+  room.solo = {
+    puzzle: P.generateSoloDetective(room.seed + 104729, { level: det.puzzle.levels.scout, cast: room.story.cast }),
+    robot: { puzzle: P.generateRobotCase(room.seed + 7, { level: det.puzzle.levels.scout, cast: room.story.cast }), state: 'locked', stepTries: 0, thiefTries: 0, lastWrong: null },
+    state: 'offer', tries: 0, wrongs: [], helped: false, lastWrong: null, startedAt: null, endedAt: null, playerKey: scout.key,
+  };
+  // Tonight's off-screen mission follows the lock that took the most work today (or today's focus).
+  const work = (l) => room.attempts.filter((a) => a.type === l.type && a.player === scout.key && (a.action === 'hint' || a.correct === false)).length;
+  const focusLock = room.locks.find((l) => l.focus);
+  const missionLock = focusLock || room.locks.slice().sort((a, b) => work(b) - work(a))[0];
   room.chest = {
     sessionId, card: room.story.conversation_card,
+    mission: { type: missionLock.type, ...MISSIONS[missionLock.type], done: false },
     durationSec: Math.round(durationMs / 1000), recordSec: record ? Math.round(record / 1000) : null,
     newRecord: record == null || durationMs < record,
     streak, mapPiece: room.story.region,
     levels: room.players.map((p) => ({ nickname: p.nickname, role: p.role, skills: Object.fromEntries(Object.entries(room.ratings[p.key].after).filter(([k]) => k !== 'communication').map(([k, v]) => [SKILLS[k], { level: store.ratingToLevel(v), levelBefore: store.ratingToLevel(room.ratings[p.key].before[k]), delta: v - room.ratings[p.key].before[k] }])) })),
   };
+}
+
+// ---------------------------------------------------------------- the Scout's solo chest
+// After the family expedition, the kid gets one small Detective on their own screen with every clue.
+// Optional, no timer. The grown-up can mark that they helped: a home attempt, not a test.
+function soloSummary(solo) {
+  return {
+    level: solo.puzzle.levels.scout, suspects: solo.puzzle.lineup.length, clues: solo.puzzle.scoutClues.length,
+    state: solo.state, solved: solo.state === 'solved', tries: solo.tries, helped: solo.helped,
+    wrongs: solo.wrongs, ms: solo.startedAt ? (solo.endedAt || now()) - solo.startedAt : null,
+    robot: solo.robot.state === 'locked' ? null : { state: solo.robot.state, fixed: solo.robot.state === 'done', stepTries: solo.robot.stepTries, thiefTries: solo.robot.thiefTries },
+  };
+}
+
+function saveSolo(room) {
+  const s = store.getSession(room.sessionId);
+  if (!s) return;
+  s.solo = soloSummary(room.solo);
+  store.saveSession(s);
+}
+
+function handleSolo(room, player, msg) {
+  const solo = room.solo;
+  if (!solo) return;
+  if (msg.action === 'helped' && player.kind === 'adult') {
+    solo.helped = msg.value === true;
+    return saveSolo(room);
+  }
+  if (msg.action === 'skip' && solo.state === 'offer') { solo.state = 'skipped'; return saveSolo(room); }
+  if (player.role !== 'scout' && room.mode !== 'single') return;
+  if (msg.action === 'start' && solo.state === 'offer') { solo.state = 'playing'; solo.startedAt = now(); return saveSolo(room); }
+  if (msg.action === 'accuse' && solo.state === 'playing') {
+    const puz = solo.puzzle;
+    const i = Number(msg.i);
+    if (!(i >= 0 && i < puz.lineup.length)) return;
+    solo.tries++;
+    if (i === puz.solution.thief) {
+      solo.state = 'solved';
+      solo.endedAt = now();
+      solo.lastWrong = null;
+      solo.robot.state = 'offer'; // bonus: fix Robo's case
+    } else {
+      const m = mixupOf(puz, i);
+      solo.wrongs.push({ name: m.name, fits: m.fits, breaks: m.breaks });
+      solo.lastWrong = `${m.checks.find((c) => !c.holds).text} Try again!`;
+    }
+    return saveSolo(room);
+  }
+}
+
+// "Fix the Robot": first find Robo's wrong step, then name the real thief.
+function handleRobot(room, player, msg) {
+  const rb = room.solo.robot;
+  const puz = rb.puzzle;
+  if (msg.action === 'robot_skip' && rb.state === 'offer') { rb.state = 'skipped'; return saveSolo(room); }
+  if (msg.action === 'robot_start' && rb.state === 'offer') { rb.state = 'step'; return saveSolo(room); }
+  if (msg.action === 'robot_step' && rb.state === 'step') {
+    const k = Number(msg.k);
+    if (!(k >= 0 && k < puz.steps.length)) return;
+    rb.stepTries++;
+    if (k === puz.solution.wrongStep) { rb.state = 'thief'; rb.lastWrong = null; }
+    else rb.lastWrong = 'Robo got that step right: that animal really doesn’t match the clue. Look for a step where the animal DOES match.';
+    return saveSolo(room);
+  }
+  if (msg.action === 'robot_thief' && rb.state === 'thief') {
+    const i = Number(msg.i);
+    if (!(i >= 0 && i < puz.lineup.length)) return;
+    rb.thiefTries++;
+    if (i === puz.solution.thief) { rb.state = 'done'; rb.lastWrong = null; }
+    else rb.lastWrong = `${P.checkSuspect(puz, i).find((c) => !c.holds).text} Try again!`;
+    return saveSolo(room);
+  }
+}
+
+function soloView(room, player) {
+  const solo = room.solo;
+  if (!solo) return null;
+  const base = { state: solo.state, tries: solo.tries, helped: solo.helped, level: solo.puzzle.levels.scout, childName: scoutName(room) };
+  // Only the Scout's screen gets the puzzle; in one-device mode both roles share the screen.
+  if (player.role === 'scout' || room.mode === 'single') {
+    const v = P.detectiveViews(solo.puzzle).scout;
+    const rb = solo.robot;
+    const rv = P.detectiveViews(rb.puzzle).scout;
+    const robot = rb.state === 'locked' ? null : { state: rb.state, steps: rb.puzzle.steps, accused: rb.puzzle.lineup[rb.puzzle.accused].name, lineup: rv.lineup, clues: rv.clues, lastWrong: rb.lastWrong };
+    return { ...base, lineup: v.lineup, clues: v.clues, lastWrong: solo.lastWrong, robot };
+  }
+  return { ...base, robot: solo.robot.state === 'locked' ? null : { state: solo.robot.state } };
 }
 
 // ---------------------------------------------------------------- sockets
@@ -479,15 +714,29 @@ io.on('connection', (socket) => {
       broadcast(room);
       return ack({ ok: true });
     }
+    if (msg.kind === 'offscreen' && room.phase === 'chest' && player.kind === 'adult') {
+      room.chest.mission.done = msg.value === true;
+      const s = store.getSession(room.sessionId);
+      if (s) { s.offscreen = room.chest.mission.done ? { type: room.chest.mission.type, title: room.chest.mission.title, t: now() } : null; store.saveSession(s); }
+      broadcast(room);
+      return ack({ ok: true });
+    }
+    if (msg.kind === 'solo' && room.phase === 'chest') {
+      if (String(msg.action || '').startsWith('robot_')) { if (player.role === 'scout' || room.mode === 'single') handleRobot(room, player, msg); }
+      else handleSolo(room, player, msg);
+      broadcast(room);
+      return ack({ ok: true });
+    }
     if (room.phase !== 'lock') return ack({ ok: false });
     const lock = room.locks[room.lockIdx];
     if (lock.opened) return ack({ ok: false });
+    let res;
     if (msg.kind === 'hint') handleHint(room, player, lock);
-    else if (lock.type === 'detective') handleDetective(room, player, lock, msg);
-    else if (lock.type === 'cipher') handleCipher(room, player, lock, msg);
-    else handleBlueprint(room, player, lock, msg);
+    else if (lock.type === 'detective') res = handleDetective(room, player, lock, msg);
+    else if (lock.type === 'cipher') res = handleCipher(room, player, lock, msg);
+    else res = handleBlueprint(room, player, lock, msg);
     broadcast(room);
-    ack({ ok: true });
+    ack({ ok: true, ...(res || {}) });
   });
 
   socket.on('disconnect', () => {

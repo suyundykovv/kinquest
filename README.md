@@ -11,13 +11,16 @@
 | Room | A grown-up opens an expedition and gets a 4-digit code plus a QR code. The kid scans it on their own phone or tablet and enters a nickname and age group |
 | Roles | The **Keeper** (grown-up) gets rules, witness notes, and blueprints. The **Scout** (kid) gets picture clues, glowing symbols, and a 3D model. **Solutions stay on the server** |
 | Story | Gemini writes the story of the day around the kid's interest (ocean, space, dinosaurs, animals). Without a key, a story from the built-in library is used |
-| Lock 1 · The Detective | Logic and critical thinking: cross out suspects, accuse one, and the kid answers “Why do you think so?” |
-| Lock 2 · The Temple Cipher | Patterns: the Scout sees a row of symbols, the Keeper reads an if/otherwise rule book. 3 rounds |
-| Lock 3 · The Blueprint Workshop | Spatial reasoning: the Scout spins and edits a 3D cube model (Three.js); the Keeper sees the plan and projections and marks the differences |
-| Hints | A 3-step ladder after 2 mistakes or 90 seconds: a leading question → narrowing down → one step. Never the full answer |
+| Lock 1 · The Detective | Logic and critical thinking: cross out suspects and pick the clue that rules each one out (the server checks the link), then accuse. A wrong pick is explained by the exact clue it breaks |
+| Lock 2 · The Temple Cipher | Patterns: the Scout sees a row of symbols, the Keeper reads an if/otherwise rule book. 3 rounds. Round 1: the Scout first predicts the next symbol and says what changes along the row, and the rule uses that prediction. Round 3 is a role swap: the kid holds a picture rule book and the grown-up presses |
+| Lock 3 · The Blueprint Workshop | Spatial reasoning: before turning the 3D cube model (Three.js), the Scout picks how it looks from the right side, then turns it to check and fixes it; the Keeper sees the plan and projections and marks the differences |
+| Hints | A 3-step ladder after 2 mistakes or 90 seconds: a leading question → narrowing down → one step. Never the full answer. The grown-up also gets “Try asking” lines tied to the kid’s last move |
 | Ratings | A chess-style skill rating per player; the next expedition is built at the new level |
 | The chest | Team time vs. family record, day streak, an off-screen conversation card, and a one-tap parent rating |
-| Report | Built from the attempt log for one session or a week: 5 skills, a strength and a growth area with numbers, thinking style, and screen-free activities from a curated library |
+| Solo chest | After the expedition, the Scout can try one small Detective alone, with every clue on their screen. Optional, no timer; the grown-up can mark “I helped.” Logged as a home try. Bonus: “Fix the Robot”: Robo solved a case with one wrong step; the kid finds it and names the real thief |
+| Off-screen mission | The chest suggests one screen-free game tied to the lock that took the most work (or today’s focus); the grown-up can mark “We did it” |
+| Next mission | Plain rules in `focus.js`, one focus at a time. Detective: a pick that matched one clue but broke another → a check tool (suspect vs. each clue). Cipher: a symbol right except for one feature → labels for that feature under the row and a decoy that differs only in it. Then the same lock without the helper → done, or back to the helper. Only one lock changes |
+| Report | Built from the move log for one session or a week, in four blocks: what went well, where it got tricky (tied to the exact clue), one question for the grown-up plus screen-free activities, and the next mission. Then results by puzzle type with levels and hints. Skill levels 1–10 are kept only as the difficulty setting |
 | Backup mode | One-device play with a “pass the device, no peeking” curtain between turns |
 
 ## Why the puzzles are fair
@@ -85,6 +88,7 @@ puzzles.js       Detective, Cipher, and Blueprint generators + solvers
 hints.js         hint ladder (templates)
 report.js        report metrics from the attempt log
 ai.js            2 Gemini calls (story, report text) with template fallbacks
+focus.js         next-mission rules: mix-up → check tool → without the tool
 activities.js    screen-free activity library
 store.js         families, ratings, sessions (JSON files)
 seed-sessions.json  demo week

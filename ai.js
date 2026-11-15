@@ -3,7 +3,7 @@
 // Privacy: only the age band, the interest and game numbers reach the model. Never the child's name —
 // the model writes the {child} token and the browser fills in the nickname.
 'use strict';
-const { ACTIVITIES, SKILLS } = require('./activities');
+const { ACTIVITIES } = require('./activities');
 
 const MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
 const TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 20000);
@@ -145,23 +145,22 @@ US English. No violence, nothing scary. The culprit is a prankster, not a villai
 }
 
 // ---------- 2. report text ----------
-const SKILL_NOUN = { spatial: 'spatial reasoning', patterns: 'pattern', logic: 'logic', critical: 'critical-thinking', communication: 'communication' };
+// Code picks the facts for each of the four blocks (report.js → blocks); the AI only words them.
+function pickActivities(m) {
+  const sk = m.blocks.tip.skill;
+  return [...ACTIVITIES.filter((a) => a.skill === sk).slice(0, 2), ...(sk === 'communication' ? [] : ACTIVITIES.filter((a) => a.skill === 'communication').slice(0, 1))];
+}
 
 function templateReport(m) {
-  const h = m.highlights;
-  const recs = [];
-  const pickFor = (sk, n) => ACTIVITIES.filter((a) => a.skill === sk).slice(0, n);
-  if (h.growth) recs.push(...pickFor(h.growth.skill, 2));
-  else if (h.strength) recs.push(...pickFor(h.strength.skill, 1));
-  recs.push(...pickFor('communication', 1));
+  const b = m.blocks;
   const t = m.team;
   return {
-    headline: `${t.locks} locks opened in ${t.minutes} minutes together. Team {child} is on a roll!`,
-    strength: h.strength ? `{child} shines at ${SKILL_NOUN[h.strength.skill]} puzzles. Here is what shows it:` : 'Not enough data yet to name a strength: we need at least 3 puzzles of one kind.',
-    growth: h.growth ? `The biggest room to grow is in ${SKILL_NOUN[h.growth.skill]} puzzles. Not a weakness, just the next step:` : 'Not enough data yet for a growth area. Play a couple more expeditions.',
-    style: h.style.length ? h.style : ['Not enough data yet about thinking style.'],
-    activity_ids: recs.map((a) => a.id),
-    next_week: h.growth ? `Kinquest will add more ${SKILL_NOUN[h.growth.skill]} puzzles at a comfortable level.` : 'Kinquest will keep tuning puzzles so {child} solves about 3 out of 4 alone.',
+    headline: `${t.locks} locks opened in ${t.minutes} minutes together.${b.wins.length ? ' Here is what {child} did, move by move.' : ''}`,
+    went_well: b.wins.length ? 'From the move log:' : 'Not enough moves yet to name something specific. Play another expedition.',
+    stuck: b.stuck.length ? 'One spot where the puzzle pushed back:' : 'No clear mix-ups in this period.',
+    parent_try: b.stuck.length ? 'One question to ask, off-screen:' : 'Keep the talk going, off-screen:',
+    next_mission: b.next.text,
+    activity_ids: pickActivities(m).map((a) => a.id),
     team: t.firstTryLocks
       ? `You opened ${t.firstTryLocks} of ${t.locks} locks on the first try.${t.stuckOn ? ` You spent the most time talking through “${t.stuckOn}.”` : ''}`
       : `Locks opened: ${t.locks}.${t.stuckOn ? ` You talked the most through “${t.stuckOn}.”` : ''}`,
@@ -175,33 +174,34 @@ async function writeReport(metrics) {
   const ids = ACTIVITIES.map((a) => a.id);
   const schema = {
     type: 'object',
-    required: ['headline', 'strength', 'growth', 'style', 'activity_ids', 'next_week', 'team'],
+    required: ['headline', 'went_well', 'stuck', 'parent_try', 'next_mission', 'activity_ids', 'team'],
     properties: {
-      headline: { type: 'string' }, strength: { type: 'string' }, growth: { type: 'string' },
-      style: { type: 'array', items: { type: 'string' } },
+      headline: { type: 'string' }, went_well: { type: 'string' }, stuck: { type: 'string' },
+      parent_try: { type: 'string' }, next_mission: { type: 'string' }, team: { type: 'string' },
       activity_ids: { type: 'array', items: { type: 'string', enum: ids } },
-      next_week: { type: 'string' }, team: { type: 'string' },
     },
   };
-  const safe = { ...metrics, subject: { ageBand: metrics.subject.ageBand, kind: metrics.subject.kind } }; // no nickname
-  const prompt = `Here are the game metrics for child {child} from the family game Kinquest (JSON):\n${JSON.stringify(safe)}\n
+  const facts = { blocks: metrics.blocks, results: metrics.results, solo: metrics.solo, team: metrics.team, ageBand: metrics.subject.ageBand }; // no nickname
+  const prompt = `Facts from the move log of the family game Kinquest for child {child} (JSON):\n${JSON.stringify(facts)}\n
 Off-screen activity library (pick only from here, by id):\n${ACTIVITIES.map((a) => `${a.id} [${a.skill}]: ${a.text}`).join('\n')}\n
-Skills: ${Object.entries(SKILLS).map(([k, v]) => `${k}=${v}`).join(', ')}.
-Write a report for the parent in plain US English. Rules:
-- every claim rests on a number from the metrics; never invent numbers that are not in the JSON;
-- if a skill has enoughData=false, say "not enough data yet";
-- observations, not diagnoses; no IQ, no "genius", no comparison with other kids;
+The report shows four blocks. Under each block the app lists the exact facts, so your sentence introduces them. Rules:
+- use only the facts in the JSON; never invent numbers or events;
+- describe actions in this game, not the child's character; no "smart", "genius", "weak", no IQ, no comparison with other kids;
+- solo chest results are a home try; if a grown-up marked help, say so plainly;
 - refer to the child only as {child};
-- headline: one sentence; strength and growth: 1-2 sentences each, with evidence (use highlights);
-- style: 1-3 short observations about behavior in the game;
-- activity_ids: 2-3 ids from the library that fit the growth area;
-- next_week: one sentence on what Kinquest itself will change next week;
+- the facts cover ${metrics.team.sessions === 1 ? 'one expedition (today)' : `${metrics.team.sessions} expeditions over ${metrics.team.daysPlayed} days (a week), so don't say "today"`};
+- headline: one warm sentence;
+- went_well: one sentence about blocks.wins (or say there is not enough yet);
+- stuck: one sentence about blocks.stuck, framed as the next step, not a weakness (or say there were no clear mix-ups);
+- parent_try: one sentence that leads into the question in blocks.tip.q; don't repeat the question, the app shows it right below;
+- next_mission: one sentence that restates blocks.next.text in plain words;
+- activity_ids: 2-3 ids from the library for skill ${metrics.blocks.tip.skill};
 - team: one sentence on how the family worked together.`;
   try {
-    const out = await callJson({ system: 'You write warm, honest reports for parents about how their child plays and grows in a puzzle game.', prompt, schema });
+    const out = await callJson({ system: 'You write short, warm, honest notes for parents about what their child did in a puzzle game. Plain US English.', prompt, schema });
     const activity_ids = (out.activity_ids || []).filter((id) => ids.includes(id)).slice(0, 3);
-    if (!shortStr(out.headline, 200) || !shortStr(out.strength, 600) || !shortStr(out.growth, 600) || activity_ids.length < 1) throw new Error('bad report fields');
-    return { ...out, style: (out.style || []).filter((s) => shortStr(s, 300)).slice(0, 3), activity_ids, source: 'gemini' };
+    for (const k of ['headline', 'went_well', 'stuck', 'parent_try', 'next_mission', 'team']) if (!shortStr(out[k], 400)) throw new Error('bad report field ' + k);
+    return { ...out, activity_ids: activity_ids.length ? activity_ids : base.activity_ids, source: 'gemini' };
   } catch (e) {
     console.warn('[ai] report fallback:', e.message);
     return base;

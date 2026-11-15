@@ -59,3 +59,44 @@ test('generators are deterministic by seed', () => {
   assert.deepStrictEqual(P.generateDetective(42, { levelScout: 3, levelKeeper: 3 }), P.generateDetective(42, { levelScout: 3, levelKeeper: 3 }));
   assert.deepStrictEqual(P.generateCipher(42, { levelScout: 3, levelKeeper: 3 }), P.generateCipher(42, { levelScout: 3, levelKeeper: 3 }));
 });
+
+test('solo chest: 200 puzzles, exactly one answer, no single clue is enough', () => {
+  for (let i = 0; i < 200; i++) {
+    const z = P.generateSoloDetective(5000 + i, { level: 1 + (i % 10) });
+    assert.deepStrictEqual(P.solveDetective(z), [z.solution.thief]);
+    for (const c of z.scoutClues) assert.ok(P.candidates(z.lineup, [c]).length >= 2);
+    // The thief fits every clue; anyone else breaks at least one.
+    z.lineup.forEach((_, j) => assert.strictEqual(P.checkSuspect(z, j).every((x) => x.holds), j === z.solution.thief));
+  }
+});
+
+test('cipher extras: prediction, role swap, focus decoy', () => {
+  for (let i = 0; i < 200; i++) {
+    const z = P.generateCipher(9000 + i, { levelScout: 1 + (i % 10), levelKeeper: 1 + ((i * 7) % 10), focusAttr: ['color', 'shape', 'dots'][i % 3] });
+    const [r1, , r3] = z.rounds;
+    assert.ok([r1.thenA, r1.elseA].includes('next'), 'round 1 uses the prediction');
+    assert.ok(P.sameSym(r1.predict.options[r1.solution.predict], P.CIPHER_ACTIONS.next.pick(r1.seq, r1.cycle)));
+    assert.strictEqual(new Set(r1.predict.options.map(P.symKey)).size, r1.predict.options.length);
+    assert.ok(r3.swapped && P.cipherViews(z, 2).scout.view === 'rule' && P.cipherViews(z, 2).keeper.view === 'row');
+    assert.ok(!JSON.stringify(P.cipherViews(z, 0)).includes('"solution"'));
+  }
+});
+
+test('side-view question: one right answer among distinct options', () => {
+  for (let i = 0; i < 200; i++) {
+    const z = P.generateBlueprint(700 + i, { levelScout: 1 + (i % 10) });
+    const q = P.viewQuestion(z.start, i);
+    assert.ok(q.options.length >= 2 && q.answer >= 0);
+    assert.strictEqual(new Set(q.options.map(String)).size, q.options.length);
+    assert.deepStrictEqual(q.options[q.answer], P.projections(z.start).side.slice().reverse());
+  }
+});
+
+test('fix the robot: exactly one wrong step, and it crossed out the real thief', () => {
+  for (let i = 0; i < 200; i++) {
+    const z = P.generateRobotCase(300 + i, { level: 1 + (i % 10) });
+    assert.strictEqual(z.steps.length, z.lineup.length - 1);
+    assert.ok(z.steps[z.solution.wrongStep].includes(z.lineup[z.solution.thief].name));
+    assert.notStrictEqual(z.accused, z.solution.thief);
+  }
+});

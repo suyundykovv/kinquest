@@ -38,4 +38,11 @@ const SKILLS = {
   communication: 'Communication',
 };
 
-module.exports = { ACTIVITIES, SKILLS };
+// Off-screen mission for tonight, tied to the lock the family just played. Picked by code, not by the AI.
+const MISSIONS = {
+  detective: { title: 'Two-Clue Hide and Seek', text: 'Hide a small toy. Give two clues about where it is, like “It’s up high” and “It’s near something soft.” Then swap: your kid hides it and gives you two clues.' },
+  cipher: { title: 'Kitchen Patterns', text: 'Lay out a pattern with spoons, forks, and cups, like spoon, fork, fork, spoon, fork, fork… Ask what comes next, then let your kid make one for you.' },
+  blueprint: { title: 'Describe and Build', text: 'Each of you takes 5 blocks. One builds a shape in secret and describes it; the other builds it without looking. Then compare.' },
+};
+
+module.exports = { ACTIVITIES, SKILLS, MISSIONS };

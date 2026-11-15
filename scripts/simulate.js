@@ -18,12 +18,12 @@ const store = require('../store');
 
 // Child profile by day: patterns strong, spatial weak but growing toward the end of the week.
 const DAYS = [
-  { logic: 0.55, patterns: 0.75, spatial: 0.25, rotations: 1, guessy: 0.35, why: 0.5, rating: 2 },
-  { logic: 0.6, patterns: 0.8, spatial: 0.3, rotations: 1, guessy: 0.3, why: 0.6, rating: 2 },
-  { logic: 0.65, patterns: 0.85, spatial: 0.35, rotations: 1, guessy: 0.25, why: 0.6, rating: 3 },
-  { logic: 0.7, patterns: 0.9, spatial: 0.45, rotations: 2, guessy: 0.2, why: 0.7, rating: 2 },
-  { logic: 0.7, patterns: 0.9, spatial: 0.5, rotations: 2, guessy: 0.2, why: 0.75, rating: 3 },
-  { logic: 0.75, patterns: 0.95, spatial: 0.6, rotations: 3, guessy: 0.15, why: 0.8, rating: 3 },
+  { logic: 0.55, patterns: 0.75, spatial: 0.25, rotations: 1, guessy: 0.35, rating: 2 },
+  { logic: 0.6, patterns: 0.8, spatial: 0.3, rotations: 1, guessy: 0.3, rating: 2 },
+  { logic: 0.65, patterns: 0.85, spatial: 0.35, rotations: 1, guessy: 0.25, rating: 3 },
+  { logic: 0.7, patterns: 0.9, spatial: 0.45, rotations: 2, guessy: 0.2, rating: 2 },
+  { logic: 0.7, patterns: 0.9, spatial: 0.5, rotations: 2, guessy: 0.2, rating: 3 },
+  { logic: 0.97, patterns: 0.95, spatial: 0.6, rotations: 3, guessy: 0.15, rating: 3 },
 ];
 const INTERESTS = ['ocean', 'ocean', 'space', 'ocean', 'dinosaurs', 'ocean'];
 const START = Date.UTC(2026, 10, 9, 16, 0); // November 9, 2026, 7:00 PM Moscow time

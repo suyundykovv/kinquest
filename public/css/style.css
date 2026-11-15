@@ -258,7 +258,7 @@ a.card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
 
 /* cipher */
 .seq { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 18px; background: #2a2335; border-radius: var(--r-lg); margin-bottom: 16px; }
-.sym { width: 60px; height: 70px; border-radius: 12px; background: #3a3148; display: grid; place-items: center; align-content: center; gap: 2px; animation: lightup .45s both; }
+.sym { width: 60px; min-height: 70px; border-radius: 12px; background: #3a3148; display: grid; place-items: center; align-content: center; gap: 2px; animation: lightup .45s both; }
 .sym .g { font-size: 32px; line-height: 1; }
 .sym .d { font-size: 10px; letter-spacing: 2px; color: #fff; line-height: 1; }
 .sym.q { color: #fff; font-size: 28px; font-weight: 700; border: 2px dashed #7d7290; background: transparent; }
@@ -366,3 +366,45 @@ a.card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
   .hero .row .btn { flex: 1 1 100%; }
 }
 .foot a { display: inline-block; padding: 12px 4px; }
+
+/* Focus of the day, the grown-up's coaching line, clue picks, the solo chest */
+.note.bad { background: var(--accent-soft); color: var(--bad); }
+.focus-note { background: var(--key-soft); border-radius: var(--r-md); padding: 12px 16px; margin: 12px 0; }
+.focus-note p { margin: 8px 0 0; color: var(--ink); font-weight: 500; }
+.coach { border-left: 4px solid var(--keeper); background: var(--keeper-soft); border-radius: var(--r-sm); padding: 10px 14px; margin: 12px 0; }
+.coach .micro { color: var(--keeper); }
+.coach p { margin: 4px 0 0; color: var(--ink); font-weight: 500; }
+.btn.clue-opt { justify-content: flex-start; text-align: left; gap: 12px; white-space: normal; height: auto; min-height: 52px; padding-top: 10px; padding-bottom: 10px; }
+.clue-opt .ic { font-size: 26px; flex: none; }
+.check-row { display: flex; gap: 10px; align-items: center; justify-content: center; margin-top: 14px; font-weight: 500; color: var(--ink); min-height: 44px; cursor: pointer; }
+.check-row input { width: 20px; height: 20px; accent-color: var(--scout); }
+.solo-card { border: 2px solid var(--scout-soft); }
+.next-mission { border: 2px solid var(--key); }
+.results { width: 100%; border-collapse: collapse; font-size: 15px; }
+.results th, .results td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+.results th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
+.results td.num { font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
+.block-list { margin: 8px 0 0; padding-left: 20px; }
+.block-list li { margin: 6px 0; color: var(--ink); }
+details.levels summary { cursor: pointer; font-weight: 600; color: var(--ink); min-height: 44px; display: flex; align-items: center; }
+@media (max-width: 743px) { .results { font-size: 14px; } .results th, .results td { padding: 8px 4px; } }
+
+/* Cipher prediction, picture rule book, side-view question, off-screen mission */
+.sym .lab { display: block; font-size: 11px; font-weight: 600; color: #fff; margin-top: 2px; text-transform: lowercase; }
+.predict { background: var(--scout-soft); border-radius: var(--r-md); padding: 16px; margin-top: 16px; }
+.predict h3 { font-size: 18px; margin: 0 0 10px; }
+.pred-opts, .view-opts { display: flex; flex-wrap: wrap; gap: 10px; }
+.pred, .view-opt { appearance: none; background: #fff; border: 2px solid var(--hairline); border-radius: var(--r-md); min-width: 64px; min-height: 64px; padding: 8px 12px; cursor: pointer; display: grid; place-items: center; color: var(--ink); font: inherit; }
+.pred { background: #2a2335; border-color: #2a2335; }
+.pred .g { font-size: 32px; line-height: 1; }
+.pred .d { color: #fff; }
+.pred .d { font-size: 14px; letter-spacing: 2px; }
+.pred[aria-pressed="true"] { border-color: var(--scout); box-shadow: 0 0 0 3px var(--scout-soft); }
+.pred:hover, .view-opt:hover { border-color: var(--scout); }
+.view-opt svg line { stroke: var(--ink); }
+.view-opt div { font-size: 13px; font-weight: 600; }
+.rulebook.kid { display: grid; gap: 10px; }
+.rulebook.kid .rl { display: flex; gap: 12px; align-items: center; font-size: 17px; }
+.rulebook.kid .ri { flex: none; min-width: 92px; text-align: center; font-size: 20px; background: #fff; border-radius: var(--r-sm); padding: 6px 8px; color: var(--ink); }
+.mission-card { border: 2px solid var(--key-soft); }
+@media (max-width: 743px) { .rulebook.kid .ri { min-width: 72px; font-size: 16px; } }

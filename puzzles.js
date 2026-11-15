@@ -209,14 +209,76 @@ function detectiveViews(puz) {
   };
 }
 
-// "Why do you think so?" options for the child: one correct explanation and two wrong ones.
-function detectiveWhyOptions(seed) {
-  const r = rng(seed ^ 0x9e3779b9);
-  return shuffle(r, [
-    { id: 'all_clues', text: 'Only this one fits every clue at once', correct: true },
-    { id: 'looks', text: 'This one looks sneakier than the rest', correct: false },
-    { id: 'guess', text: 'I just guessed', correct: false },
-  ]).map(({ id, text }) => ({ id, text }));
+// Short words for a clue ("the thief wears red"), used in explanations and the report.
+function clueShort(c) {
+  const p = c.p;
+  if (c.type === 'hat_is') return p.h === 'none' ? 'the thief wore no hat' : `the thief wore ${HAT_LABEL[p.h]}`;
+  if (c.type === 'color_is') return `the thief wears ${COLOR_LABEL[p.c]}`;
+  if (c.type === 'umbrella_is') return p.u ? 'the thief had an umbrella' : 'the thief had no umbrella';
+  const t = CLUE_TYPES[c.type].text(p);
+  return t.charAt(0).toLowerCase() + t.slice(1).replace(/\.$/, '');
+}
+
+// What a picture clue looks at on one suspect: "wears red", "has no umbrella".
+function suspectFact(s, type) {
+  if (type === 'hat_is') return s.hat === 'none' ? 'wears no hat' : `wears ${HAT_LABEL[s.hat]}`;
+  if (type === 'color_is') return `wears ${COLOR_LABEL[s.color]}`;
+  if (type === 'umbrella_is') return s.umbrella ? 'has an umbrella' : 'has no umbrella';
+  return null;
+}
+
+// Checks one clue against one suspect and says why, without naming the thief.
+// holds=true: the clue fits this suspect, so it can't rule them out.
+function explainClue(lineup, i, c) {
+  const s = lineup[i];
+  const holds = CLUE_TYPES[c.type].holds(lineup, i, c.p);
+  const fact = suspectFact(s, c.type);
+  const short = clueShort(c);
+  let text;
+  if (fact) text = holds ? `${s.name} ${fact}, and ${short}.` : `${s.name} ${fact}, but ${short}.`;
+  else text = holds ? `${s.name} fits the note “${CLUE_TYPES[c.type].text(c.p)}”` : `${s.name} doesn’t fit the note “${CLUE_TYPES[c.type].text(c.p)}”`;
+  return { holds, text, short };
+}
+
+// Every clue (Scout's first, then the Keeper's) checked against one suspect.
+function checkSuspect(puz, i) {
+  return [
+    ...puz.scoutClues.map((c, k) => ({ who: 'scout', k, ...explainClue(puz.lineup, i, c) })),
+    ...puz.keeperClues.map((c, k) => ({ who: 'keeper', k, ...explainClue(puz.lineup, i, c) })),
+  ];
+}
+
+// The Scout's solo chest: a small lineup and 2–3 picture clues, all on the kid's own screen.
+// Same method as the family Detective: no single clue is enough, together they leave one suspect.
+function generateSoloDetective(seed, opts = {}) {
+  const level = clampLevel(opts.level);
+  const r = rng(seed ^ 0x51f15e);
+  const n = level >= 5 ? 5 : 4;
+  const clueCount = level >= 7 ? 3 : 2;
+  const cast = opts.cast && opts.cast.length >= n ? opts.cast : ANIMALS;
+  for (let attempt = 0; attempt < 2000; attempt++) {
+    const lineup = shuffle(r, cast).slice(0, n).map((a) => ({ name: a.name, emoji: a.emoji, hat: pick(r, HATS), color: pick(r, COLORS), umbrella: r() < 0.5 }));
+    if (new Set(lineup.map((s) => `${s.hat}|${s.color}|${s.umbrella}`)).size < n) continue;
+    const thief = Math.floor(r() * n);
+    const pool = shuffle(r, Object.entries(CLUE_TYPES)
+      .filter(([, t]) => t.who === 'scout')
+      .flatMap(([type, t]) => t.params().map((p) => ({ type, p })))
+      .filter((c) => CLUE_TYPES[c.type].holds(lineup, thief, c.p)));
+    const clues = [];
+    for (const c of pool) {
+      if (clues.some((x) => x.type === c.type)) continue;
+      if (candidates(lineup, [c]).length < 2) continue; // one clue alone must never be enough
+      const before = candidates(lineup, clues).length;
+      if (candidates(lineup, [...clues, c]).length >= before) continue;
+      clues.push(c);
+      if (clues.length === clueCount) break;
+    }
+    if (clues.length !== clueCount) continue;
+    const sol = candidates(lineup, clues);
+    if (sol.length !== 1 || sol[0] !== thief) continue;
+    return { type: 'detective', solo: true, seed, levels: { scout: level }, lineup, scoutClues: clues, keeperClues: [], solution: { thief } };
+  }
+  throw new Error('solo detective: failed to generate a puzzle for seed ' + seed);
 }
 
 // =====================================================================
@@ -232,20 +294,20 @@ const sameSym = (a, b) => symKey(a) === symKey(b);
 
 // What a rulebook action indicates: which symbol must be pressed.
 const CIPHER_ACTIONS = {
-  next: { text: 'press the symbol that comes next in the row', pick: (seq, cyc) => cyc[seq.length % cyc.length] },
-  two_back: { text: 'press the symbol two steps back (the second to last)', pick: (seq) => seq[seq.length - 2] },
-  first: { text: 'press the symbol the row starts with', pick: (seq) => seq[0] },
-  after_next: { text: 'press the symbol that comes two spots later (skip the next one)', pick: (seq, cyc) => cyc[(seq.length + 1) % cyc.length] },
+  next: { icon: '➡️', text: 'press the symbol that comes next in the row', pick: (seq, cyc) => cyc[seq.length % cyc.length] },
+  two_back: { icon: '⬅️⬅️', text: 'press the symbol two steps back (the second to last)', pick: (seq) => seq[seq.length - 2] },
+  first: { icon: '⏮️', text: 'press the symbol the row starts with', pick: (seq) => seq[0] },
+  after_next: { icon: '⏭️', text: 'press the symbol that comes two spots later (skip the next one)', pick: (seq, cyc) => cyc[(seq.length + 1) % cyc.length] },
 };
 
 // Conditions are what only the Keeper knows, but only the Scout can check.
 const CIPHER_CONDS = [
-  { id: 'more_red', needs: 'color', text: 'If the row has more red symbols than blue ones,', test: (seq) => seq.filter((s) => s.color === 'red').length > seq.filter((s) => s.color === 'blue').length },
-  { id: 'last_star', needs: 'shape', text: 'If the row ends with a star,', test: (seq) => seq[seq.length - 1].shape === 'star' },
-  { id: 'has_three', needs: 'dots', text: 'If at least one symbol has three dots,', test: (seq) => seq.some((s) => s.dots === 3) },
-  { id: 'even_len', needs: null, text: 'If the row has an even number of symbols,', test: (seq) => seq.length % 2 === 0 },
-  { id: 'first_last_same_color', needs: 'color', text: 'If the first and last symbols are the same color,', test: (seq) => seq[0].color === seq[seq.length - 1].color },
-  { id: 'circles_gt2', needs: 'shape', text: 'If the row has more than two circles,', test: (seq) => seq.filter((s) => s.shape === 'circle').length > 2 },
+  { id: 'more_red', icon: '🔴 > 🔵 ?', needs: 'color', text: 'If the row has more red symbols than blue ones,', test: (seq) => seq.filter((s) => s.color === 'red').length > seq.filter((s) => s.color === 'blue').length },
+  { id: 'last_star', icon: '… ★ ?', needs: 'shape', text: 'If the row ends with a star,', test: (seq) => seq[seq.length - 1].shape === 'star' },
+  { id: 'has_three', icon: '••• ?', needs: 'dots', text: 'If at least one symbol has three dots,', test: (seq) => seq.some((s) => s.dots === 3) },
+  { id: 'even_len', icon: '2 · 4 · 6 ?', needs: null, text: 'If the row has an even number of symbols,', test: (seq) => seq.length % 2 === 0 },
+  { id: 'first_last_same_color', icon: '🎨 … 🎨 ?', needs: 'color', text: 'If the first and last symbols are the same color,', test: (seq) => seq[0].color === seq[seq.length - 1].color },
+  { id: 'circles_gt2', icon: '● ● ● + ?', needs: 'shape', text: 'If the row has more than two circles,', test: (seq) => seq.filter((s) => s.shape === 'circle').length > 2 },
 ];
 
 function cipherParams(level) {
@@ -273,8 +335,13 @@ function makeCycle(r, len, attrs) {
   return null;
 }
 
-function generateCipherRound(r, levelScout, levelKeeper) {
-  const { cycleLen, attrs } = cipherParams(levelScout);
+// levelRow: whoever sees the row; levelRule: whoever reads the rule book (swapped in the last round).
+// opts.needNext: one branch says "press what comes next", so the Scout's prediction is used.
+// opts.focusAttr: the row varies in that feature, and the panel has a decoy that differs only in it.
+function generateCipherRound(r, levelScout, levelKeeper, opts = {}) {
+  const base = cipherParams(levelScout);
+  const cycleLen = base.cycleLen;
+  const attrs = opts.focusAttr && !base.attrs.includes(opts.focusAttr) ? [...base.attrs, opts.focusAttr] : base.attrs;
   for (let t = 0; t < 500; t++) {
     const cyc = makeCycle(r, cycleLen, attrs);
     if (!cyc) continue;
@@ -284,6 +351,7 @@ function generateCipherRound(r, levelScout, levelKeeper) {
     const conds = CIPHER_CONDS.filter((c) => !c.needs || attrs.includes(c.needs) || levelKeeper >= 4);
     const cond = pick(r, conds);
     const actionIds = shuffle(r, Object.keys(CIPHER_ACTIONS)).filter((a) => levelKeeper >= 3 || a !== 'after_next');
+    if (opts.needNext && !actionIds.slice(0, 2).includes('next')) continue;
     const thenA = actionIds[0];
     const elseA = actionIds[1];
     const thenSym = CIPHER_ACTIONS[thenA].pick(seq, cyc);
@@ -295,6 +363,15 @@ function generateCipherRound(r, levelScout, levelKeeper) {
 
     // Panel of 6 distinct buttons: both candidates + cycle signs + random ones.
     const buttons = [thenSym, elseSym];
+    if (opts.focusAttr) {
+      const decoy = { ...answer };
+      for (let g = 0; g < 20 && sameSym(decoy, answer); g++) {
+        if (opts.focusAttr === 'shape') decoy.shape = pick(r, SHAPES);
+        if (opts.focusAttr === 'color') decoy.color = pick(r, COLORS);
+        if (opts.focusAttr === 'dots') decoy.dots = randInt(r, 1, 3);
+      }
+      if (!buttons.some((b) => sameSym(b, decoy))) buttons.push(decoy);
+    }
     for (const s of shuffle(r, cyc)) if (!buttons.some((b) => sameSym(b, s))) buttons.push(s);
     // Decoy buttons may differ by any feature, otherwise 6 can't be reached with one feature.
     for (let guard = 0; buttons.length < 6 && guard < 500; guard++) {
@@ -307,11 +384,29 @@ function generateCipherRound(r, levelScout, levelKeeper) {
     }
     if (buttons.length < 6) continue;
     const panel = shuffle(r, buttons.slice(0, 6));
-    return {
-      seq, cycle: cyc, cond: cond.id, condText: cond.text, thenA, elseA,
+    const out = {
+      seq, cycle: cyc, cond: cond.id, condText: cond.text, condIcon: cond.icon, thenA, elseA,
       panel,
       solution: { branch, button: panel.findIndex((b) => sameSym(b, answer)) },
     };
+    if (opts.predict) {
+      // The Scout's own step: pick what comes next and say which features change along the row.
+      const next = CIPHER_ACTIONS.next.pick(seq, cyc);
+      const options = [next];
+      for (let g = 0; options.length < 4 && g < 200; g++) {
+        const s = { ...next };
+        const a = pick(r, attrs.length > 1 || g > 40 ? ['shape', 'color', 'dots'] : attrs);
+        if (a === 'shape') s.shape = pick(r, SHAPES);
+        if (a === 'color') s.color = pick(r, COLORS);
+        if (a === 'dots') s.dots = randInt(r, 1, 3);
+        if (!options.some((o) => sameSym(o, s))) options.push(s);
+      }
+      const shuffled = shuffle(r, options);
+      out.predict = { options: shuffled };
+      out.solution.predict = shuffled.findIndex((o) => sameSym(o, next));
+      out.solution.changes = ['shape', 'color', 'dots'].filter((a) => new Set(cyc.map((c) => c[a])).size > 1);
+    }
+    return out;
   }
   throw new Error('cipher: failed to generate a round');
 }
@@ -320,7 +415,13 @@ function generateCipher(seed, opts = {}) {
   const levelScout = clampLevel(opts.levelScout);
   const levelKeeper = clampLevel(opts.levelKeeper);
   const r = rng(seed);
-  const rounds = [0, 1, 2].map(() => generateCipherRound(r, levelScout, levelKeeper));
+  const f = { focusAttr: opts.focusAttr };
+  // Round 1: the Scout predicts first and the rule uses it. Round 3: roles swap, the kid holds the rule.
+  const rounds = [
+    generateCipherRound(r, levelScout, levelKeeper, { ...f, predict: true, needNext: true }),
+    generateCipherRound(r, levelScout, levelKeeper, f),
+    { ...generateCipherRound(r, levelKeeper, levelScout), swapped: true },
+  ];
   return { type: 'cipher', seed, levels: { scout: levelScout, keeper: levelKeeper }, rounds };
 }
 
@@ -334,16 +435,22 @@ function solveCipherRound(round) {
   return { branch, buttons };
 }
 
+// In a swapped round the grown-up sees the row and presses; the kid reads a picture rule and picks the branch.
 function cipherViews(puz, roundIdx) {
   const rd = puz.rounds[roundIdx];
-  return {
-    scout: { round: roundIdx, rounds: puz.rounds.length, seq: rd.seq, panel: rd.panel },
-    keeper: {
-      round: roundIdx, rounds: puz.rounds.length,
-      rule: { cond: rd.condText, then: CIPHER_ACTIONS[rd.thenA].text, else: CIPHER_ACTIONS[rd.elseA].text },
+  const row = { view: 'row', round: roundIdx, rounds: puz.rounds.length, seq: rd.seq, panel: rd.panel, swapped: !!rd.swapped, predict: rd.predict ? { options: rd.predict.options } : null };
+  const rule = {
+    view: 'rule', round: roundIdx, rounds: puz.rounds.length, swapped: !!rd.swapped,
+    rule: {
+      cond: rd.condText, then: CIPHER_ACTIONS[rd.thenA].text, else: CIPHER_ACTIONS[rd.elseA].text,
+      icons: { cond: rd.condIcon, then: CIPHER_ACTIONS[rd.thenA].icon, else: CIPHER_ACTIONS[rd.elseA].icon },
     },
+    usesPrediction: !!rd.predict,
   };
+  return rd.swapped ? { scout: rule, keeper: row } : { scout: row, keeper: rule };
 }
+// Which role presses the panel (the row holder) in this round.
+const cipherPresser = (rd) => (rd.swapped ? 'keeper' : 'scout');
 
 // =====================================================================
 // 3. BLUEPRINT WORKSHOP (space)
@@ -413,6 +520,28 @@ function solveBlueprint(puz) {
   return { target: puz.target, diffs };
 }
 
+// "How does your model look from the right side?" asked before the Scout turns it.
+// Options: the real right-side view, the front view (a classic mix-up) and a one-tower change.
+function viewQuestion(grid, seed) {
+  const r = rng(seed ^ 0x5eed);
+  const p = projections(grid);
+  // Seen from the right, the front row is on the viewer's left (same as the Keeper's blueprint drawing).
+  const side = p.side.slice().reverse();
+  const key = (a) => a.join(',');
+  const options = [side];
+  const add = (a) => { if (a.length && !options.some((o) => key(o) === key(a))) options.push(a); };
+  if (p.front.length === side.length) add(p.front);
+  add(p.side.slice());
+  for (let g = 0; options.length < 3 && g < 50; g++) {
+    const a = side.slice();
+    const i = Math.floor(r() * a.length);
+    a[i] = Math.max(0, Math.min(4, a[i] + (r() < 0.5 ? -1 : 1)));
+    add(a);
+  }
+  const shuffled = shuffle(r, options.slice(0, 3));
+  return { options: shuffled, answer: shuffled.findIndex((o) => key(o) === key(side)) };
+}
+
 function blueprintViews(puz) {
   return {
     scout: { w: puz.w, d: puz.d, grid: puz.start },
@@ -420,10 +549,35 @@ function blueprintViews(puz) {
   };
 }
 
+// "Fix the Robot": Robo solved a small case, but one cross-out is wrong: it ruled out the real
+// thief with a clue that fits them. The kid finds the wrong step, then names the real thief.
+function generateRobotCase(seed, opts = {}) {
+  const puz = generateSoloDetective(seed ^ 0xb07, opts);
+  const r = rng(seed ^ 0xb07b07);
+  const thief = puz.solution.thief;
+  const innocents = shuffle(r, puz.lineup.map((_, i) => i).filter((i) => i !== thief));
+  const leftOver = innocents.pop(); // Robo never checks this one and accuses them
+  const step = (i, c, wrong) => {
+    const s = puz.lineup[i];
+    return { i, wrong, text: `${s.name} ${suspectFact(s, c.type)}. The clue says ${clueShort(c)}. That doesn’t match, so I crossed ${s.name} out!` };
+  };
+  const steps = innocents.map((i) => step(i, puz.scoutClues.find((c) => !CLUE_TYPES[c.type].holds(puz.lineup, i, c.p)), false));
+  const misread = puz.scoutClues[Math.floor(r() * puz.scoutClues.length)];
+  steps.push(step(thief, misread, true));
+  const ordered = shuffle(r, steps);
+  return {
+    ...puz, robot: true,
+    steps: ordered.map((x) => x.text),
+    accused: leftOver,
+    solution: { thief, wrongStep: ordered.findIndex((x) => x.wrong) },
+  };
+}
+
 module.exports = {
   rng, shuffle, clampLevel,
-  generateDetective, solveDetective, detectiveViews, detectiveWhyOptions, candidates, CLUE_TYPES,
-  generateCipher, solveCipherRound, cipherViews, CIPHER_CONDS, CIPHER_ACTIONS, SHAPE_LABEL, SHAPE_GLYPH, symKey, sameSym,
+  generateDetective, solveDetective, detectiveViews, candidates, CLUE_TYPES,
+  clueShort, explainClue, checkSuspect, generateSoloDetective,
+  generateCipher, solveCipherRound, cipherViews, cipherPresser, viewQuestion, generateRobotCase, suspectFact, CIPHER_CONDS, CIPHER_ACTIONS, SHAPE_LABEL, SHAPE_GLYPH, symKey, sameSym,
   generateBlueprint, solveBlueprint, blueprintViews, projections, sumH,
   HAT_LABEL, COLOR_LABEL, COLOR_ADJ, ANIMALS,
 };

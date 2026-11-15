@@ -109,7 +109,7 @@ socket.on('lock_update', (u) => {
   if (!v || !v.lock || u.lockIdx !== v.lock.idx) return;
   const ev = u.event || {};
   const mine = ev.role === S.activeRole || v.mode === 'single';
-  if (ev.kind === 'wrong' && mine) toast(ev.message, 'bad');
+  if ((ev.kind === 'wrong' || ev.kind === 'look_again') && mine) toast(ev.message, 'bad');
   if (ev.kind === 'key') toast('🗝️ ' + ev.message, 'good');
   if (ev.kind === 'round') toast('✨ ' + ev.message, 'good');
   if (ev.kind === 'next_round') toast(ev.message);
@@ -123,9 +123,10 @@ socket.on('lock_update', (u) => {
   }
 });
 
-function submit(payload) {
+function submit(payload, then) {
   socket.emit('submit', { ...payload, asRole: S.activeRole }, (res) => {
     if (res && res.error) toast(res.error, 'bad');
+    if (then) then(res || {});
   });
 }
 const currentView = () => S.views[S.activeRole] || Object.values(S.views)[0];
@@ -302,11 +303,11 @@ function renderLock(v) {
   const role = S.activeRole;
   let body = '';
   if (L.type === 'detective') body = role === 'scout' ? detectiveScout(L) : detectiveKeeper(L);
-  else if (L.type === 'cipher') body = role === 'scout' ? cipherScout(L) : cipherKeeper(L);
+  else if (L.type === 'cipher') body = L.view === 'row' ? cipherRow(L, role) : cipherRule(L, role);
   else body = role === 'scout' ? blueprintScout(L) : blueprintKeeper(L);
   const done = L.solved ? `<div class="note ok center">🗝️ Your key is lit! Help your partner — the door waits for everyone.</div>` : '';
   const preserved = S.stageEl && S.stageLock === `${L.idx}` && L.type === 'blueprint' && role === 'scout' ? S.stageEl : null;
-  app.innerHTML = lockHeader(v) + keybar(v) + done + body + hintBlock(v);
+  app.innerHTML = lockHeader(v) + keybar(v) + focusNote(L, role) + coachNote(L) + done + body + hintBlock(v);
   bindLock(v);
   if (L.type === 'blueprint' && role === 'scout') mountStage(L, preserved);
   else destroyStage();
@@ -339,6 +340,18 @@ function renderCurtain(v) {
   };
 }
 
+// Today's focus (from the next-mission rules) and the grown-up's coaching line.
+function focusNote(L, role) {
+  if (!L.focus) return '';
+  const tool = L.focus.stage === 'scaffold';
+  return `<div class="focus-note"><span class="pill key">🎯 Today’s focus: ${esc(L.focus.title)}</span>
+    <p>${role === 'scout' ? (tool ? 'Before you accuse, you’ll check your suspect against each clue, one at a time.' : 'No check tool today. Can you check every clue on your own?') : esc(L.focus.goal)}</p></div>`;
+}
+function coachNote(L) {
+  if (!L.coach) return '';
+  return `<div class="coach" role="status"><span class="micro">🗣️ Try asking</span><p>${child(L.coach.text)}</p></div>`;
+}
+
 // ---------- detective
 const HAT = { cap: ['🧢', 'cap'], crown: ['👑', 'crown'], feather: ['🪶', 'feathered hat'], none: ['', 'no hat'] };
 function suspectCard(s, L, i) {
@@ -366,8 +379,8 @@ function accuseBar(L) {
 
 function detectiveScout(L) {
   return `<div class="card"><div class="panel-title"><h2>🧩 Your Clues</h2><button class="speak" id="sayClues" aria-label="Read the clues aloud">🔊</button></div>
-    <div class="clues">${L.clues.map((c) => `<div class="clue-pic"><div class="ic" aria-hidden="true">${c.color ? `<span class="col-${c.color}">${c.icon}</span>` : c.icon}</div><div class="tx">${esc(c.text)}</div></div>`).join('')}</div>
-    <p class="muted">Tell the Keeper what you found. They have their own notes — ask what they say!</p>
+    <div class="clues">${L.clues.map((c) => `<div class="clue-pic"><div class="ic" aria-hidden="true">${clueIcon(c)}</div><div class="tx">${esc(c.text)}</div></div>`).join('')}</div>
+    <p class="muted">Tell the Keeper what you found. They have their own notes — ask what they say! When you cross someone out (✕), pick the clue that rules them out.</p>
     <h3>The lineup, left to right</h3><div class="lineup">${L.lineup.map((s, i) => suspectCard(s, L, i)).join('')}</div>${accuseBar(L)}</div>`;
 }
 
@@ -378,19 +391,77 @@ function detectiveKeeper(L) {
     <h3>The lineup, left to right</h3><div class="lineup">${L.lineup.map((s, i) => suspectCard(s, L, i)).join('')}</div>${accuseBar(L)}</div>`;
 }
 
-function whyModal(L, i) {
+const clueIcon = (c) => (c.color ? `<span class="col-${c.color}">${c.icon}</span>` : c.icon);
+function closeModal() {
+  document.getElementById('overlay').innerHTML = '';
+  if (S.modalReturn) { const el = app.querySelector(S.modalReturn); if (el) el.focus(); S.modalReturn = null; }
+}
+function modal(html, label) {
   const ov = document.getElementById('overlay');
-  ov.innerHTML = `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="why-t"><div class="card modal">
-    <h2 id="why-t" style="font-size:26px">Why do you think so?</h2><p class="muted">${L.lineup[i].emoji} ${esc(L.lineup[i].name)}</p>
-    <div class="stack">${L.why.map((o) => `<button class="btn ghost block" data-why="${o.id}">${esc(o.text)}</button>`).join('')}</div>
-    <button class="btn sm ghost" id="whyCancel" style="margin-top:16px">Go Back</button></div></div>`;
-  ov.querySelector('[data-why]').focus();
-  ov.querySelectorAll('[data-why]').forEach((b) => (b.onclick = () => {
-    ov.innerHTML = '';
-    submit({ action: 'accuse', i, why: b.dataset.why });
-    S.sel = null;
+  ov.innerHTML = `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="${label}"><div class="card modal">${html}</div></div>`;
+  ov.onkeydown = (e) => { if (e.key === 'Escape') closeModal(); };
+  const first = ov.querySelector('button');
+  if (first) first.focus();
+  return ov;
+}
+
+// The Scout crosses someone out and says which of their clues rules them out.
+// One tap, and "just cross out" is always there: a reason is welcome, never a chore.
+function clueChooser(L, i) {
+  const s = L.lineup[i];
+  S.modalReturn = `[data-x="${i}"]`;
+  const ov = modal(`<h2 id="cc-t" style="font-size:24px">Which clue rules out ${esc(s.emoji)} ${esc(s.name)}?</h2>
+    <div class="stack" style="margin-top:12px">${L.clues.map((c, k) => `<button class="btn ghost block clue-opt" data-clue="${k}"><span class="ic" aria-hidden="true">${clueIcon(c)}</span>${esc(c.text)}</button>`).join('')}
+    <button class="btn ghost block" data-clue="keeper">📜 Something the Keeper told me</button></div>
+    <button class="btn sm ghost" id="ccPlain" style="margin-top:14px">Just cross out</button>
+    <button class="btn sm ghost" id="ccBack" style="margin-top:14px">Go Back</button>`, 'cc-t');
+  ov.querySelectorAll('[data-clue]').forEach((b) => (b.onclick = () => {
+    const clue = b.dataset.clue === 'keeper' ? 'keeper' : Number(b.dataset.clue);
+    closeModal();
+    submit({ action: 'exclude', i, clue });
   }));
-  document.getElementById('whyCancel').onclick = () => (ov.innerHTML = '');
+  document.getElementById('ccPlain').onclick = () => { closeModal(); submit({ action: 'exclude', i }); };
+  document.getElementById('ccBack').onclick = closeModal;
+}
+
+// Check tool (focus "Two Clues", first stage): suspect vs. each picture clue, then the Keeper's notes.
+function checkTool(L, i, k = 0, msg = '') {
+  const s = L.lineup[i];
+  S.modalReturn = '#accuse';
+  if (k < L.clues.length) {
+    const c = L.clues[k];
+    const ov = modal(`<span class="micro">Check ${k + 1} of ${L.clues.length + 1}</span>
+      <h2 id="ct-t" style="font-size:24px;margin-top:6px">Does ${esc(s.emoji)} ${esc(s.name)} match this clue?</h2>
+      <div class="clue-pic" style="margin:12px 0"><div class="ic" aria-hidden="true">${clueIcon(c)}</div><div class="tx">${esc(c.text)}</div></div>
+      ${msg ? `<div class="note bad" role="alert">${esc(msg)}</div>` : ''}
+      <div class="row"><button class="btn scout" data-ans="yes">✔ Yes, it matches</button><button class="btn ghost" data-ans="no">✖ No</button></div>
+      <button class="btn sm ghost" id="ctBack" style="margin-top:14px">Go Back</button>`, 'ct-t');
+    ov.querySelectorAll('[data-ans]').forEach((b) => (b.onclick = () => {
+      const answer = b.dataset.ans === 'yes';
+      ov.querySelectorAll('button').forEach((x) => (x.disabled = true));
+      submit({ action: 'check_clue', i, k, answer }, (res) => {
+        if (res.correct === false) return checkTool(L, i, k, res.text);
+        if (!answer) {
+          // A clue that doesn't match rules the suspect out.
+          const ov2 = modal(`<h2 id="ct2-t" style="font-size:24px">Then ${esc(s.name)} can’t be the thief!</h2>
+            <p>One clue that doesn’t match is enough to rule someone out.</p>
+            <div class="row"><button class="btn scout" id="ctOut">✕ Cross Out ${esc(s.name)}</button><button class="btn ghost" id="ctBack2">Go Back</button></div>`, 'ct2-t');
+          ov2.querySelector('#ctOut').onclick = () => { closeModal(); S.sel = null; if (!L.excluded.includes(i)) submit({ action: 'exclude', i, clue: k }); };
+          ov2.querySelector('#ctBack2').onclick = closeModal;
+          return;
+        }
+        checkTool(L, i, k + 1);
+      });
+    }));
+    document.getElementById('ctBack').onclick = closeModal;
+    return;
+  }
+  const ov = modal(`<span class="micro">Check ${k + 1} of ${L.clues.length + 1}</span>
+    <h2 id="ct3-t" style="font-size:24px;margin-top:6px">${esc(s.name)} matches all your clues!</h2>
+    <p>Now ask the Keeper: <b>“Does ${esc(s.name)} match every one of your notes?”</b></p>
+    <div class="row"><button class="btn" id="ctYes">🔎 Yes, Every Note! Accuse</button><button class="btn ghost" id="ctNo">Not Every Note</button></div>`, 'ct3-t');
+  ov.querySelector('#ctYes').onclick = () => { closeModal(); S.sel = null; submit({ action: 'accuse', i, checked: true }); };
+  ov.querySelector('#ctNo').onclick = () => { closeModal(); toast(`Then it’s not ${s.name}. Who else is left?`); };
 }
 
 // ---------- cipher
@@ -399,19 +470,56 @@ const symLabel = (s) => `${s.color} ${s.shape}, ${s.dots} dot${s.dots > 1 ? 's' 
 const symHtml = (s, i) => `<div class="sym" style="animation-delay:${i * 0.12}s" role="listitem" aria-label="${symLabel(s)}"><span class="g col-${s.color}" aria-hidden="true">${GLYPH[s.shape]}</span><span class="d" aria-hidden="true">${'•'.repeat(s.dots)}</span></div>`;
 const roundDots = (L) => `<div class="round-dots" aria-label="Round ${L.round + 1} of ${L.rounds}">${Array.from({ length: L.rounds }, (_, i) => `<span class="${i < L.round || (i === L.round && L.roundSolved) ? 'done' : ''}"></span>`).join('')}</div>`;
 
-function cipherScout(L) {
-  return `<div class="card"><div class="panel-title"><h2>✨ Glowing Symbols · Round ${L.round + 1} of ${L.rounds}</h2>${roundDots(L)}</div>
-    <div class="seq" role="list" aria-label="Symbol row">${L.seq.map(symHtml).join('')}<div class="sym q" role="listitem" aria-label="What comes next?">?</div></div>
-    <p class="muted center">Describe each symbol to the Keeper: its shape, color, and how many dots. They know which button to press.</p>
-    ${L.roundSolved ? '<div class="note ok center">✅ Correct! Waiting for the Keeper.</div>' : `<div class="panel6">${L.panel.map((s, i) => `<button data-press="${i}" aria-label="Button ${i + 1}: ${symLabel(s)}"><span class="n" aria-hidden="true">${i + 1}</span><span class="g col-${s.color}" aria-hidden="true">${GLYPH[s.shape]}</span><span class="d" aria-hidden="true">${'•'.repeat(s.dots)}</span></button>`).join('')}</div>`}</div>`;
+// Focus "Watch the Colors" (first stage): a label under each symbol for the feature in practice.
+const ATTR_LABEL = { color: (x) => x.color, shape: (x) => x.shape, dots: (x) => `${x.dots} dot${x.dots > 1 ? 's' : ''}` };
+function rowLabels(L) {
+  return L.focus && L.focus.attr && L.focus.stage === 'scaffold' ? L.focus.attr : null;
+}
+const symTile = (x, i, attr) => `<div class="sym" style="animation-delay:${i * 0.12}s" role="listitem" aria-label="${symLabel(x)}"><span class="g col-${x.color}" aria-hidden="true">${GLYPH[x.shape]}</span><span class="d" aria-hidden="true">${'•'.repeat(x.dots)}</span>${attr ? `<span class="lab" aria-hidden="true">${ATTR_LABEL[attr](x)}</span>` : ''}</div>`;
+
+// The row holder: the Scout in rounds 1–2, the Keeper in the role-swap round.
+function cipherRow(L, role) {
+  const attr = rowLabels(L);
+  const intro = L.swapped
+    ? '<div class="note">🔄 <b>Role swap!</b> This time the Scout holds the rule book. Describe each symbol to the Scout: its shape, color, and dots. They’ll tell you which rule applies.</div>'
+    : '';
+  let action;
+  if (L.roundSolved) action = `<div class="note ok center">✅ Correct! Waiting for the ${L.swapped ? 'Scout' : 'Keeper'}.</div>`;
+  else if (L.predict) action = predictCard(L);
+  else action = `<p class="muted center">${L.swapped ? 'When the Scout tells you which symbol, press it.' : 'Describe each symbol to the Keeper. Their rule says which button to press.'}</p>
+    <div class="panel6">${L.panel.map((x, i) => `<button data-press="${i}" aria-label="Button ${i + 1}: ${symLabel(x)}"><span class="n" aria-hidden="true">${i + 1}</span><span class="g col-${x.color}" aria-hidden="true">${GLYPH[x.shape]}</span><span class="d" aria-hidden="true">${'•'.repeat(x.dots)}</span></button>`).join('')}</div>`;
+  return `<div class="card"><div class="panel-title"><h2>✨ Glowing Symbols · Round ${L.round + 1} of ${L.rounds}</h2>${roundDots(L)}</div>${intro}
+    <div class="seq" role="list" aria-label="Symbol row">${L.seq.map((x, i) => symTile(x, i, attr)).join('')}<div class="sym q" role="listitem" aria-label="What comes next?">?</div></div>
+    ${action}</div>`;
 }
 
-function cipherKeeper(L) {
+// The Scout's own step in round 1: what comes next, and what changes along the row.
+function predictCard(L) {
+  const sel = S.predSel;
+  const ch = S.predChanges || [];
+  return `<div class="predict"><h3>Your turn first: what comes next in the row?</h3>
+    <div class="pred-opts" role="group" aria-label="Pick the next symbol">${L.predict.options.map((x, i) => `<button class="pred" data-pred="${i}" aria-pressed="${sel === i}" aria-label="${symLabel(x)}"><span class="g col-${x.color}" aria-hidden="true">${GLYPH[x.shape]}</span><span class="d" aria-hidden="true">${'•'.repeat(x.dots)}</span></button>`).join('')}</div>
+    <h3 style="margin-top:16px">What changes from one symbol to the next?</h3>
+    <div class="chips" role="group" aria-label="What changes">${['shape', 'color', 'dots'].map((a) => `<button type="button" class="chip" data-chg="${a}" aria-pressed="${ch.includes(a)}">${a === 'dots' ? 'The dots' : `The ${a}`}</button>`).join('')}</div>
+    <button class="btn scout" id="predGo" style="margin-top:16px" ${sel == null ? 'disabled' : ''}>🔮 Lock In My Prediction</button></div>`;
+}
+
+// The rule holder: the Keeper in rounds 1–2, the Scout (with picture rules) in the role-swap round.
+function cipherRule(L, role) {
+  const kidRule = role === 'scout';
+  const ic = L.rule.icons || {};
+  const rule = kidRule
+    ? `<div class="rulebook kid"><div class="rl"><span class="ri" aria-hidden="true">${esc(ic.cond)}</span><b>${esc(L.rule.cond)}</b></div>
+       <div class="rl"><span class="ri" aria-hidden="true">✔ ${esc(ic.then)}</span>then ${esc(L.rule.then)}.</div>
+       <div class="rl"><span class="ri" aria-hidden="true">✖ ${esc(ic.else)}</span>Otherwise, ${esc(L.rule.else)}.</div></div>`
+    : `<div class="rulebook"><b>${esc(L.rule.cond)}</b> ${esc(L.rule.then)}.<br><b>Otherwise,</b> ${esc(L.rule.else)}.</div>`;
+  const tip = kidRule
+    ? '<div class="note">🔄 <b>Role swap!</b> You hold the rule book now. Ask the Keeper about the symbols, decide if the rule is true, then tell them which symbol to press.</div>'
+    : `<p class="muted" style="margin-top:12px">You can’t see the symbols. Ask the Scout, decide which rule applies, and explain which symbol to press.${L.usesPrediction ? ' <b>The Scout predicts the next symbol first: your rule may need it.</b>' : ''}</p>`;
   return `<div class="card"><div class="panel-title"><h2>📖 The Temple Rule Book · Round ${L.round + 1} of ${L.rounds}</h2>${roundDots(L)}</div>
-    <div class="rulebook"><b>${esc(L.rule.cond)}</b> ${esc(L.rule.then)}.<br><b>Otherwise,</b> ${esc(L.rule.else)}.</div>
-    <p class="muted" style="margin-top:12px">You can’t see the symbols. Ask the Scout, decide which rule applies, and explain which symbol to press.</p>
-    ${L.roundSolved ? '<div class="note ok center">✅ You picked the right rule! Help the Scout press the right symbol.</div>' : `
-    <div class="branch-btns"><button class="btn keeper" data-branch="then">✔ The Condition Is True</button><button class="btn ghost" data-branch="else">✖ It’s False (“Otherwise”)</button></div>`}</div>`;
+    ${kidRule ? tip + rule : rule + tip}
+    ${L.roundSolved ? `<div class="note ok center">✅ You picked the right rule! Help the ${kidRule ? 'Keeper' : 'Scout'} press the right symbol.</div>` : `
+    <div class="branch-btns"><button class="btn ${kidRule ? 'scout' : 'keeper'}" data-branch="then">✔ ${kidRule ? 'Yes, It’s True' : 'The Condition Is True'}</button><button class="btn ghost" data-branch="else">✖ ${kidRule ? 'No (Otherwise)' : 'It’s False (“Otherwise”)'}</button></div>`}</div>`;
 }
 
 // ---------- blueprint
@@ -419,8 +527,16 @@ function blueprintScout(L) {
   return `<div class="card"><div class="panel-title"><h2>🧱 Your Model</h2>
     <div class="seg" role="group" aria-label="Tool"><button data-tool="add" aria-pressed="${S.tool === 'add'}">＋ Add</button><button data-tool="remove" aria-pressed="${S.tool === 'remove'}">－ Remove</button></div></div>
     <p class="muted">Drag to spin the model. Tap a cube or a tile to ${S.tool === 'add' ? 'stack a cube on top' : 'remove the top cube'}. Your model is off by 1–3 cubes. Ask the Keeper!</p>
+    ${L.viewQ ? viewQCard(L) : ''}
     <div id="stageSlot"></div>
     ${L.solved ? '' : '<div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn scout" id="check">✅ Check My Model</button></div>'}</div>`;
+}
+
+// Before turning the model: guess its right-side view, then turn it to check.
+function viewQCard(L) {
+  return `<div class="predict"><h3>Before you turn it: which picture shows your model from the <b>right side</b>?</h3>
+    <div class="view-opts" role="group" aria-label="Right-side view options">${L.viewQ.options.map((o, i) => `<button class="view-opt" data-view="${i}" aria-label="Option ${i + 1}: heights ${o.join(', ')}">${projSvg(o, `Option ${i + 1}`)}</button>`).join('')}</div>
+    <button class="btn sm ghost" data-view="skip" style="margin-top:10px">Skip</button></div>`;
 }
 
 function mountStage(L, preserved) {
@@ -477,15 +593,38 @@ function bindLock(v) {
     const again = app.querySelector(`.suspect[data-i="${i}"]`);
     if (again) again.focus();
   }));
-  app.querySelectorAll('[data-x]').forEach((b) => (b.onclick = () => submit({ action: 'exclude', i: Number(b.dataset.x) })));
+  app.querySelectorAll('[data-x]').forEach((b) => (b.onclick = () => {
+    const i = Number(b.dataset.x);
+    if (S.activeRole === 'scout' && L.type === 'detective' && !L.excluded.includes(i)) clueChooser(L, i);
+    else submit({ action: 'exclude', i });
+  }));
   const acc = document.getElementById('accuse');
   if (acc) acc.onclick = () => {
     if (S.sel == null) return;
-    if (S.activeRole === 'scout' && L.why) whyModal(L, S.sel);
+    if (S.activeRole === 'scout' && L.checkTool) checkTool(L, S.sel);
     else { submit({ action: 'accuse', i: S.sel }); S.sel = null; }
   };
   const sc = document.getElementById('sayClues');
   if (sc) sc.onclick = () => speak(L.clues.map((c) => c.text).join(' '));
+  app.querySelectorAll('[data-pred]').forEach((b) => (b.onclick = () => { S.predSel = Number(b.dataset.pred); render(); }));
+  app.querySelectorAll('[data-chg]').forEach((b) => (b.onclick = () => {
+    const a = b.dataset.chg;
+    const ch = S.predChanges || [];
+    S.predChanges = ch.includes(a) ? ch.filter((x) => x !== a) : [...ch, a];
+    render();
+  }));
+  const pg = document.getElementById('predGo');
+  if (pg) pg.onclick = () => {
+    pg.disabled = true;
+    submit({ action: 'predict', choice: S.predSel, changes: S.predChanges || [] }, (res) => {
+      if (res.correct) { S.predSel = null; S.predChanges = []; }
+      if (res.changesNote) setTimeout(() => toast(res.changesNote, res.correct ? 'good' : 'bad'), res.correct ? 1600 : 2900);
+    });
+  };
+  app.querySelectorAll('[data-view]').forEach((b) => (b.onclick = () => submit({ action: 'predict_view', choice: b.dataset.view === 'skip' ? 'skip' : Number(b.dataset.view) }, (res) => {
+    if (res.correct === true) toast('🎯 Right! Now turn the model to the right side to check.', 'good');
+    else if (res.correct === false) toast('Not quite. Turn the model to the right side and look.', 'bad');
+  })));
   app.querySelectorAll('[data-press]').forEach((b) => (b.onclick = () => submit({ action: 'press', button: Number(b.dataset.press) })));
   app.querySelectorAll('[data-branch]').forEach((b) => (b.onclick = () => submit({ action: 'branch', branch: b.dataset.branch })));
   app.querySelectorAll('[data-tool]').forEach((b) => (b.onclick = () => { S.tool = b.dataset.tool; render(); }));
@@ -509,7 +648,7 @@ function renderChest(v) {
   const adult = v.me.kind === 'adult';
   const mins = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   const levels = c.levels.map((p) => `<div class="card"><h3>${ROLE_ICON[p.role]} ${esc(p.nickname)}</h3>${Object.entries(p.skills).map(([k, s]) => `<div class="row" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--hairline)"><span>${esc(k)}</span><b class="num" style="color:var(--ink)">${s.levelBefore !== s.level ? `Level ${s.levelBefore} → ${s.level}` : `Level ${s.level}`} <span class="small ${s.delta > 0 ? 'up' : s.delta < 0 ? 'down' : 'muted'}">${s.delta > 0 ? '▲' : s.delta < 0 ? '▼' : '·'}${s.delta ? Math.abs(s.delta) + ' pts' : ''}</span></b></div>`).join('')}</div>`).join('');
-  app.innerHTML = `
+  app.innerHTML = soloBlock(v) + `
   <div class="center"><div class="chest" aria-hidden="true">🎁</div><h1>Expedition Complete!</h1>
   <p class="muted">New piece of your family map: <b>${esc(c.mapPiece)}</b></p>
   <div class="stat-row" style="margin:20px 0">
@@ -517,6 +656,8 @@ function renderChest(v) {
     <div class="stat"><b>${mins(c.newRecord ? c.durationSec : c.recordSec)}</b>${c.recordSec == null ? '🏆 first family record' : c.newRecord ? '🏆 new record!' : 'family record'}</div>
     <div class="stat"><b>🔥 ${c.streak}</b>day${c.streak === 1 ? '' : 's'} in a row</div>
   </div></div>
+  ${c.mission ? `<div class="card narrow mission-card" style="margin-bottom:16px"><span class="micro">🏡 Tonight’s off-screen mission</span><h3 style="margin:6px 0">${esc(c.mission.title)}</h3><p style="margin:0">${esc(c.mission.text)}</p>
+    ${adult || v.mode === 'single' ? `<label class="check-row" style="justify-content:flex-start"><input type="checkbox" id="missionDone" ${c.mission.done ? 'checked' : ''}> We did it</label>` : ''}</div>` : ''}
   <div class="convo-card narrow">💬 Talk about it, screens off:<span class="q">${child(c.card)}</span><button class="speak" id="sayCard" aria-label="Read the question aloud">🔊</button>
   <p class="small muted" style="margin:10px 0 0;font-weight:500">You can close the app now and chat about it at dinner.</p></div>
   ${adult ? `<div class="card narrow center" style="margin-top:16px">
@@ -528,5 +669,99 @@ function renderChest(v) {
   <div class="grid2" style="margin-top:20px">${levels}</div>`;
   document.getElementById('sayCard').onclick = () => speak(c.card);
   app.querySelectorAll('[data-rate]').forEach((b) => (b.onclick = () => { S.activeRole = 'keeper'; submit({ kind: 'rating', value: Number(b.dataset.rate) }); }));
+  bindSolo(v);
   if (adult) { try { localStorage.setItem('kq_familyId', v.familyId); } catch {} }
+}
+
+// ---------------------------------------------------------------- the Scout's solo chest
+// One small Detective with every clue on the kid's screen. Optional, no timer; the grown-up can mark help.
+function soloBlock(v) {
+  const so = v.solo;
+  if (!so || so.state === 'skipped') return '';
+  const name = esc(so.childName);
+  const helped = v.me.kind === 'adult' || v.mode === 'single'
+    ? `<label class="check-row"><input type="checkbox" id="soloHelped" ${so.helped ? 'checked' : ''}> I helped ${name} with the solo chest</label>` : '';
+  if (!so.lineup) {
+    // The grown-up's screen in two-device mode: no puzzle, just the nudge and the help mark.
+    const status = so.state === 'solved' ? `🎉 ${name} opened the solo chest${so.tries > 1 ? ` on try ${so.tries}` : ' on the first try'}!`
+      : so.state === 'playing' ? `${name} is working on the solo chest…` : `${name} can open a solo chest on their screen.`;
+    return `<div class="card narrow solo-card" style="margin-bottom:20px"><span class="pill scout">🧰 Solo Chest</span><h2 style="font-size:22px;margin-top:10px">${status}</h2>
+      <p class="muted">Let ${name} try it alone: it’s one small puzzle using today’s Detective skill. It’s a home try, not a test, so helping is fine. Just mark it.</p>${helped}</div>`;
+  }
+  if (so.state === 'offer') {
+    return `<div class="card narrow solo-card center" style="margin-bottom:20px"><div class="chest" aria-hidden="true">🧰</div>
+      <h2 style="font-size:26px">Your Own Chest, ${name}!</h2>
+      <p>You opened the doors together. Now help the little explorer open their own chest: one small mystery, and every clue is on your screen.</p>
+      <div class="row" style="justify-content:center"><button class="btn scout" id="soloStart">Try It Myself</button><button class="btn ghost" id="soloSkip">Not Today</button></div>${helped}</div>`;
+  }
+  if (so.state === 'solved') {
+    return `<div class="card narrow solo-card center" style="margin-bottom:20px"><div class="chest" aria-hidden="true">🎉</div>
+      <h2 style="font-size:26px">You opened your own chest!</h2><p class="muted">${so.tries > 1 ? `It took ${so.tries} tries, and you kept going.` : 'First try!'}</p>${helped}</div>${robotBlock(so)}`;
+  }
+  const sel = S.soloSel != null && so.lineup[S.soloSel] ? so.lineup[S.soloSel] : null;
+  return `<div class="card solo-card" style="margin-bottom:20px"><div class="panel-title"><h2>🧰 Your Own Chest</h2><button class="speak" id="soloSay" aria-label="Read the clues aloud">🔊</button></div>
+    <p class="muted">Who took the key to your chest? Check each animal against <b>every</b> clue.</p>
+    <div class="clues">${so.clues.map((c) => `<div class="clue-pic"><div class="ic" aria-hidden="true">${clueIcon(c)}</div><div class="tx">${esc(c.text)}</div></div>`).join('')}</div>
+    ${so.lastWrong ? `<div class="note bad" role="alert">${esc(so.lastWrong)}</div>` : ''}
+    <div class="lineup">${so.lineup.map((s, i) => soloCard(s, i)).join('')}</div>
+    <div class="accuse-bar"><div>${sel ? `Pick: <b>${sel.emoji} ${esc(sel.name)}</b>` : '<span class="muted">Tap an animal to pick them.</span>'}</div>
+    <button class="btn scout" id="soloAccuse" ${sel ? '' : 'disabled'}>🔑 Open My Chest</button></div>${helped}</div>`;
+}
+
+// Bonus after the solo chest: Robo solved a case with one wrong step. Find it, then name the real thief.
+function robotBlock(so) {
+  const rb = so.robot;
+  if (!rb || rb.state === 'skipped') return '';
+  if (rb.state === 'offer') {
+    return `<div class="card narrow solo-card center" style="margin-bottom:20px"><div class="chest" aria-hidden="true">🤖</div>
+      <h2 style="font-size:24px">Bonus: Fix the Robot!</h2><p>Robo the Robot solved a case too, but one of its steps is wrong. Can you find it?</p>
+      <div class="row" style="justify-content:center"><button class="btn scout" id="robotStart">Check Robo’s Work</button><button class="btn ghost" id="robotSkip">Not Today</button></div></div>`;
+  }
+  if (rb.state === 'done') {
+    return `<div class="card narrow solo-card center" style="margin-bottom:20px"><div class="chest" aria-hidden="true">🤖🔧</div><h2 style="font-size:24px">You fixed Robo’s case!</h2><p class="muted">Robo says thank you. Beep boop!</p></div>`;
+  }
+  const clues = `<div class="clues">${rb.clues.map((c) => `<div class="clue-pic"><div class="ic" aria-hidden="true">${clueIcon(c)}</div><div class="tx">${esc(c.text)}</div></div>`).join('')}</div>`;
+  const warn = rb.lastWrong ? `<div class="note bad" role="alert">${esc(rb.lastWrong)}</div>` : '';
+  if (rb.state === 'step') {
+    return `<div class="card solo-card" style="margin-bottom:20px"><h2>🤖 Robo’s Case</h2>${clues}
+      <p class="muted">Robo’s steps. Which one is wrong? Tap it.</p>
+      <div class="stack">${rb.steps.map((t, k) => `<button class="btn ghost block clue-opt" data-rstep="${k}">🤖 ${esc(t)}</button>`).join('')}
+      <div class="note" style="margin:0">🤖 “Only ${esc(rb.accused)} is left, so ${esc(rb.accused)} is the thief!”</div></div>${warn}</div>`;
+  }
+  return `<div class="card solo-card" style="margin-bottom:20px"><h2>🤖 You Found Robo’s Mistake!</h2>${clues}
+    <p>That animal does match the clue, so Robo shouldn’t have crossed them out. <b>Who is the real thief?</b></p>${warn}
+    <div class="lineup">${rb.lineup.map((s, i) => soloCard(s, i, 'rthief')).join('')}</div></div>`;
+}
+
+function soloCard(s, i, attr = 'solo') {
+  const [hatIcon, hatTxt] = HAT[s.hat];
+  return `<div class="suspect-wrap"><button type="button" class="suspect" data-${attr}="${i}" aria-pressed="${attr === 'solo' && S.soloSel === i}" aria-label="${esc(`${s.name}: ${hatTxt}, wearing ${s.color}${s.umbrella ? ', with an umbrella' : ''}`)}">
+    <span class="face" aria-hidden="true">${hatIcon ? `<span class="hat">${hatIcon}</span>` : ''}${s.emoji}${s.umbrella ? '<span class="umb">☂️</span>' : ''}</span>
+    <span class="name" aria-hidden="true" style="display:block">${esc(s.name)}</span>
+    <span class="attrs" aria-hidden="true" style="display:block">${hatTxt}<br>${s.color}${s.umbrella ? ' · umbrella' : ''}</span>
+    <span class="stripe c-${s.color}" aria-hidden="true" style="display:block"></span></button></div>`;
+}
+
+function bindSolo(v) {
+  const solo = (action, extra = {}) => submit({ kind: 'solo', action, ...extra });
+  const on = (id, fn) => { const el = document.getElementById(id); if (el) el.onclick = fn; };
+  on('soloStart', () => { S.activeRole = v.mode === 'single' ? 'scout' : S.activeRole; solo('start'); });
+  on('soloSkip', () => solo('skip'));
+  on('soloAccuse', () => { if (S.soloSel != null) solo('accuse', { i: S.soloSel }); S.soloSel = null; });
+  on('soloSay', () => speak(v.solo.clues.map((c) => c.text).join(' ')));
+  app.querySelectorAll('[data-solo]').forEach((b) => (b.onclick = () => {
+    const i = Number(b.dataset.solo);
+    S.soloSel = S.soloSel === i ? null : i;
+    render();
+    const again = app.querySelector(`[data-solo="${i}"]`);
+    if (again) again.focus();
+  }));
+  on('robotStart', () => solo('robot_start'));
+  on('robotSkip', () => solo('robot_skip'));
+  app.querySelectorAll('[data-rstep]').forEach((b) => (b.onclick = () => solo('robot_step', { k: Number(b.dataset.rstep) })));
+  app.querySelectorAll('[data-rthief]').forEach((b) => (b.onclick = () => solo('robot_thief', { i: Number(b.dataset.rthief) })));
+  const md = document.getElementById('missionDone');
+  if (md) md.onchange = () => { S.activeRole = v.mode === 'single' ? 'keeper' : S.activeRole; submit({ kind: 'offscreen', value: md.checked }); };
+  const h = document.getElementById('soloHelped');
+  if (h) h.onchange = () => { S.activeRole = v.mode === 'single' ? 'keeper' : S.activeRole; solo('helped', { value: h.checked }); };
 }
