@@ -1,4 +1,4 @@
-# Kinquest 🗝️
+# Kinquest 🗝️ - BEZUMIE team, project for Business Cup 2.0 by Zimran & AIESEC
 
 **A 10-minute daily co-op puzzle for kids 6–10 and their grown-ups.** Each player sees only their part of the puzzle on their own device, and the door opens only when every player's key is lit.
 
