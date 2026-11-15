@@ -4,15 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Kinquest — The 10-Minute Daily Puzzle for Kids and Parents</title>
-  <meta name="description" content="A daily 10-minute co-op puzzle for kids 6–10 and their grown-ups. Each player sees only half the clues, so you solve it by talking. Weekly skills report for parents.">
+  <meta name="description" content="A daily 10-minute co-op puzzle for kids 6–10 and their grown-ups. Each player sees only half the clues, so you solve it by talking. Tomorrow’s mission practices today’s tricky part.">
   <meta name="theme-color" content="#ffffff">
   <meta property="og:title" content="Kinquest — 10 minutes a day of thinking together">
   <meta property="og:description" content="Your kid sees the clues. You hold the rules. Neither of you can solve it alone.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kinquest-production.up.railway.app/">
+  <meta property="og:image" content="https://kinquest-production.up.railway.app/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Kinquest: two phones, the Scout and the Keeper, both keys lit and the door open.">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>">
+  <script type="importmap">
+    { "imports": { "three": "/vendor/three/build/three.module.js", "three/addons/": "/vendor/three/examples/jsm/" } }
+  </script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to Content</a>
@@ -34,7 +44,7 @@
         <div data-enter>
           <span class="pill accent">For kids 6–10 and their grown-ups</span>
           <h1 id="hero-title" style="margin-top:16px">The 10-minute daily puzzle your kid can’t solve without you</h1>
-          <p class="lead">Your child sees the clues. You hold the rules. Neither of you can open the lock alone, so you talk it through. Every Sunday you get a report on what your child is getting better at.</p>
+          <p class="lead">Your child sees the clues. You hold the rules. Neither of you can open the lock alone, so you talk it through. Afterward you see what your child did, and tomorrow’s mission practices the tricky part.</p>
           <div class="fact"><b class="num">½</b><span>Each player sees only half of every puzzle on their own phone. The door opens when every key is lit.</span></div>
           <div class="row">
             <a class="btn" href="#start">Start an Expedition <span class="arrow" aria-hidden="true">→</span></a>
@@ -43,41 +53,37 @@
           <p class="small" style="margin-top:14px">🧑‍⚖️ Judging Kinquest? <a href="#judges">Start here: a 5-minute guide</a></p>
         </div>
 
-        <div class="phones" data-enter="2" aria-label="Two phones showing the same puzzle from different roles" role="img">
+        <div class="phones" data-enter="2" id="heroDemo" role="img" aria-label="Animation: the Scout finds a feather and wet footprints, the Keeper adds that the thief isn't wearing red. Together they cross out suspects until one is left, both keys light up, and the door opens.">
           <div class="phone scout" aria-hidden="true">
             <div class="screen">
               <div class="bar"><span>🔭 Max · Scout</span><span>Lock 1 of 3</span></div>
               <div class="body">
-                <div class="mini-keys"><span class="lit">🗝️</span><span>🔒</span></div>
-                <div class="mini-clue"><span class="ic">🪶</span>We found a feather. The thief wore a feathered hat.</div>
-                <div class="mini-clue"><span class="ic">💧</span>Wet footprints. No umbrella!</div>
-                <div class="mini-line">
-                  <div class="mini-s">🦀<small>Pinch</small><i class="c-red"></i></div>
-                  <div class="mini-s out">🐢<small>Shelly</small><i class="c-yellow"></i></div>
-                  <div class="mini-s">🐙<small>Ollie</small><i class="c-blue"></i></div>
-                  <div class="mini-s">🐠<small>Sparky</small><i class="c-green"></i></div>
-                  <div class="mini-s out">🐬<small>Splash</small><i class="c-red"></i></div>
-                  <div class="mini-s">🐡<small>Puff</small><i class="c-yellow"></i></div>
-                </div>
+                <div class="mini-keys"><span data-key="scout">🔒</span><span data-key="keeper">🔒</span></div>
+                <div class="mini-clue" data-clue="0"><span class="ic">🪶</span>We found a feather. The thief wore a feathered hat.</div>
+                <div class="mini-clue" data-clue="1"><span class="ic">💧</span>Wet footprints. No umbrella!</div>
+                <div class="mini-line"><div class="mini-s" data-s="0">🦀<small>Pinch</small><span class="att">🧢</span><i class="c-red"></i></div><div class="mini-s" data-s="1">🐢<small>Shelly</small><span class="att">🪶☂️</span><i class="c-yellow"></i></div><div class="mini-s" data-s="2">🐙<small>Ollie</small><span class="att">🪶</span><i class="c-blue"></i></div><div class="mini-s" data-s="3">🐠<small>Sparky</small><span class="att">🧢☂️</span><i class="c-green"></i></div><div class="mini-s" data-s="4">🐬<small>Splash</small><span class="att">🪶</span><i class="c-red"></i></div><div class="mini-s" data-s="5">🐡<small>Puff</small><span class="att"></span><i class="c-yellow"></i></div></div>
               </div>
+              <div class="say scout" data-say="scout"></div>
             </div>
           </div>
           <div class="phone keeper offset" aria-hidden="true">
             <div class="screen">
               <div class="bar"><span>📜 Mom · Keeper</span><span>Lock 1 of 3</span></div>
               <div class="body">
-                <div class="mini-keys"><span class="lit">🗝️</span><span>🔒</span></div>
+                <div class="mini-keys"><span data-key="scout">🔒</span><span data-key="keeper">🔒</span></div>
                 <div class="mini-note"><b>Witness notes</b>
                   <ol>
-                    <li>The thief is not wearing red.</li>
+                    <li data-note="0">The thief is not wearing red.</li>
                     <li>The thief stood left of a neighbor with an umbrella.</li>
                     <li>The thief was not at either end of the line.</li>
                   </ol>
                 </div>
-                <div class="mini-note" style="background:#e8effc;border-color:#d3e0f8">“Max, what did you find by the window?”</div>
+                <div class="mini-line"><div class="mini-s" data-s="0">🦀<small>Pinch</small><span class="att">🧢</span><i class="c-red"></i></div><div class="mini-s" data-s="1">🐢<small>Shelly</small><span class="att">🪶☂️</span><i class="c-yellow"></i></div><div class="mini-s" data-s="2">🐙<small>Ollie</small><span class="att">🪶</span><i class="c-blue"></i></div><div class="mini-s" data-s="3">🐠<small>Sparky</small><span class="att">🧢☂️</span><i class="c-green"></i></div><div class="mini-s" data-s="4">🐬<small>Splash</small><span class="att">🪶</span><i class="c-red"></i></div><div class="mini-s" data-s="5">🐡<small>Puff</small><span class="att"></span><i class="c-yellow"></i></div></div>
               </div>
+              <div class="say keeper" data-say="keeper"></div>
             </div>
           </div>
+          <div class="door-banner" aria-hidden="true">🗝️ 🗝️ <b>The door is open!</b></div>
         </div>
       </div>
     </section>
@@ -144,12 +150,56 @@
             <p>The Scout sees glowing symbols. The Keeper reads the rule book: “If there are more red than blue…” Your kid predicts what comes next first, and in the last round you swap: the kid holds the rules.</p>
           </div>
           <div class="card lock-card">
-            <div class="demo" aria-hidden="true"><div class="plan-mini"><span>2</span><span>2</span><span class="e">0</span><span>1</span><span>1</span><span class="e">0</span><span class="e">0</span><span>2</span><span class="e">0</span></div></div>
+            <div class="demo demo3d" id="mini3d" role="img" aria-label="A 3D model built from cubes, slowly turning. Drag to spin it."><div class="plan-mini" aria-hidden="true"><span>2</span><span>2</span><span class="e">0</span><span>1</span><span>1</span><span class="e">0</span><span class="e">0</span><span>2</span><span class="e">0</span></div></div>
             <span class="pill">Spatial Reasoning</span>
             <h3 style="margin-top:10px">The Blueprint Workshop</h3>
+            <p class="small muted" style="margin:-8px 0 10px">↻ The real 3D model from the game. Drag to spin it.</p>
             <p>The Scout first guesses how the 3D model looks from the side, then spins it to check. The Keeper holds the blueprint. Find the 1–3 cubes that are off and fix the bridge.</p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="section" id="adapts" aria-labelledby="adapts-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="adapts-title">Today’s mix-up becomes tomorrow’s practice</h2>
+          <p class="muted">Kinquest reads the move log, not the mood. When your kid trips on something specific, the next expedition practices exactly that, first with a helper, then without it.</p>
+        </div>
+        <div class="grid3 adapt">
+          <div class="card adapt-step">
+            <span class="step-n">1</span><span class="micro">Day 1 · A mix-up</span>
+            <div class="mock">
+              <div class="mock-row"><span class="mock-pick">🦊 Foxy Fern</span><span class="pill">Max’s pick</span></div>
+              <div class="mock-line ok">✔ matches “the thief wears red”</div>
+              <div class="mock-line no">✖ breaks “the thief had an umbrella”</div>
+            </div>
+            <h3>Kinquest spots the exact clue</h3>
+            <p class="muted small">Not “weak at logic.” The game logs which clue the pick matched and which one it broke.</p>
+          </div>
+          <div class="card adapt-step">
+            <span class="step-n">2</span><span class="micro">Day 2 · With a helper</span>
+            <div class="mock">
+              <div class="micro" style="margin-bottom:6px">Check 2 of 3</div>
+              <div class="mock-q">Does 🦊 Foxy Fern match this clue?</div>
+              <div class="mock-clue">☂️ The thief had an umbrella.</div>
+              <div class="mock-btns"><span class="b yes">✔ Yes</span><span class="b">✖ No</span></div>
+            </div>
+            <h3>A check tool, one clue at a time</h3>
+            <p class="muted small">The Detective lock adds a step: check your suspect against every clue before you accuse. The grown-up gets one question to ask.</p>
+          </div>
+          <div class="card adapt-step">
+            <span class="step-n">3</span><span class="micro">Day 3 · On their own</span>
+            <div class="mock center">
+              <div style="font-size:36px" aria-hidden="true">🧰🎉</div>
+              <div class="mock-q">Max opened the solo chest</div>
+              <div class="mock-line ok" style="justify-content:center">First try · no helper · no help marked</div>
+            </div>
+            <h3>Then the helper goes away</h3>
+            <p class="muted small">A similar lock without the tool, and a solo chest the kid tries alone. If the mix-up comes back, the helper returns.</p>
+          </div>
+        </div>
+        <p class="center small muted" style="margin-top:20px">Plain rules, not a black box: one lock changes at a time, so the other two stay varied. <a href="/report.html?family=demo">See it in a sample report →</a></p>
       </div>
     </section>
 
@@ -254,6 +304,62 @@
       try { sessionStorage.setItem('kq_create', JSON.stringify(opts)); } catch {}
       location.href = '/game.html?create=1';
     });
+    // The real Blueprint Workshop model, turning slowly. Loaded only when the card scrolls into view.
+    (function mini3d() {
+      const el = document.getElementById('mini3d');
+      if (!el || !('IntersectionObserver' in window)) return;
+      const io = new IntersectionObserver(([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        import('/js/blueprint3d.js').then(({ createBlueprintStage }) => {
+          el.innerHTML = '';
+          const stage = createBlueprintStage(el, { showcase: true });
+          stage.update({ w: 3, d: 3, grid: [[2, 3, 1], [1, 2, 0], [2, 1, 1]], highlight: null });
+        }).catch(() => {}); // no WebGL: the flat plan stays
+      }, { rootMargin: '200px' });
+      io.observe(el);
+    })();
+
+    // Hero story loop. Plays only while visible; with reduced motion it shows the solved state.
+    (function heroStory() {
+      const root = document.getElementById('heroDemo');
+      if (!root) return;
+      const all = (sel) => root.querySelectorAll(sel);
+      const say = (who, text) => all(`[data-say="${who}"]`).forEach((el) => { el.textContent = text; el.classList.toggle('on', !!text); });
+      const out = (...ids) => ids.forEach((i) => all(`[data-s="${i}"]`).forEach((el) => el.classList.add('out')));
+      const hl = (sel) => { all('.hl').forEach((el) => el.classList.remove('hl')); if (sel) all(sel).forEach((el) => el.classList.add('hl')); };
+      const key = (who) => all(`[data-key="${who}"]`).forEach((el) => { el.classList.add('lit'); el.textContent = '🗝️'; });
+      const reset = () => {
+        all('.mini-s').forEach((el) => el.classList.remove('out', 'pick'));
+        all('[data-key]').forEach((el) => { el.classList.remove('lit'); el.textContent = '🔒'; });
+        hl(null); say('scout', ''); say('keeper', '');
+        root.querySelector('.door-banner').classList.remove('on');
+      };
+      const solved = () => { out(0, 1, 3, 4, 5); all('[data-s="2"]').forEach((el) => el.classList.add('pick')); key('scout'); key('keeper'); };
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return solved();
+      const steps = [
+        [900, () => { hl('[data-clue="0"]'); say('scout', 'I found a feather! Who wears a feathered hat?'); }],
+        [2300, () => out(0, 3, 5)],
+        [3400, () => { hl('[data-clue="1"]'); say('scout', 'Wet footprints… so no umbrella!'); }],
+        [4500, () => out(1)],
+        [5500, () => { hl('[data-note="0"]'); say('scout', ''); say('keeper', 'My note says: not wearing red.'); }],
+        [6700, () => out(4)],
+        [7600, () => { hl(null); all('[data-s="2"]').forEach((el) => el.classList.add('pick')); say('keeper', ''); say('scout', 'It’s Ollie!'); key('scout'); }],
+        [8400, () => { say('keeper', 'Ollie fits every clue. Yes!'); key('keeper'); }],
+        [9100, () => { say('scout', ''); say('keeper', ''); root.querySelector('.door-banner').classList.add('on'); }],
+      ];
+      let timers = [], running = false;
+      const play = () => {
+        reset();
+        timers = steps.map(([t, fn]) => setTimeout(fn, t));
+        timers.push(setTimeout(play, 11800));
+      };
+      new IntersectionObserver(([e]) => {
+        if (e.isIntersecting && !running) { running = true; play(); }
+        else if (!e.isIntersecting && running) { running = false; timers.forEach(clearTimeout); }
+      }, { threshold: 0.3 }).observe(root);
+    })();
+
     document.getElementById('demoStart').addEventListener('click', (e) => {
       e.target.disabled = true;
       try { sessionStorage.setItem('kq_create', JSON.stringify({ demoFamily: true, parentName: 'Mom', ageBand: '8-10', interest: 'ocean', mode: 'multi' })); } catch {}

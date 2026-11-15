@@ -422,3 +422,49 @@ details.levels summary { cursor: pointer; font-weight: 600; color: var(--ink); m
 .judges { background: var(--surface); }
 .judges ol { margin: 0; padding-left: 20px; }
 .judges li { margin: 8px 0; color: var(--ink); }
+
+/* Hero story loop: clues → cross-outs → both keys → the door opens */
+.phone { position: relative; }
+.phone .screen { position: relative; }
+.mini-s { transition: opacity .35s ease, transform .35s ease, box-shadow .25s ease; }
+.mini-s .att { display: block; font-size: 11px; line-height: 1.2; min-height: 13px; }
+.mini-s.out { opacity: .28; transform: scale(.94); }
+.mini-s.out::after { content: '✕'; position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; color: var(--bad); font-weight: 700; }
+.mini-s.pick { box-shadow: 0 0 0 3px var(--accent); transform: scale(1.06); }
+.mini-clue, .mini-note li { transition: background-color .3s ease, box-shadow .3s ease; border-radius: 8px; }
+.mini-clue.hl { box-shadow: 0 0 0 2px var(--scout); background: #d2efe9; }
+.mini-note li.hl { background: var(--keeper-soft); box-shadow: 0 0 0 2px var(--keeper); }
+.mini-keys span { transition: background-color .3s ease, transform .3s cubic-bezier(.2,.9,.3,1.4); }
+.mini-keys span.lit { transform: scale(1.12); }
+.say { position: absolute; left: 10px; right: 10px; bottom: 12px; padding: 9px 12px; border-radius: 14px; font-size: 12.5px; font-weight: 600; color: #fff; line-height: 1.35; opacity: 0; transform: translateY(8px); transition: opacity .3s ease, transform .3s ease; box-shadow: var(--shadow); }
+.say.scout { background: var(--scout); }
+.say.keeper { background: var(--keeper); }
+.say.on { opacity: 1; transform: none; }
+.door-banner { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%) scale(.6); background: var(--key); color: #3b2a00; border-radius: 999px; padding: 12px 22px; font-size: 17px; white-space: nowrap; box-shadow: 0 12px 32px rgba(0,0,0,.18); opacity: 0; transition: opacity .3s ease, transform .4s cubic-bezier(.2,.9,.3,1.4); pointer-events: none; }
+.door-banner.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+@media (max-width: 520px) { .say { font-size: 10.5px; padding: 7px 9px; bottom: 8px; left: 7px; right: 7px; } .mini-s .att { font-size: 9px; } .door-banner { font-size: 14px; padding: 10px 16px; } }
+@media (prefers-reduced-motion: reduce) { .mini-s, .say, .door-banner, .mini-keys span { transition: none; } }
+.lock-card .demo.demo3d { padding: 0; height: 200px; min-height: 200px; overflow: hidden; cursor: grab; background: linear-gradient(180deg, #eef6fb, var(--surface)); }
+.lock-card .demo.demo3d canvas { display: block; touch-action: pan-y; }
+.lock-card .demo.demo3d { padding: 0; height: 200px; min-height: 200px; overflow: hidden; cursor: grab; background: linear-gradient(180deg, #eef6fb, var(--surface)); }
+.lock-card .demo.demo3d canvas { display: block; touch-action: pan-y; }
+.grid3 > *, .lock-card { min-width: 0; }
+.lock-card .demo.demo3d canvas { width: 100% !important; height: 100% !important; }
+.lock-card .demo { min-height: 200px; }
+
+/* How Kinquest adapts */
+.adapt-step { position: relative; display: flex; flex-direction: column; gap: 8px; }
+.adapt-step h3 { margin: 6px 0 0; font-size: 20px; }
+.adapt-step p { margin: 0; }
+.step-n { position: absolute; top: 16px; right: 18px; width: 30px; height: 30px; border-radius: 50%; background: var(--key-soft); color: #7a5800; display: grid; place-items: center; font-weight: 700; font-family: var(--font-display); }
+.mock { background: var(--surface); border-radius: var(--r-md); padding: 14px; display: grid; gap: 8px; margin-top: 4px; min-height: 150px; align-content: center; }
+.mock-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.mock-pick { font-weight: 700; color: var(--ink); font-size: 17px; }
+.mock-line { display: flex; gap: 6px; font-size: 13.5px; font-weight: 600; padding: 7px 10px; border-radius: 10px; background: #fff; }
+.mock-line.ok { color: var(--good); }
+.mock-line.no { color: var(--bad); }
+.mock-q { font-weight: 700; color: var(--ink); }
+.mock-clue { background: var(--scout-soft); border-radius: 10px; padding: 8px 10px; font-size: 14px; color: var(--ink); font-weight: 500; }
+.mock-btns { display: flex; gap: 8px; }
+.mock-btns .b { flex: 1; text-align: center; border-radius: 8px; padding: 7px; font-size: 13px; font-weight: 600; background: #fff; border: 1px solid var(--hairline); color: var(--ink); }
+.mock-btns .b.yes { background: var(--scout); border-color: var(--scout); color: #fff; }

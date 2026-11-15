@@ -4,7 +4,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const PALETTE = [0xf4a261, 0xe9c46a, 0x2a9d8f, 0xe76f51, 0x8ab17d, 0x9b8ce8];
 
-export function createBlueprintStage(container, { onEdit, onRotate }) {
+// showcase: a slowly turning, look-only model for the home page (no zoom, no edits).
+export function createBlueprintStage(container, { onEdit, onRotate, showcase = false }) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
   container.appendChild(renderer.domElement);
@@ -25,6 +26,12 @@ export function createBlueprintStage(container, { onEdit, onRotate }) {
   controls.maxDistance = 14;
   controls.maxPolarAngle = Math.PI * 0.49;
   controls.target.set(0, 0.8, 0);
+  if (showcase) {
+    controls.autoRotate = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    controls.autoRotateSpeed = 1.6;
+    controls.enableZoom = false;
+    controls.target.set(0, 1.1, 0);
+  }
 
   // Count a "turn" when one gesture rotates the camera by more than ~20°.
   let startAz = 0, startPol = 0;
@@ -128,7 +135,7 @@ export function createBlueprintStage(container, { onEdit, onRotate }) {
     if (key === framedFor) return;
     framedFor = key;
     const size = Math.max(state.w, state.d, 3) + 1.5;
-    const dist = (size * 1.55) / Math.min(1, camera.aspect * 1.1);
+    const dist = ((size * 1.55) / Math.min(1, camera.aspect * 1.1)) * (showcase ? 1.75 : 1);
     const dir = new THREE.Vector3(0.5, 0.62, 0.88).normalize();
     camera.position.copy(dir.multiplyScalar(dist)).add(controls.target);
     controls.minDistance = dist * 0.6;
