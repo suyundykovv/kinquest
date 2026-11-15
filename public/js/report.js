@@ -10,11 +10,46 @@
   const url = q.get('session') ? `/api/report/session/${encodeURIComponent(q.get('session'))}` : `/api/report/week?family=${encodeURIComponent(q.get('family') || 'demo')}`;
 
   fetch(url).then((r) => r.json().then((j) => ({ ok: r.ok, j }))).then(({ ok, j }) => {
+    if (j.paywall) return renderPaywall(j);
     if (!ok) throw new Error(j.error || 'Something went wrong');
     render(j);
   }).catch((e) => {
     app.innerHTML = `<div class="card center"><div class="chest" aria-hidden="true">🗺️</div><h1 style="font-size:28px">${esc(e.message)}</h1><p class="muted">Play your first expedition and your report will show up here.</p><div class="row" style="justify-content:center"><a class="btn" href="/">Start an Expedition</a><a class="btn ghost" href="/report.html?family=demo">See a Sample Report</a></div></div>`;
   }).finally(() => app.removeAttribute('aria-busy'));
+
+  const upgraded = q.get('upgraded') ? '<div class="note ok" role="status">🎉 Your Kinquest Family trial is on (test mode, nothing was charged). Next missions and weekly reports are unlocked.</div>' : '';
+
+  // Checkout buttons anywhere on the page: data-checkout="monthly|yearly".
+  function bindCheckout(familyId) {
+    app.querySelectorAll('[data-checkout]').forEach((b) => (b.onclick = () => {
+      b.disabled = true;
+      b.textContent = 'Opening checkout…';
+      window.kqCheckout(b.dataset.checkout, location.pathname + location.search.replace(/[?&]upgraded=1/, ''), familyId).catch((e) => { b.disabled = false; b.textContent = e.message; });
+    }));
+  }
+  const unlockCard = (what) => `<div class="paywall-mini"><p style="margin:0 0 10px">${what}</p>
+    <div class="row"><button class="btn" data-checkout="monthly">Start 7-Day Free Trial</button><a class="btn ghost" href="/pricing.html">See Plans</a></div>
+    <p class="small muted" style="margin:8px 0 0">Then $7.99/mo. Test mode: no real charge.</p></div>`;
+
+  // The weekly report is a Kinquest Family feature: show what's waiting, not the findings.
+  function renderPaywall(j) {
+    const t = j.teaser;
+    document.title = 'Unlock Your Weekly Report · Kinquest';
+    app.innerHTML = `<div class="card narrow center paywall">
+      <div class="chest" aria-hidden="true">🔒</div>
+      <span class="pill key">Kinquest Family</span>
+      <h1 style="font-size:32px;margin-top:12px">Your weekly report is ready</h1>
+      <div class="stat-row" style="margin:16px 0"><div class="stat"><b>${fmtNum(t.sessions)}</b>expedition${t.sessions === 1 ? '' : 's'}</div><div class="stat"><b>${fmtNum(t.locks)}</b>locks opened</div><div class="stat"><b>${fmtNum(t.minutes)}</b>minutes together</div></div>
+      <ul class="block-list" style="text-align:left;max-width:440px;margin:0 auto 16px">
+        <li>What went well and where it got tricky, tied to the exact clue</li>
+        <li>One question to ask at dinner, plus screen-free activities</li>
+        <li>The next mission: today’s mix-up becomes tomorrow’s practice</li>
+      </ul>
+      <div class="row" style="justify-content:center"><button class="btn" data-checkout="monthly">Start 7-Day Free Trial</button><button class="btn ghost" data-checkout="yearly">Yearly: $59.99</button></div>
+      <p class="small muted" style="margin-top:12px">Then $7.99/mo, cancel anytime. Test mode: use card 4242 4242 4242 4242, nothing is charged.</p>
+      <p class="small"><a href="/report.html?family=demo">See a sample weekly report first</a></p></div>`;
+    bindCheckout(j.family.id);
+  }
 
   function render(d) {
     const m = d.metrics, t = d.text;
@@ -44,6 +79,9 @@
 
     const b = m.blocks;
     const li = (xs) => (xs.length ? `<ul class="block-list">${xs.map((x) => `<li>${fill(x)}</li>`).join('')}</ul>` : '');
+    const nextBlock = d.paid === false
+      ? unlockCard(b.next.id ? `Kinquest has a next mission ready for ${esc(name)}: <b>“${esc(b.next.title)}”</b>. Unlock it with Kinquest Family.` : 'Personalized next missions come with Kinquest Family.')
+      : null;
     const nextBtn = isWeek && d.family.demo
       ? '<a class="btn" href="/#start">Start Your Own Expedition</a>'
       : `<a class="btn" href="/#start">${b.next.id ? `Start “${esc(b.next.title)}”` : 'Start the Next Expedition'}</a>`;
@@ -51,7 +89,7 @@
     const robot = m.solo.robots ? `<tr><td>Fix the Robot<div class="small muted">bonus after the solo chest</div></td><td class="num">${m.solo.robotsFirstStep}/${m.solo.robots}</td><td class="num">—</td><td class="num">—</td></tr>` : '';
     const solo = m.solo.played ? `<tr><td>Solo chest<div class="small muted">home try, ${m.solo.helped ? `help marked ${m.solo.helped}×` : 'no help marked'}</div></td><td class="num">${m.solo.firstTry}/${m.solo.played}</td><td class="num">—</td><td class="num">${m.solo.last ? m.solo.last.level : '—'}</td></tr>` : '';
 
-    app.innerHTML = `
+    app.innerHTML = upgraded + `
     ${d.family && d.family.demo ? '<div class="demo-banner">🤖 Demo family: these expeditions were played by a bot through the real game server (generators, answer checks, move log, ratings). It shows the report format. Before a pitch, swap in sessions from a real test family.</div>' : ''}
     <div class="report-head">
       <div>
@@ -87,8 +125,8 @@
         <h2 style="font-size:20px">🎯 Next Mission</h2>
         <p>${fill(t.next_mission)}</p>
         ${b.next.because ? `<p class="small muted">${fill(b.next.because)}</p>` : ''}
-        <div class="row no-print">${nextBtn}</div>
-        <p class="small muted" style="margin-bottom:0">Kinquest applies this to the next expedition your family starts. One lock changes; the other two stay varied.</p>
+        ${nextBlock || `<div class="row no-print">${nextBtn}</div>
+        <p class="small muted" style="margin-bottom:0">Kinquest applies this to the next expedition your family starts. One lock changes; the other two stay varied.</p>`}
       </section>
     </div>
 
@@ -117,6 +155,8 @@
       <p class="small muted" style="margin:12px 0 0">With fewer than ${m.minParts} puzzles in a skill, we say so instead of guessing.</p></details>
     </section>
 
+    ${!isWeek ? `<div class="card no-print" style="margin-top:16px"><h2 style="font-size:20px">🗓️ This Week</h2>${d.paid ? `<a class="btn ghost" href="/report.html?family=${encodeURIComponent(d.session.familyId)}">See the Weekly Report</a>` : unlockCard('The weekly report puts every expedition together and tracks the next mission. It comes with Kinquest Family.')}</div>` : ''}
     <p class="src">Facts come straight from the game’s move log (${isWeek ? `${d.sessionIds.length} sessions` : 'this session'}). Text: ${t.source === 'gemini' ? 'worded by Gemini from these facts only; activities picked from the Kinquest library' : 'Kinquest template (AI unavailable)'}. Your child’s name is never sent to the AI.</p>`;
+    bindCheckout(d.session ? d.session.familyId : d.family.id);
   }
 })();

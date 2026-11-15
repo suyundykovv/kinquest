@@ -14,6 +14,14 @@ const { server, rooms, clock } = require('../server');
 const { playExpedition, client, waitFor } = require('../scripts/bot');
 
 let url;
+const post = (p, body) => fetch(url + p, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.json());
+async function pay(familyId) {
+  const c = await post('/api/checkout', { plan: 'monthly', familyId });
+  assert.strictEqual(c.provider, 'test');
+  const id = new URL(c.url, url).searchParams.get('c');
+  assert.strictEqual((await post(`/api/checkout/${id}/pay`, { card: '4000 0000 0000 0002', exp: '12/30', cvc: '123' })).ok, false, 'only the test card');
+  assert.strictEqual((await post(`/api/checkout/${id}/pay`, { card: '4242 4242 4242 4242', exp: '12/30', cvc: '123' })).ok, true);
+}
 test.before(() => new Promise((res) => server.listen(0, () => { url = `http://localhost:${server.address().port}`; res(); })));
 test.after(() => new Promise((res) => { server.closeAllConnections?.(); server.close(() => res()); }));
 
@@ -37,6 +45,11 @@ test('full expedition on two devices and a report from real attempts', async () 
   assert.ok(rep.text.headline);
   assert.ok(rep.activities.length >= 1);
 
+  // The weekly report is behind the paywall until the family starts a trial through test checkout.
+  const locked = await fetch(`${url}/api/report/week?family=${out.familyId}`);
+  assert.strictEqual(locked.status, 402);
+  assert.ok((await locked.json()).teaser.locks === 3);
+  await pay(out.familyId);
   const week = await (await fetch(`${url}/api/report/week?family=${out.familyId}`)).json();
   assert.strictEqual(week.kind, 'week');
   assert.strictEqual(week.sessionIds.length, 1);
@@ -48,6 +61,7 @@ test('a mix-up leads to the check tool, then the same lock without it', async ()
   const fam = 'f' + Date.now();
   const profile = { logic: 0, keeper: 1, solo: 0 }; // first wrong picks are mix-ups
   const one = await playExpedition({ url, rooms, clock, profile, opts: { childName: 'Ana', familyName: 'Focus Family' } });
+  await pay(one.familyId);
   const s1 = rooms.get(one.code);
   assert.ok(s1.attempts.some((a) => a.action === 'accuse' && !a.correct && a.fits && a.breaks));
   const two = await playExpedition({ url, rooms, clock, profile: { logic: 0.95, keeper: 1, solo: 0 }, opts: { childName: 'Ana', familyId: one.familyId } });
@@ -79,6 +93,7 @@ test('a Cipher near-miss leads to a "watch" focus on the Cipher lock', async () 
     att = rooms.get(one.code).attempts;
     if (att.some((a) => (a.action === 'press' || a.action === 'predict') && a.off && a.off.length === 1)) break;
   }
+  await pay(one.familyId);
   const two = await playExpedition({ url, rooms, clock, profile: { logic: 1, keeper: 1, patterns: 1, solo: 0 }, opts: { childName: 'Ivy', familyId: one.familyId } });
   const ciph = rooms.get(two.code).locks[1];
   assert.ok(ciph.focus && ciph.focus.id.startsWith('watch_') && ciph.focus.stage === 'scaffold');
@@ -146,4 +161,20 @@ test('roles get different parts of the puzzle', async () => {
   await kid.emit('submit', { kind: 'hint', asRole: 'scout' });
   await waitFor(() => kid.views.scout.lock.hints.length === 1);
   for (const s of [host, kid, extra]) s.socket.close();
+});
+
+test('without the plan, the next mission waits; the demo family copy starts with it', async () => {
+  const one = await playExpedition({ url, rooms, clock, profile: { logic: 0, keeper: 1, solo: 0 }, opts: { childName: 'Kit' } });
+  assert.ok(rooms.get(one.code).chest.nextMission.locked, 'the chest shows a locked next mission');
+  const two = await playExpedition({ url, rooms, clock, profile: { logic: 1, keeper: 1, solo: 0 }, opts: { childName: 'Kit', familyId: one.familyId } });
+  assert.strictEqual(rooms.get(two.code).locks[0].focus, null, 'no focus without the plan');
+  assert.ok(rooms.get(two.code).focusLocked, 'the grown-up sees what is waiting');
+  // A judge's demo copy: the demo week is its history, so the focus applies right away, whatever the kid's name.
+  const demo = await playExpedition({ url, rooms, clock, profile: { logic: 1, keeper: 1, solo: 0 }, opts: { demoFamily: true, childName: 'Judge Kid' } });
+  const det = rooms.get(demo.code).locks[0];
+  assert.ok(det.focus && det.focus.stage === 'scaffold', 'the demo week ends with a check-tool mission');
+  const fam = require('../store').getFamily(demo.familyId);
+  assert.strictEqual(fam.historyFrom, 'demo');
+  const week = await (await fetch(`${url}/api/report/week?family=${demo.familyId}`)).json();
+  assert.ok(week.family.demo && week.sessionIds.length >= 2);
 });

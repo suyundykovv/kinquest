@@ -12,7 +12,7 @@ const P = require('./puzzles');
 const H = require('./hints');
 const store = require('./store');
 const ai = require('./ai');
-const { buildMetrics, LOCK_SKILLS } = require('./report');
+const { buildMetrics, LOCK_SKILLS, LOCK_LABEL } = require('./report');
 const { ACTIVITIES, SKILLS, MISSIONS } = require('./activities');
 const { focusFor, FOCUS } = require('./focus');
 
@@ -83,7 +83,10 @@ async function buildExpedition(room) {
   const scout = room.players.find((p) => p.role === 'scout');
   const keeper = room.players.find((p) => p.role === 'keeper');
   // Next-mission rules (focus.js): a mix-up seen in earlier sessions shapes one of today's locks.
-  const focus = focusFor(store.familySessions(room.familyId), scout.key).next;
+  // It's a Kinquest Family feature: without the plan, the family sees what's waiting but plays a regular lock.
+  const found = nextFocus(room, scout);
+  const focus = store.isPaid(room.familyId) ? found : null;
+  room.focusLocked = found && !focus ? { title: found.title } : null;
   room.locks = LOCK_TYPES.map((type, i) => {
     const opts = { levelScout: levelFor(room, scout, type), levelKeeper: levelFor(room, keeper, type), cast: story.cast };
     if (focus && focus.lock === type && focus.attr && focus.stage === 'scaffold') opts.focusAttr = focus.attr;
@@ -104,6 +107,12 @@ async function buildExpedition(room) {
       totals: { errors: 0, hints: 0 },
     };
   });
+}
+
+function nextFocus(room, scout) {
+  const fam = store.getFamily(room.familyId);
+  // A judge's copy of the demo family may name the kid differently: match the child by role instead.
+  return focusFor(store.familySessions(room.familyId), fam && fam.historyFrom ? null : scout.key).next;
 }
 
 function startLock(room, idx) {
@@ -168,6 +177,7 @@ function roleView(room, player) {
     familyId: room.familyId,
   };
   if (room.phase === 'lobby') v.qrSvg = room.qrSvg;
+  if (player.kind === 'adult' && room.focusLocked) v.focusLocked = room.focusLocked;
   if (room.story) v.story = { title: room.story.title, intro: room.story.intro, region: room.story.region, lockNames: room.story.lock_names, source: room.story.source };
   if (room.phase === 'lock' && room.locks[room.lockIdx]) v.lock = lockView(room, room.locks[room.lockIdx], player.role);
   if (room.phase === 'lock' || room.phase === 'chest') v.locksDone = room.locks.map((l) => l.opened);
@@ -516,8 +526,12 @@ function finish(room) {
   const work = (l) => room.attempts.filter((a) => a.type === l.type && a.player === scout.key && (a.action === 'hint' || a.correct === false)).length;
   const focusLock = room.locks.find((l) => l.focus);
   const missionLock = focusLock || room.locks.slice().sort((a, b) => work(b) - work(a))[0];
+  const nf = nextFocus(room, scout);
+  const paid = store.isPaid(room.familyId);
   room.chest = {
     sessionId, card: room.story.conversation_card,
+    nextMission: nf ? { title: nf.title, lock: LOCK_LABEL[nf.lock], stage: nf.stage, because: nf.because, locked: !paid } : null,
+    paid,
     mission: { type: missionLock.type, ...MISSIONS[missionLock.type], done: false },
     durationSec: Math.round(durationMs / 1000), recordSec: record ? Math.round(record / 1000) : null,
     newRecord: record == null || durationMs < record,
@@ -626,7 +640,7 @@ io.on('connection', (socket) => {
   socket.on('create_room', async (data = {}, ack = () => {}) => {
     try {
       const mode = data.mode === 'single' ? 'single' : 'multi';
-      const fam = store.ensureFamily(clean(data.familyId, 32), clean(data.familyName, 40) || undefined);
+      const fam = data.demoFamily === true ? store.createDemoCopy() : store.ensureFamily(clean(data.familyId, 32), clean(data.familyName, 40) || undefined);
       const parentName = clean(data.parentName) || 'Mom';
       const interest = INTERESTS.includes(data.interest) ? data.interest : 'animals';
       const ageBand = AGE_BANDS.includes(data.ageBand) ? data.ageBand : '8-10';
@@ -780,7 +794,7 @@ app.get('/api/report/session/:id', async (req, res) => {
   if (!s) return res.status(404).json({ error: 'Session not found' });
   const key = `s:${s.id}:${s.parentRating || 0}`;
   const out = await reportFor([s], key);
-  res.json({ kind: 'session', session: { id: s.id, familyId: s.familyId, title: s.story.title, region: s.story.region, startedAt: s.startedAt, players: s.players }, ...out });
+  res.json({ kind: 'session', paid: store.isPaid(s.familyId), session: { id: s.id, familyId: s.familyId, title: s.story.title, region: s.story.region, startedAt: s.startedAt, players: s.players }, ...out });
 });
 
 app.get('/api/report/week', async (req, res) => {
@@ -790,9 +804,14 @@ app.get('/api/report/week', async (req, res) => {
   const lastTs = all[all.length - 1].startedAt;
   const week = all.filter((s) => s.startedAt > lastTs - 7 * 86400000);
   const fam = familyId === 'demo' ? { name: 'Demo Family' } : store.getFamily(familyId) || {};
+  // The weekly report is a Kinquest Family feature. The teaser shows only counts, never the findings.
+  if (!store.isPaid(familyId)) {
+    const locks = week.reduce((a, s) => a + (s.locks || []).filter((l) => l.opened).length, 0);
+    return res.status(402).json({ paywall: true, family: { id: familyId, name: fam.name }, teaser: { sessions: week.length, locks, minutes: Math.round(week.reduce((a, s) => a + Math.max(0, (s.endedAt || s.startedAt) - s.startedAt), 0) / 60000) } });
+  }
   const key = `w:${familyId}:${week.map((s) => s.id + (s.parentRating || 0)).join(',')}`;
   const out = await reportFor(week, key);
-  res.json({ kind: 'week', family: { id: familyId, name: fam.name, demo: familyId === 'demo' }, sessionIds: week.map((s) => s.id), ...out });
+  res.json({ kind: 'week', paid: true, family: { id: familyId, name: fam.name, demo: familyId === 'demo' || fam.historyFrom === 'demo' }, sessionIds: week.map((s) => s.id), ...out });
 });
 
 app.get('/api/family/:id', (req, res) => {
@@ -800,13 +819,122 @@ app.get('/api/family/:id', (req, res) => {
   if (!fam) return res.status(404).json({ error: 'not found' });
   const sessions = store.familySessions(fam.id);
   res.json({
-    id: fam.id, name: fam.name,
+    id: fam.id, name: fam.name, plan: fam.plan || null, paid: store.isPaid(fam.id), demo: fam.historyFrom === 'demo',
     members: Object.values(fam.members).map((m) => ({ nickname: m.nickname, kind: m.kind, ageBand: m.ageBand, levels: Object.fromEntries(Object.entries(m.ratings).map(([k, v]) => [k, store.ratingToLevel(v)])) })),
     sessions: sessions.map((s) => ({ id: s.id, startedAt: s.startedAt, title: s.story.title })),
   });
 });
 
-app.get('/api/config', (req, res) => res.json({ ai: ai.hasKey(), model: ai.MODEL }));
+// ---------------------------------------------------------------- plans and checkout
+// One paid plan, Kinquest Family, with a 7-day trial. With STRIPE_SECRET_KEY (test mode only) checkout runs
+// on Stripe; without it, a built-in test checkout takes Stripe's public test card. Nothing real is charged.
+const PLANS = {
+  monthly: { name: 'Kinquest Family, monthly', cents: 799, interval: 'month' },
+  yearly: { name: 'Kinquest Family, yearly', cents: 5999, interval: 'year' },
+};
+const TRIAL_DAYS = 7;
+const stripeKey = () => (String(process.env.STRIPE_SECRET_KEY || '').startsWith('sk_test_') ? process.env.STRIPE_SECRET_KEY : null);
+const checkouts = new Map(); // built-in test checkout sessions, in memory
+const safeReturn = (r) => (typeof r === 'string' && /^\/[a-z0-9/._?=&%#-]*$/i.test(r) && !r.startsWith('//') ? r : null);
+
+// Adds upgraded=1 to a return path, before any #hash.
+function withUpgraded(path) {
+  const [p, h] = path.split('#');
+  return p + (p.includes('?') ? '&' : '?') + 'upgraded=1' + (h ? '#' + h : '');
+}
+
+function activate(familyId, plan, source) {
+  return store.setPlan(familyId, { status: 'trialing', plan, source, since: Date.now(), trialEnds: Date.now() + TRIAL_DAYS * 86400000 });
+}
+
+async function stripe(pathname, params, method = 'POST') {
+  const res = await fetch(`https://api.stripe.com/v1/${pathname}`, {
+    method,
+    headers: { authorization: `Bearer ${stripeKey()}`, 'content-type': 'application/x-www-form-urlencoded' },
+    body: method === 'POST' ? new URLSearchParams(params).toString() : undefined,
+  });
+  const body = await res.json();
+  if (!res.ok) throw new Error((body.error && body.error.message) || `Stripe ${res.status}`);
+  return body;
+}
+
+app.post('/api/checkout', async (req, res) => {
+  const plan = PLANS[req.body.plan] ? req.body.plan : 'monthly';
+  const fam = store.ensureFamily(clean(req.body.familyId, 32));
+  const back = safeReturn(req.body.returnTo) || `/report.html?family=${fam.id}`;
+  const base = process.env.PUBLIC_URL ? process.env.PUBLIC_URL.replace(/\/$/, '') : `${req.headers['x-forwarded-proto'] || req.protocol}://${req.headers['x-forwarded-host'] || req.headers.host}`;
+  try {
+    if (stripeKey()) {
+      const p = PLANS[plan];
+      const session = await stripe('checkout/sessions', {
+        mode: 'subscription',
+        'line_items[0][quantity]': '1',
+        'line_items[0][price_data][currency]': 'usd',
+        'line_items[0][price_data][unit_amount]': String(p.cents),
+        'line_items[0][price_data][recurring][interval]': p.interval,
+        'line_items[0][price_data][product_data][name]': p.name,
+        'subscription_data[trial_period_days]': String(TRIAL_DAYS),
+        client_reference_id: fam.id,
+        'metadata[familyId]': fam.id,
+        'metadata[plan]': plan,
+        success_url: `${base}/api/checkout/stripe-done?session_id={CHECKOUT_SESSION_ID}&r=${encodeURIComponent(back)}`,
+        cancel_url: `${base}/pricing.html?family=${fam.id}&canceled=1`,
+      });
+      return res.json({ ok: true, familyId: fam.id, url: session.url, provider: 'stripe' });
+    }
+    const id = store.newId(8);
+    checkouts.set(id, { familyId: fam.id, plan, back, createdAt: Date.now() });
+    res.json({ ok: true, familyId: fam.id, url: `/checkout.html?c=${id}`, provider: 'test' });
+  } catch (e) {
+    console.error('[checkout]', e.message);
+    res.status(502).json({ ok: false, error: 'Checkout is unavailable right now. Please try again.' });
+  }
+});
+
+app.get('/api/checkout/stripe-done', async (req, res) => {
+  const back = safeReturn(req.query.r) || '/';
+  try {
+    const s = await stripe(`checkout/sessions/${encodeURIComponent(String(req.query.session_id || ''))}`, null, 'GET');
+    if (s.status === 'complete' && s.metadata && s.metadata.familyId) activate(s.metadata.familyId, s.metadata.plan || 'monthly', 'stripe_test');
+    res.redirect(withUpgraded(back));
+  } catch (e) {
+    console.error('[checkout]', e.message);
+    res.redirect('/pricing.html?canceled=1');
+  }
+});
+
+app.get('/api/checkout/:id', (req, res) => {
+  const c = checkouts.get(req.params.id);
+  if (!c) return res.status(404).json({ error: 'This checkout has expired. Start again from Pricing.' });
+  const p = PLANS[c.plan];
+  res.json({ plan: c.plan, name: p.name, cents: p.cents, interval: p.interval, trialDays: TRIAL_DAYS, back: c.back });
+});
+
+// Built-in test checkout: accepts only Stripe's public test card. Card details are checked and dropped, never stored.
+app.post('/api/checkout/:id/pay', (req, res) => {
+  const c = checkouts.get(req.params.id);
+  if (!c) return res.status(404).json({ ok: false, error: 'This checkout has expired. Start again from Pricing.' });
+  const card = String(req.body.card || '').replace(/\D/g, '');
+  const [mm, yy] = String(req.body.exp || '').split('/').map((x) => Number(x.trim()));
+  const now = new Date();
+  const expOk = mm >= 1 && mm <= 12 && (2000 + yy > now.getFullYear() || (2000 + yy === now.getFullYear() && mm >= now.getMonth() + 1));
+  if (card !== '4242424242424242') return res.status(400).json({ ok: false, field: 'card', error: 'Test mode: use the test card 4242 4242 4242 4242.' });
+  if (!expOk) return res.status(400).json({ ok: false, field: 'exp', error: 'Enter a future date as MM/YY.' });
+  if (!/^\d{3,4}$/.test(String(req.body.cvc || ''))) return res.status(400).json({ ok: false, field: 'cvc', error: 'Enter any 3 digits.' });
+  activate(c.familyId, c.plan, 'test_checkout');
+  checkouts.delete(req.params.id);
+  res.json({ ok: true, familyId: c.familyId, redirect: withUpgraded(c.back) });
+});
+
+// Lets a family (or a judge) cancel and see the free experience again.
+app.post('/api/plan/cancel', (req, res) => {
+  const fam = store.getFamily(clean(req.body.familyId, 32));
+  if (!fam || fam.historyFrom === 'demo') return res.status(400).json({ ok: false });
+  store.setPlan(fam.id, { ...(fam.plan || {}), status: 'canceled', canceledAt: Date.now() });
+  res.json({ ok: true });
+});
+
+app.get('/api/config', (req, res) => res.json({ ai: ai.hasKey(), model: ai.MODEL, checkout: stripeKey() ? 'stripe_test' : 'test' }));
 app.get('/healthz', (req, res) => res.send('ok'));
 
 if (require.main === module) {

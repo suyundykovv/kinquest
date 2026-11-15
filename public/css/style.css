@@ -408,3 +408,17 @@ details.levels summary { cursor: pointer; font-weight: 600; color: var(--ink); m
 .rulebook.kid .ri { flex: none; min-width: 92px; text-align: center; font-size: 20px; background: #fff; border-radius: var(--r-sm); padding: 6px 8px; color: var(--ink); }
 .mission-card { border: 2px solid var(--key-soft); }
 @media (max-width: 743px) { .rulebook.kid .ri { min-width: 72px; font-size: 16px; } }
+
+/* Plans, paywall, test checkout */
+.plans.two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 760px; margin-left: auto; margin-right: auto; }
+@media (max-width: 743px) { .plans.two { grid-template-columns: 1fr; } }
+.test-card { background: var(--key-soft); border: 0; }
+.test-banner { background: var(--key-soft); color: #7a5800; font-weight: 600; text-align: center; border-radius: var(--r-md); padding: 10px 14px; margin-bottom: 16px; }
+.summary { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; background: var(--surface); border-radius: var(--r-md); padding: 14px 16px; margin: 12px 0 8px; color: var(--ink); }
+.summary .num { text-align: right; }
+.paywall-mini { background: var(--surface); border-radius: var(--r-md); padding: 14px 16px; margin-top: 8px; }
+.linkish { appearance: none; background: none; border: 0; padding: 0; color: var(--accent-press); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
+.upsell { border: 2px solid var(--key); }
+.judges { background: var(--surface); }
+.judges ol { margin: 0; padding-left: 20px; }
+.judges li { margin: 8px 0; color: var(--ink); }

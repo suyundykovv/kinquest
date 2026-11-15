@@ -23,6 +23,24 @@
 | Report | Built from the move log for one session or a week, in four blocks: what went well, where it got tricky (tied to the exact clue), one question for the grown-up plus screen-free activities, and the next mission. Then results by puzzle type with levels and hints. Skill levels 1–10 are kept only as the difficulty setting |
 | Backup mode | One-device play with a “pass the device, no peeking” curtain between turns |
 
+## For judges
+
+The home page has a 5-minute guide (`/#judges`). In short:
+
+1. **Start as the Demo Family** (you’re the Keeper), then open the join link in a private window (the Scout). The demo family has a week of bot-played history, so today’s Detective starts with the “Two Clues” check tool.
+2. [Sample weekly report](/report.html?family=demo).
+3. **Paywall:** a new family gets today’s report free; the weekly report and next missions are Kinquest Family ($7.99/mo or $59.99/yr, 7-day trial). Checkout is test mode: card `4242 4242 4242 4242`, any future date, any CVC.
+
+## Plans and checkout
+
+| | Free | Kinquest Family |
+|---|---|---|
+| Daily expedition, today’s report, solo chest, Fix the Robot, off-screen mission | ✅ | ✅ |
+| Next missions that adapt (focus.js) | shows what’s waiting | ✅ |
+| Weekly report | teaser | ✅ |
+
+`POST /api/checkout` starts a 7-day trial. With `STRIPE_SECRET_KEY` set to a **test** key (`sk_test_…`), it creates a Stripe Checkout session (subscription with a trial) and verifies it on return. Without a key, a built-in test checkout accepts only Stripe’s public test card. Card details are never stored. Live keys are ignored.
+
 ## Why the puzzles are fair
 
 Code handles everything that must be exact; AI handles everything that should feel alive.
@@ -52,6 +70,7 @@ Without a key everything still works; story and report text come from built-in t
 | `GEMINI_MODEL` | default `gemini-3.5-flash-lite` (about 1.5 s per call) |
 | `PUBLIC_URL` | public URL for the QR code when behind a proxy |
 | `DATA_DIR` | where families and sessions are stored (default `./data`) |
+| `STRIPE_SECRET_KEY` | optional, test mode only (`sk_test_…`): checkout runs on Stripe instead of the built-in test checkout |
 
 To try it locally, open the game in a normal window and a private window (or two tabs): those are two players. A phone on the same Wi-Fi can join via the QR code using your computer's LAN address.
 

@@ -23,7 +23,7 @@ const DAYS = [
   { logic: 0.65, patterns: 0.85, spatial: 0.35, rotations: 1, guessy: 0.25, rating: 3 },
   { logic: 0.7, patterns: 0.9, spatial: 0.45, rotations: 2, guessy: 0.2, rating: 2 },
   { logic: 0.7, patterns: 0.9, spatial: 0.5, rotations: 2, guessy: 0.2, rating: 3 },
-  { logic: 0.97, patterns: 0.95, spatial: 0.6, rotations: 3, guessy: 0.15, rating: 3 },
+  { logic: 0.2, patterns: 0.95, spatial: 0.6, rotations: 3, guessy: 0.15, rating: 3 },
 ];
 const INTERESTS = ['ocean', 'ocean', 'space', 'ocean', 'dinosaurs', 'ocean'];
 const START = Date.UTC(2026, 10, 9, 16, 0); // November 9, 2026, 7:00 PM Moscow time
@@ -37,6 +37,7 @@ server.listen(0, async () => {
     clock.now = () => START + d * 86400000 + Math.floor(rnd() * 3600e3);
     const out = await playExpedition({ url, rooms, clock, rnd, profile: DAYS[d], opts: { parentName: 'Mom', childName: 'Max', ageBand: '8-10', interest: INTERESTS[d], familyId, familyName: 'Demo Family' } });
     familyId = out.familyId;
+    if (d === 0) store.setPlan(familyId, { status: 'active', plan: 'demo', source: 'demo' }); // the demo family has Kinquest Family
     ids.push(out.sessionId);
     console.log(`day ${d + 1}: ${out.sessionId}`);
   }

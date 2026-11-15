@@ -40,6 +40,7 @@
             <a class="btn" href="#start">Start an Expedition <span class="arrow" aria-hidden="true">→</span></a>
             <a class="btn secondary" href="#join">Join with a Code</a>
           </div>
+          <p class="small" style="margin-top:14px">🧑‍⚖️ Judging Kinquest? <a href="#judges">Start here: a 5-minute guide</a></p>
         </div>
 
         <div class="phones" data-enter="2" aria-label="Two phones showing the same puzzle from different roles" role="img">
@@ -76,6 +77,34 @@
                 <div class="mini-note" style="background:#e8effc;border-color:#d3e0f8">“Max, what did you find by the window?”</div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section judges" id="judges" aria-labelledby="judges-title">
+      <div class="wrap">
+        <div class="section-head"><h2 id="judges-title">For judges: try it in 5 minutes</h2><p class="muted">No sign-up. Kinquest is a game for two, so you’ll use two windows.</p></div>
+        <div class="grid2">
+          <div class="card">
+            <h3>Play as the demo family</h3>
+            <ol>
+              <li>Tap <b>Start as the Demo Family</b>. You’re the Keeper (the grown-up).</li>
+              <li>Open the join link under the QR code in a <b>private window</b> or on your phone. That’s the Scout (the kid). Enter any name.</li>
+              <li>The demo family already has a week of history, so today’s Detective opens with the <b>“Two Clues” check tool</b>: the next mission built from that week’s mix-ups.</li>
+              <li>After the chest, try the kid’s solo chest and “Fix the Robot,” then open the report.</li>
+            </ol>
+            <p class="small muted">Only one window? Use “One device, pass it around” in the form below. Demo history was played by a bot through the real game server, and it’s labeled as demo.</p>
+            <button class="btn block" id="demoStart" type="button">Start as the Demo Family <span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+          <div class="card">
+            <h3>See the report and the paywall</h3>
+            <ol>
+              <li><a href="/report.html?family=demo">Sample weekly report</a>: four blocks built from the move log, worded by Gemini.</li>
+              <li>A new family gets today’s report free. The weekly report and next missions are <b>Kinquest Family</b> ($7.99/mo, 7-day trial).</li>
+              <li><a href="/pricing.html">Pricing</a> → Start Free Trial → test checkout. Card <b class="num">4242 4242 4242 4242</b>, any future date, any CVC. Nothing is charged.</li>
+            </ol>
+            <a class="btn ghost block" href="/report.html?family=demo">Open the Sample Report</a>
           </div>
         </div>
       </div>
@@ -223,6 +252,11 @@
       store.set('kq_parentName', parentName);
       const opts = { parentName, ageBand: chips.ageBand, interest: chips.interest, mode: chips.mode, childName: document.getElementById('childName').value.trim(), familyId: store.get('kq_familyId') || '' };
       try { sessionStorage.setItem('kq_create', JSON.stringify(opts)); } catch {}
+      location.href = '/game.html?create=1';
+    });
+    document.getElementById('demoStart').addEventListener('click', (e) => {
+      e.target.disabled = true;
+      try { sessionStorage.setItem('kq_create', JSON.stringify({ demoFamily: true, parentName: 'Mom', ageBand: '8-10', interest: 'ocean', mode: 'multi' })); } catch {}
       location.href = '/game.html?create=1';
     });
     document.getElementById('joinForm').addEventListener('submit', (e) => {

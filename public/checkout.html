@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Checkout · Kinquest</title>
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to Content</a>
+  <header class="top">
+    <div class="wrap">
+      <a class="logo" href="/" translate="no"><span class="logo-mark" aria-hidden="true">🗝️</span>Kinquest</a>
+      <nav aria-label="Main"><a href="/pricing.html">Back to Pricing</a></nav>
+    </div>
+  </header>
+  <main class="section" id="main" style="padding-top:48px">
+    <div class="wrap narrow" id="app">
+      <div class="card center"><p>Loading checkout…</p></div>
+    </div>
+  </main>
+  <script>
+    // Built-in test checkout (used when no Stripe test key is set). It only accepts Stripe's public test card
+    // and never stores card details: the server checks them and starts the trial.
+    const app = document.getElementById('app');
+    const id = new URLSearchParams(location.search).get('c');
+    const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    fetch('/api/checkout/' + encodeURIComponent(id || '')).then((r) => r.json().then((j) => ({ ok: r.ok, j }))).then(({ ok, j }) => {
+      if (!ok) { app.innerHTML = `<div class="card center"><h1 style="font-size:28px">${esc(j.error)}</h1><a class="btn" href="/pricing.html">Back to Pricing</a></div>`; return; }
+      const trialEnd = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric' }).format(new Date(Date.now() + j.trialDays * 86400000));
+      app.innerHTML = `
+      <div class="test-banner" role="note">🧪 TEST MODE · No real charge. Use card 4242 4242 4242 4242.</div>
+      <form class="card" id="pay" novalidate>
+        <span class="pill scout">Kinquest Family</span>
+        <h1 style="font-size:28px;margin-top:12px">Start your 7-day free trial</h1>
+        <div class="summary"><div><b>${esc(j.name)}</b><div class="small muted">Free until ${trialEnd}, then ${usd.format(j.cents / 100)}/${j.interval}. Cancel anytime.</div></div><div class="num"><b>${usd.format(0)}</b><div class="small muted">due today</div></div></div>
+        <label class="f" for="card">Card number</label>
+        <input type="text" id="card" inputmode="numeric" autocomplete="off" placeholder="4242 4242 4242 4242" aria-describedby="card-err" maxlength="19">
+        <div class="field-error" id="card-err" aria-live="polite"></div>
+        <div class="grid2" style="gap:12px">
+          <div><label class="f" for="exp">Expires (MM/YY)</label><input type="text" id="exp" inputmode="numeric" autocomplete="off" placeholder="12/30" maxlength="5" aria-describedby="exp-err"><div class="field-error" id="exp-err" aria-live="polite"></div></div>
+          <div><label class="f" for="cvc">CVC</label><input type="text" id="cvc" inputmode="numeric" autocomplete="off" placeholder="123" maxlength="4" aria-describedby="cvc-err"><div class="field-error" id="cvc-err" aria-live="polite"></div></div>
+        </div>
+        <button type="button" class="btn ghost sm" id="fill" style="margin-top:12px">Fill In the Test Card</button>
+        <div style="margin-top:20px"><button class="btn block" id="go">Start Free Trial</button></div>
+        <p class="small muted center" style="margin:12px 0 0">Built-in test checkout. With a Stripe test key on the server, this step runs on Stripe Checkout instead.</p>
+      </form>`;
+      const card = document.getElementById('card');
+      card.oninput = () => { card.value = card.value.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 '); };
+      const exp = document.getElementById('exp');
+      exp.oninput = () => { const d = exp.value.replace(/\D/g, '').slice(0, 4); exp.value = d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d; };
+      document.getElementById('fill').onclick = () => { card.value = '4242 4242 4242 4242'; exp.value = '12/30'; document.getElementById('cvc').value = '123'; };
+      document.getElementById('pay').onsubmit = (e) => {
+        e.preventDefault();
+        ['card', 'exp', 'cvc'].forEach((f) => (document.getElementById(f + '-err').textContent = ''));
+        const go = document.getElementById('go');
+        go.disabled = true; go.textContent = 'Starting your trial…';
+        fetch(`/api/checkout/${encodeURIComponent(id)}/pay`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ card: card.value, exp: exp.value, cvc: document.getElementById('cvc').value }) })
+          .then((r) => r.json()).then((r) => {
+            if (!r.ok) { go.disabled = false; go.textContent = 'Start Free Trial'; const f = r.field || 'card'; document.getElementById(f + '-err').textContent = r.error; document.getElementById(f).focus(); return; }
+            try { localStorage.setItem('kq_familyId', r.familyId); } catch {}
+            location.href = r.redirect;
+          });
+      };
+    });
+  </script>
+</body>
+</html>

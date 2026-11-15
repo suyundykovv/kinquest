@@ -32,7 +32,7 @@ async function playExpedition({ url, rooms, clock, rnd = Math.random, profile = 
 
   const host = client(url);
   const kid = client(url);
-  const created = await host.emit('create_room', { parentName: opts.parentName || 'Mom', interest: opts.interest || 'ocean', ageBand: opts.ageBand || '8-10', familyId: opts.familyId || '', familyName: opts.familyName });
+  const created = await host.emit('create_room', { parentName: opts.parentName || 'Mom', interest: opts.interest || 'ocean', ageBand: opts.ageBand || '8-10', familyId: opts.familyId || '', familyName: opts.familyName, demoFamily: opts.demoFamily });
   if (!created.ok) throw new Error(created.error);
   const joined = await kid.emit('join_room', { code: created.code, name: opts.childName || 'Max', ageBand: opts.ageBand || '8-10' });
   if (!joined.ok) throw new Error(joined.error);

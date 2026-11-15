@@ -2,10 +2,10 @@
  {
   "id": "demo-1",
   "familyId": "demo",
-  "code": "1516",
+  "code": "8634",
   "mode": "multi",
   "startedAt": 1794240983294,
-  "endedAt": 1794241268837,
+  "endedAt": 1794241269667,
   "story": {
    "title": "The Sunken Octopus Temple",
    "region": "Undersea Kingdom",
@@ -37,7 +37,7 @@
     "opened": true,
     "errors": 2,
     "hints": 0,
-    "ms": 109630
+    "ms": 110460
    },
    {
     "type": "cipher",
@@ -72,7 +72,7 @@
     "action": "accuse",
     "ms": 11733,
     "hint": 0,
-    "i": 4,
+    "i": 6,
     "correct": true
    },
    {
@@ -94,44 +94,44 @@
     "type": "detective",
     "player": "max",
     "role": "scout",
-    "action": "exclude_link",
+    "action": "exclude",
     "ms": 17164,
     "hint": 0,
     "i": 0,
-    "clue": 0,
-    "valid": false,
-    "name": "Shelly Turtle",
-    "short": "the thief had no umbrella"
-   },
-   {
-    "t": 1794241031255,
-    "lock": 0,
-    "type": "detective",
-    "player": "max",
-    "role": "scout",
-    "action": "exclude",
-    "ms": 7767,
-    "hint": 0,
-    "i": 0,
-    "correct": true,
-    "clue": "keeper"
-   },
-   {
-    "t": 1794241041520,
-    "lock": 0,
-    "type": "detective",
-    "player": "max",
-    "role": "scout",
-    "action": "exclude",
-    "ms": 10265,
-    "hint": 0,
-    "i": 1,
     "correct": true,
     "clue": 0,
     "linkValid": true
    },
    {
-    "t": 1794241064152,
+    "t": 1794241035434,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "exclude_link",
+    "ms": 11946,
+    "hint": 0,
+    "i": 1,
+    "clue": 0,
+    "valid": false,
+    "name": "Pinch the Crab",
+    "short": "the thief had no umbrella"
+   },
+   {
+    "t": 1794241042350,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 6916,
+    "hint": 0,
+    "i": 1,
+    "correct": true,
+    "clue": "keeper"
+   },
+   {
+    "t": 1794241064982,
     "lock": 0,
     "type": "detective",
     "player": "max",
@@ -141,22 +141,20 @@
     "hint": 0,
     "i": 5,
     "correct": false,
-    "name": "Sparky Fish",
+    "name": "Ollie Octopus",
     "fits": [
-     "the thief was not standing at either end of the line",
-     "the thief is not wearing green"
-    ],
-    "breaks": [
-     "the thief had no umbrella",
+     "the thief stood somewhere right of a neighbor wearing a feathered hat",
      "the thief is not wearing yellow"
     ],
+    "breaks": [
+     "the thief had no umbrella"
+    ],
     "breaksWho": [
-     "scout",
-     "keeper"
+     "scout"
     ]
    },
    {
-    "t": 1794241093125,
+    "t": 1794241093955,
     "lock": 0,
     "type": "detective",
     "player": "max",
@@ -168,19 +166,18 @@
     "correct": false,
     "name": "Pinch the Crab",
     "fits": [
-     "the thief is not wearing yellow",
-     "the thief was not standing at either end of the line",
-     "the thief is not wearing green"
-    ],
-    "breaks": [
      "the thief had no umbrella"
     ],
+    "breaks": [
+     "the thief stood somewhere right of a neighbor wearing a feathered hat",
+     "the thief is not wearing yellow"
+    ],
     "breaksWho": [
-     "scout"
+     "keeper"
     ]
    },
    {
-    "t": 1794241115954,
+    "t": 1794241116784,
     "lock": 0,
     "type": "detective",
     "player": "max",
@@ -188,24 +185,24 @@
     "action": "accuse",
     "ms": 22829,
     "hint": 0,
-    "i": 4,
+    "i": 6,
     "correct": true
    },
    {
-    "t": 1794241115954,
+    "t": 1794241116784,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 109630,
+    "ms": 110460,
     "hint": 0,
     "errors": 2,
     "hints": 0,
     "level": 3
    },
    {
-    "t": 1794241138129,
+    "t": 1794241138959,
     "lock": 1,
     "type": "cipher",
     "round": 0,
@@ -226,7 +223,7 @@
     ]
    },
    {
-    "t": 1794241139684,
+    "t": 1794241140514,
     "lock": 1,
     "type": "cipher",
     "round": 0,
@@ -236,13 +233,13 @@
     "ms": 1555,
     "hint": 0,
     "correct": false,
-    "button": 2,
+    "button": 0,
     "off": [
      "shape"
     ]
    },
    {
-    "t": 1794241150969,
+    "t": 1794241151799,
     "lock": 1,
     "type": "cipher",
     "round": 0,
@@ -252,10 +249,10 @@
     "ms": 11285,
     "hint": 0,
     "correct": true,
-    "button": 4
+    "button": 2
    },
    {
-    "t": 1794241150969,
+    "t": 1794241151799,
     "lock": 1,
     "type": "cipher",
     "round": 0,
@@ -269,7 +266,7 @@
     "level": 3
    },
    {
-    "t": 1794241162034,
+    "t": 1794241162864,
     "lock": 1,
     "type": "cipher",
     "round": 0,
@@ -282,7 +279,7 @@
     "choice": "else"
    },
    {
-    "t": 1794241162034,
+    "t": 1794241162864,
     "lock": 1,
     "type": "cipher",
     "round": 0,
@@ -296,7 +293,7 @@
     "level": 5
    },
    {
-    "t": 1794241176282,
+    "t": 1794241177112,
     "lock": 1,
     "type": "cipher",
     "round": 1,
@@ -309,7 +306,7 @@
     "button": 5
    },
    {
-    "t": 1794241176282,
+    "t": 1794241177112,
     "lock": 1,
     "type": "cipher",
     "round": 1,
@@ -323,7 +320,7 @@
     "level": 3
    },
    {
-    "t": 1794241190872,
+    "t": 1794241191702,
     "lock": 1,
     "type": "cipher",
     "round": 1,
@@ -333,10 +330,10 @@
     "ms": 28838,
     "hint": 0,
     "correct": true,
-    "choice": "else"
+    "choice": "then"
    },
    {
-    "t": 1794241190872,
+    "t": 1794241191702,
     "lock": 1,
     "type": "cipher",
     "round": 1,
@@ -350,7 +347,7 @@
     "level": 5
    },
    {
-    "t": 1794241202727,
+    "t": 1794241203557,
     "lock": 1,
     "type": "cipher",
     "round": 2,
@@ -364,7 +361,7 @@
     "swapped": true
    },
    {
-    "t": 1794241210874,
+    "t": 1794241211704,
     "lock": 1,
     "type": "cipher",
     "round": 2,
@@ -378,7 +375,7 @@
     "swapped": true
    },
    {
-    "t": 1794241210874,
+    "t": 1794241211704,
     "lock": 1,
     "type": "cipher",
     "round": 2,
@@ -393,7 +390,7 @@
     "swapped": true
    },
    {
-    "t": 1794241217909,
+    "t": 1794241218739,
     "lock": 1,
     "type": "cipher",
     "round": 2,
@@ -403,11 +400,11 @@
     "ms": 27037,
     "hint": 0,
     "correct": true,
-    "button": 5,
+    "button": 2,
     "swapped": true
    },
    {
-    "t": 1794241217909,
+    "t": 1794241218739,
     "lock": 1,
     "type": "cipher",
     "round": 2,
@@ -422,7 +419,7 @@
     "swapped": true
    },
    {
-    "t": 1794241224029,
+    "t": 1794241224859,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
@@ -433,7 +430,7 @@
     "n": 1
    },
    {
-    "t": 1794241227623,
+    "t": 1794241228453,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
@@ -444,7 +441,7 @@
     "n": 2
    },
    {
-    "t": 1794241237455,
+    "t": 1794241238285,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
@@ -456,7 +453,7 @@
     "marked": 1
    },
    {
-    "t": 1794241237455,
+    "t": 1794241238285,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
@@ -469,7 +466,7 @@
     "level": 5
    },
    {
-    "t": 1794241239627,
+    "t": 1794241240457,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
@@ -481,7 +478,7 @@
     "rotations": 2
    },
    {
-    "t": 1794241260471,
+    "t": 1794241261301,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
@@ -492,7 +489,7 @@
     "n": 3
    },
    {
-    "t": 1794241260471,
+    "t": 1794241261301,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
@@ -500,14 +497,14 @@
     "action": "edit",
     "ms": 0,
     "hint": 0,
-    "z": 0,
-    "x": 2,
+    "z": 2,
+    "x": 1,
     "delta": -1,
     "correct": true,
     "brokeRight": false
    },
    {
-    "t": 1794241265039,
+    "t": 1794241265869,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
@@ -519,7 +516,7 @@
     "rotations": 3
    },
    {
-    "t": 1794241265039,
+    "t": 1794241265869,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
@@ -591,10 +588,10 @@
  {
   "id": "demo-2",
   "familyId": "demo",
-  "code": "8620",
+  "code": "7714",
   "mode": "multi",
   "startedAt": 1794329062775,
-  "endedAt": 1794329305490,
+  "endedAt": 1794329374908,
   "story": {
    "title": "The Sunken Octopus Temple",
    "region": "Undersea Kingdom",
@@ -625,15 +622,15 @@
     },
     "opened": true,
     "errors": 0,
-    "hints": 0,
-    "ms": 82018,
+    "hints": 1,
+    "ms": 137082,
     "focus": {
      "id": "two_clues",
      "stage": "scaffold",
      "reason": {
       "name": "Pinch the Crab",
-      "fits": "the thief is not wearing yellow",
-      "breaks": "the thief had no umbrella",
+      "fits": "the thief had no umbrella",
+      "breaks": "the thief stood somewhere right of a neighbor wearing a feathered hat",
       "solo": false
      }
     }
@@ -647,7 +644,7 @@
     "opened": true,
     "errors": 1,
     "hints": 0,
-    "ms": 84889
+    "ms": 105477
    },
    {
     "type": "blueprint",
@@ -656,9 +653,9 @@
      "keeper": 5
     },
     "opened": true,
-    "errors": 1,
-    "hints": 1,
-    "ms": 40998
+    "errors": 0,
+    "hints": 0,
+    "ms": 34254
    }
   ],
   "attempts": [
@@ -693,36 +690,22 @@
     "type": "detective",
     "player": "max",
     "role": "scout",
-    "action": "exclude_link",
+    "action": "exclude",
     "ms": 31781,
     "hint": 0,
     "i": 0,
-    "clue": 0,
-    "valid": false,
-    "name": "Pinch the Crab",
-    "short": "the thief wears blue"
-   },
-   {
-    "t": 1794329126475,
-    "lock": 0,
-    "type": "detective",
-    "player": "max",
-    "role": "scout",
-    "action": "exclude",
-    "ms": 7444,
-    "hint": 0,
-    "i": 0,
     "correct": true,
-    "clue": "keeper"
+    "clue": 0,
+    "linkValid": true
    },
    {
-    "t": 1794329135013,
+    "t": 1794329129278,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "exclude",
-    "ms": 8538,
+    "ms": 10247,
     "hint": 0,
     "i": 2,
     "correct": true,
@@ -730,13 +713,13 @@
     "linkValid": true
    },
    {
-    "t": 1794329145394,
+    "t": 1794329140388,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "exclude",
-    "ms": 10381,
+    "ms": 11110,
     "hint": 0,
     "i": 3,
     "correct": true,
@@ -744,54 +727,135 @@
     "linkValid": true
    },
    {
-    "t": 1794329169268,
+    "t": 1794329155220,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "check_clue",
-    "ms": 23874,
+    "ms": 14832,
     "hint": 0,
+    "i": 3,
+    "k": 0,
+    "answer": true,
+    "correct": false
+   },
+   {
+    "t": 1794329155220,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "check_clue",
+    "ms": 0,
+    "hint": 0,
+    "i": 3,
+    "k": 0,
+    "answer": false,
+    "correct": true
+   },
+   {
+    "t": 1794329185680,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "check_clue",
+    "ms": 30460,
+    "hint": 0,
+    "i": 4,
+    "k": 0,
+    "answer": true,
+    "correct": false
+   },
+   {
+    "t": 1794329185680,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "check_clue",
+    "ms": 0,
+    "hint": 0,
+    "i": 4,
+    "k": 0,
+    "answer": false,
+    "correct": true
+   },
+   {
+    "t": 1794329185680,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 0,
+    "hint": 0,
+    "i": 4,
+    "correct": true,
+    "clue": 0,
+    "linkValid": true
+   },
+   {
+    "t": 1794329216537,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "hint",
+    "ms": 30857,
+    "hint": 1,
+    "level": 1
+   },
+   {
+    "t": 1794329224332,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "check_clue",
+    "ms": 7795,
+    "hint": 1,
     "i": 1,
     "k": 0,
     "answer": true,
     "correct": true
    },
    {
-    "t": 1794329169268,
+    "t": 1794329224332,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "accuse",
     "ms": 0,
-    "hint": 0,
+    "hint": 1,
     "i": 1,
     "correct": true,
     "checked": true
    },
    {
-    "t": 1794329169268,
+    "t": 1794329224332,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 82018,
-    "hint": 0,
+    "ms": 137082,
+    "hint": 1,
     "errors": 0,
-    "hints": 0,
+    "hints": 1,
     "level": 3
    },
    {
-    "t": 1794329186902,
+    "t": 1794329238938,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "predict",
-    "ms": 14141,
+    "ms": 11050,
     "hint": 0,
     "correct": true,
     "changes": [
@@ -805,179 +869,178 @@
     ]
    },
    {
-    "t": 1794329197284,
+    "t": 1794329257168,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "press",
-    "ms": 10382,
+    "ms": 18230,
     "hint": 0,
     "correct": true,
-    "button": 0
+    "button": 4
    },
    {
-    "t": 1794329197284,
+    "t": 1794329257168,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 24523,
+    "ms": 29280,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 4
    },
    {
-    "t": 1794329207849,
+    "t": 1794329270823,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "mom",
     "role": "keeper",
     "action": "branch",
-    "ms": 35088,
-    "hint": 0,
-    "correct": true,
-    "choice": "then"
-   },
-   {
-    "t": 1794329207849,
-    "lock": 1,
-    "type": "cipher",
-    "round": 0,
-    "player": "mom",
-    "role": "keeper",
-    "action": "part_solved",
-    "ms": 35088,
-    "hint": 0,
-    "errors": 0,
-    "hints": 0,
-    "level": 6
-   },
-   {
-    "t": 1794329217458,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "max",
-    "role": "scout",
-    "action": "press",
-    "ms": 9609,
-    "hint": 0,
-    "correct": true,
-    "button": 5
-   },
-   {
-    "t": 1794329217458,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "max",
-    "role": "scout",
-    "action": "part_solved",
-    "ms": 9609,
-    "hint": 0,
-    "errors": 0,
-    "hints": 0,
-    "level": 4
-   },
-   {
-    "t": 1794329228895,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "mom",
-    "role": "keeper",
-    "action": "branch",
-    "ms": 21046,
+    "ms": 42935,
     "hint": 0,
     "correct": true,
     "choice": "else"
    },
    {
-    "t": 1794329228895,
+    "t": 1794329270823,
     "lock": 1,
     "type": "cipher",
-    "round": 1,
+    "round": 0,
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 21046,
+    "ms": 42935,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 6
    },
    {
-    "t": 1794329244784,
+    "t": 1794329293614,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "max",
+    "role": "scout",
+    "action": "press",
+    "ms": 22791,
+    "hint": 0,
+    "correct": true,
+    "button": 5
+   },
+   {
+    "t": 1794329293614,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "max",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 22791,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 4
+   },
+   {
+    "t": 1794329299511,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 28688,
+    "hint": 0,
+    "correct": false,
+    "choice": "then"
+   },
+   {
+    "t": 1794329305838,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 6327,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794329305838,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 35015,
+    "hint": 0,
+    "errors": 1,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794329323405,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "max",
     "role": "scout",
     "action": "branch",
-    "ms": 15889,
+    "ms": 17567,
     "hint": 0,
-    "correct": false,
+    "correct": true,
     "choice": "else",
     "swapped": true
    },
    {
-    "t": 1794329250783,
-    "lock": 1,
-    "type": "cipher",
-    "round": 2,
-    "player": "max",
-    "role": "scout",
-    "action": "branch",
-    "ms": 5999,
-    "hint": 0,
-    "correct": true,
-    "choice": "then",
-    "swapped": true
-   },
-   {
-    "t": 1794329250783,
+    "t": 1794329323405,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 21888,
+    "ms": 17567,
     "hint": 0,
-    "errors": 1,
+    "errors": 0,
     "hints": 0,
     "level": 4,
     "swapped": true
    },
    {
-    "t": 1794329257650,
+    "t": 1794329333365,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "mom",
     "role": "keeper",
     "action": "press",
-    "ms": 28755,
+    "ms": 27527,
     "hint": 0,
     "correct": true,
     "button": 0,
     "swapped": true
    },
    {
-    "t": 1794329257650,
+    "t": 1794329333365,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 28755,
+    "ms": 27527,
     "hint": 0,
     "errors": 0,
     "hints": 0,
@@ -985,138 +1048,82 @@
     "swapped": true
    },
    {
-    "t": 1794329269744,
+    "t": 1794329346745,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "predict_view",
-    "ms": 8392,
+    "ms": 9469,
     "hint": 0,
     "correct": true,
     "rotationsBefore": 0
    },
    {
-    "t": 1794329272806,
-    "lock": 2,
-    "type": "blueprint",
-    "player": "max",
-    "role": "scout",
-    "action": "rotate",
-    "ms": 3062,
-    "hint": 0,
-    "n": 1
-   },
-   {
-    "t": 1794329277057,
-    "lock": 2,
-    "type": "blueprint",
-    "player": "max",
-    "role": "scout",
-    "action": "rotate",
-    "ms": 4251,
-    "hint": 0,
-    "n": 2
-   },
-   {
-    "t": 1794329283496,
+    "t": 1794329353147,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
     "role": "keeper",
     "action": "mark",
-    "ms": 22144,
+    "ms": 15871,
     "hint": 0,
     "correct": true,
     "marked": 1
    },
    {
-    "t": 1794329283496,
+    "t": 1794329353147,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 22144,
+    "ms": 15871,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 5
    },
    {
-    "t": 1794329285948,
-    "lock": 2,
-    "type": "blueprint",
-    "player": "max",
-    "role": "scout",
-    "action": "check",
-    "ms": 8891,
-    "hint": 0,
-    "correct": false,
-    "rotations": 2
-   },
-   {
-    "t": 1794329285948,
-    "lock": 2,
-    "type": "blueprint",
-    "player": "max",
-    "role": "scout",
-    "action": "hint",
-    "ms": 0,
-    "hint": 1,
-    "level": 1
-   },
-   {
-    "t": 1794329298576,
-    "lock": 2,
-    "type": "blueprint",
-    "player": "max",
-    "role": "scout",
-    "action": "rotate",
-    "ms": 12628,
-    "hint": 1,
-    "n": 3
-   },
-   {
-    "t": 1794329298576,
+    "t": 1794329366140,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "edit",
-    "ms": 0,
-    "hint": 1,
-    "z": 2,
+    "ms": 19395,
+    "hint": 0,
+    "z": 1,
     "x": 2,
-    "delta": -1,
+    "delta": 1,
     "correct": true,
     "brokeRight": false
    },
    {
-    "t": 1794329302350,
+    "t": 1794329371530,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "check",
-    "ms": 3774,
-    "hint": 1,
+    "ms": 5390,
+    "hint": 0,
     "correct": true,
-    "rotations": 3
+    "rotations": 0
    },
    {
-    "t": 1794329302350,
+    "t": 1794329371530,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 40998,
-    "hint": 1,
-    "errors": 1,
-    "hints": 1,
+    "ms": 34254,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
     "level": 3,
-    "rotations": 3
+    "rotations": 0
    }
   ],
   "ratings": {
@@ -1130,7 +1137,7 @@
     },
     "after": {
      "spatial": 1246,
-     "patterns": 1340,
+     "patterns": 1333,
      "logic": 1246,
      "critical": 1246,
      "communication": 1200
@@ -1145,10 +1152,10 @@
      "communication": 1000
     },
     "after": {
-     "spatial": 1021,
-     "patterns": 1122,
-     "logic": 1035,
-     "critical": 1035,
+     "spatial": 1040,
+     "patterns": 1130,
+     "logic": 1016,
+     "critical": 1016,
      "communication": 1000
     }
    }
@@ -1160,10 +1167,19 @@
    "clues": 2,
    "state": "solved",
    "solved": true,
-   "tries": 1,
+   "tries": 2,
    "helped": false,
-   "wrongs": [],
-   "ms": 33980,
+   "wrongs": [
+    {
+     "name": "Puff the Blowfish",
+     "fits": [],
+     "breaks": [
+      "the thief had no umbrella",
+      "the thief wears yellow"
+     ]
+    }
+   ],
+   "ms": 45349,
    "robot": {
     "state": "done",
     "fixed": true,
@@ -1174,17 +1190,17 @@
   "offscreen": {
    "type": "detective",
    "title": "Two-Clue Hide and Seek",
-   "t": 1794329367391
+   "t": 1794329446687
   },
   "simulated": true
  },
  {
   "id": "demo-3",
   "familyId": "demo",
-  "code": "8967",
+  "code": "4429",
   "mode": "multi",
-  "startedAt": 1794414833305,
-  "endedAt": 1794415033485,
+  "startedAt": 1794414313868,
+  "endedAt": 1794414547092,
   "story": {
    "title": "The Missing Star Key",
    "region": "Star Station",
@@ -1214,16 +1230,16 @@
      "keeper": 5
     },
     "opened": true,
-    "errors": 0,
+    "errors": 2,
     "hints": 0,
-    "ms": 67306,
+    "ms": 82207,
     "focus": {
      "id": "two_clues",
      "stage": "independent",
      "reason": {
       "name": "Pinch the Crab",
-      "fits": "the thief is not wearing yellow",
-      "breaks": "the thief had no umbrella",
+      "fits": "the thief had no umbrella",
+      "breaks": "the thief stood somewhere right of a neighbor wearing a feathered hat",
       "solo": false
      }
     }
@@ -1235,9 +1251,9 @@
      "keeper": 6
     },
     "opened": true,
-    "errors": 1,
+    "errors": 0,
     "hints": 0,
-    "ms": 59717
+    "ms": 97115
    },
    {
     "type": "blueprint",
@@ -1248,111 +1264,148 @@
     "opened": true,
     "errors": 0,
     "hints": 0,
-    "ms": 38554
+    "ms": 26351
    }
   ],
   "attempts": [
    {
-    "t": 1794414871067,
+    "t": 1794414344276,
     "lock": 0,
     "type": "detective",
     "player": "mom",
     "role": "keeper",
     "action": "accuse",
-    "ms": 13274,
+    "ms": 13149,
     "hint": 0,
-    "i": 1,
+    "i": 2,
     "correct": true
    },
    {
-    "t": 1794414871067,
+    "t": 1794414344276,
     "lock": 0,
     "type": "detective",
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 13274,
+    "ms": 13149,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 5
    },
    {
-    "t": 1794414879792,
+    "t": 1794414355590,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "exclude",
-    "ms": 21999,
+    "ms": 24463,
     "hint": 0,
     "i": 0,
     "correct": true,
     "clue": "keeper"
    },
    {
-    "t": 1794414887156,
+    "t": 1794414361529,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "exclude",
-    "ms": 7364,
+    "ms": 5939,
     "hint": 0,
-    "i": 2,
-    "correct": true,
-    "clue": "keeper"
-   },
-   {
-    "t": 1794414892415,
-    "lock": 0,
-    "type": "detective",
-    "player": "max",
-    "role": "scout",
-    "action": "exclude",
-    "ms": 5259,
-    "hint": 0,
-    "i": 3,
+    "i": 1,
     "correct": true,
     "clue": 0,
     "linkValid": true
    },
    {
-    "t": 1794414925099,
+    "t": 1794414371481,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "accuse",
-    "ms": 32684,
+    "ms": 9952,
     "hint": 0,
     "i": 1,
+    "correct": false,
+    "name": "Twinkle Owl",
+    "fits": [
+     "the thief was not wearing a crown"
+    ],
+    "breaks": [
+     "the thief had no umbrella",
+     "the thief is not wearing blue"
+    ],
+    "breaksWho": [
+     "scout",
+     "keeper"
+    ]
+   },
+   {
+    "t": 1794414387523,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 16042,
+    "hint": 0,
+    "i": 0,
+    "correct": false,
+    "name": "Laika the Pup",
+    "fits": [
+     "the thief had no umbrella"
+    ],
+    "breaks": [
+     "the thief is not wearing blue",
+     "the thief was not wearing a crown"
+    ],
+    "breaksWho": [
+     "keeper"
+    ]
+   },
+   {
+    "t": 1794414413334,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 25811,
+    "hint": 0,
+    "i": 2,
     "correct": true
    },
    {
-    "t": 1794414925099,
+    "t": 1794414413334,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 67306,
+    "ms": 82207,
     "hint": 0,
-    "errors": 0,
+    "errors": 2,
     "hints": 0,
     "level": 3
    },
    {
-    "t": 1794414937503,
+    "t": 1794414433568,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "predict",
-    "ms": 9394,
+    "ms": 17052,
     "hint": 0,
-    "correct": true,
+    "correct": false,
+    "off": [
+     "dots"
+    ],
     "changes": [
      "shape",
      "color"
@@ -1364,179 +1417,185 @@
     ]
    },
    {
-    "t": 1794414941479,
+    "t": 1794414447981,
+    "lock": 1,
+    "type": "cipher",
+    "round": 0,
+    "player": "max",
+    "role": "scout",
+    "action": "predict",
+    "ms": 14413,
+    "hint": 0,
+    "correct": true,
+    "changes": [
+     "shape"
+    ],
+    "changesCorrect": false,
+    "actual": [
+     "shape",
+     "color"
+    ]
+   },
+   {
+    "t": 1794414449902,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "press",
-    "ms": 3976,
+    "ms": 1921,
     "hint": 0,
     "correct": true,
-    "button": 0
+    "button": 2
    },
    {
-    "t": 1794414941479,
+    "t": 1794414449902,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 13370,
+    "ms": 33386,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 4
    },
    {
-    "t": 1794414949458,
+    "t": 1794414459016,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "mom",
     "role": "keeper",
     "action": "branch",
-    "ms": 21349,
-    "hint": 0,
-    "correct": true,
-    "choice": "else"
-   },
-   {
-    "t": 1794414949458,
-    "lock": 1,
-    "type": "cipher",
-    "round": 0,
-    "player": "mom",
-    "role": "keeper",
-    "action": "part_solved",
-    "ms": 21349,
-    "hint": 0,
-    "errors": 0,
-    "hints": 0,
-    "level": 6
-   },
-   {
-    "t": 1794414958907,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "max",
-    "role": "scout",
-    "action": "press",
-    "ms": 9449,
-    "hint": 0,
-    "correct": true,
-    "button": 0
-   },
-   {
-    "t": 1794414958907,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "max",
-    "role": "scout",
-    "action": "part_solved",
-    "ms": 9449,
-    "hint": 0,
-    "errors": 0,
-    "hints": 0,
-    "level": 4
-   },
-   {
-    "t": 1794414965759,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "mom",
-    "role": "keeper",
-    "action": "branch",
-    "ms": 16301,
+    "ms": 42500,
     "hint": 0,
     "correct": true,
     "choice": "then"
    },
    {
-    "t": 1794414965759,
+    "t": 1794414459016,
     "lock": 1,
     "type": "cipher",
-    "round": 1,
+    "round": 0,
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 16301,
+    "ms": 42500,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 6
    },
    {
-    "t": 1794414976213,
+    "t": 1794414469377,
     "lock": 1,
     "type": "cipher",
-    "round": 2,
+    "round": 1,
     "player": "max",
     "role": "scout",
-    "action": "branch",
-    "ms": 10454,
+    "action": "press",
+    "ms": 10361,
     "hint": 0,
-    "correct": false,
-    "choice": "then",
-    "swapped": true
+    "correct": true,
+    "button": 2
    },
    {
-    "t": 1794414983171,
+    "t": 1794414469377,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "max",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 10361,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 4
+   },
+   {
+    "t": 1794414484141,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 25125,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794414484141,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 25125,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794414505708,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "max",
     "role": "scout",
     "action": "branch",
-    "ms": 6958,
+    "ms": 21567,
     "hint": 0,
     "correct": true,
     "choice": "else",
     "swapped": true
    },
    {
-    "t": 1794414983171,
+    "t": 1794414505708,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 17412,
+    "ms": 21567,
     "hint": 0,
-    "errors": 1,
+    "errors": 0,
     "hints": 0,
     "level": 4,
     "swapped": true
    },
    {
-    "t": 1794414987826,
+    "t": 1794414513631,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "mom",
     "role": "keeper",
     "action": "press",
-    "ms": 22067,
+    "ms": 29490,
     "hint": 0,
     "correct": true,
-    "button": 3,
+    "button": 2,
     "swapped": true
    },
    {
-    "t": 1794414987826,
+    "t": 1794414513631,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 22067,
+    "ms": 29490,
     "hint": 0,
     "errors": 0,
     "hints": 0,
@@ -1544,96 +1603,107 @@
     "swapped": true
    },
    {
-    "t": 1794415000247,
+    "t": 1794414524358,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "predict_view",
-    "ms": 9114,
+    "ms": 7341,
     "hint": 0,
-    "correct": false,
+    "correct": true,
     "rotationsBefore": 0
    },
    {
-    "t": 1794415011275,
+    "t": 1794414527686,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "max",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 3328,
+    "hint": 0,
+    "n": 1
+   },
+   {
+    "t": 1794414532920,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
     "role": "keeper",
     "action": "mark",
-    "ms": 20142,
+    "ms": 15903,
     "hint": 0,
     "correct": true,
     "marked": 1
    },
    {
-    "t": 1794415011275,
+    "t": 1794414532920,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 20142,
+    "ms": 15903,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 5
    },
    {
-    "t": 1794415026039,
+    "t": 1794414538980,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "edit",
-    "ms": 25792,
+    "ms": 11294,
     "hint": 0,
-    "z": 2,
+    "z": 1,
     "x": 1,
-    "delta": 1,
+    "delta": -1,
     "correct": true,
     "brokeRight": false
    },
    {
-    "t": 1794415029687,
+    "t": 1794414543368,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "check",
-    "ms": 3648,
+    "ms": 4388,
     "hint": 0,
     "correct": true,
-    "rotations": 0
+    "rotations": 1
    },
    {
-    "t": 1794415029687,
+    "t": 1794414543368,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 38554,
+    "ms": 26351,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 3,
-    "rotations": 0
+    "rotations": 1
    }
   ],
   "ratings": {
    "mom": {
     "before": {
      "spatial": 1246,
-     "patterns": 1340,
+     "patterns": 1333,
      "logic": 1246,
      "critical": 1246,
      "communication": 1200
     },
     "after": {
      "spatial": 1267,
-     "patterns": 1400,
+     "patterns": 1394,
      "logic": 1267,
      "critical": 1267,
      "communication": 1200
@@ -1641,17 +1711,17 @@
    },
    "max": {
     "before": {
-     "spatial": 1021,
-     "patterns": 1122,
-     "logic": 1035,
-     "critical": 1035,
+     "spatial": 1040,
+     "patterns": 1130,
+     "logic": 1016,
+     "critical": 1016,
      "communication": 1000
     },
     "after": {
-     "spatial": 1044,
-     "patterns": 1177,
-     "logic": 1057,
-     "critical": 1057,
+     "spatial": 1061,
+     "patterns": 1191,
+     "logic": 1027,
+     "critical": 1027,
      "communication": 1000
     }
    }
@@ -1663,20 +1733,10 @@
    "clues": 2,
    "state": "solved",
    "solved": true,
-   "tries": 2,
-   "helped": false,
-   "wrongs": [
-    {
-     "name": "Rocket Penguin",
-     "fits": [
-      "the thief had no umbrella"
-     ],
-     "breaks": [
-      "the thief wears green"
-     ]
-    }
-   ],
-   "ms": 34742,
+   "tries": 1,
+   "helped": true,
+   "wrongs": [],
+   "ms": 18301,
    "robot": {
     "state": "done",
     "fixed": true,
@@ -1684,20 +1744,16 @@
     "thiefTries": 1
    }
   },
-  "offscreen": {
-   "type": "detective",
-   "title": "Two-Clue Hide and Seek",
-   "t": 1794415091146
-  },
+  "offscreen": null,
   "simulated": true
  },
  {
   "id": "demo-4",
   "familyId": "demo",
-  "code": "4189",
+  "code": "1338",
   "mode": "multi",
-  "startedAt": 1794499581504,
-  "endedAt": 1794499836502,
+  "startedAt": 1794502199897,
+  "endedAt": 1794502443593,
   "story": {
    "title": "The Sunken Octopus Temple",
    "region": "Undersea Kingdom",
@@ -1723,21 +1779,21 @@
    {
     "type": "detective",
     "levels": {
-     "scout": 4,
+     "scout": 3,
      "keeper": 6
     },
     "opened": true,
     "errors": 0,
     "hints": 0,
-    "ms": 70575,
+    "ms": 59893,
     "focus": {
      "id": "two_clues",
      "stage": "scaffold",
      "reason": {
-      "name": "Rocket Penguin",
+      "name": "Laika the Pup",
       "fits": "the thief had no umbrella",
-      "breaks": "the thief wears green",
-      "solo": true
+      "breaks": "the thief is not wearing blue",
+      "solo": false
      }
     }
    },
@@ -1750,67 +1806,81 @@
     "opened": true,
     "errors": 0,
     "hints": 0,
-    "ms": 98158
+    "ms": 94541
    },
    {
     "type": "blueprint",
     "levels": {
-     "scout": 3,
+     "scout": 4,
      "keeper": 6
     },
     "opened": true,
     "errors": 1,
-    "hints": 1,
-    "ms": 58816
+    "hints": 0,
+    "ms": 57680
    }
   ],
   "attempts": [
    {
-    "t": 1794499623759,
+    "t": 1794502239543,
     "lock": 0,
     "type": "detective",
     "player": "mom",
     "role": "keeper",
     "action": "accuse",
-    "ms": 24479,
+    "ms": 18557,
     "hint": 0,
-    "i": 1,
+    "i": 3,
     "correct": true
    },
    {
-    "t": 1794499623759,
+    "t": 1794502239543,
     "lock": 0,
     "type": "detective",
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 24479,
+    "ms": 18557,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 6
    },
    {
-    "t": 1794499629973,
+    "t": 1794502245798,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "exclude",
-    "ms": 30693,
+    "ms": 24812,
     "hint": 0,
     "i": 0,
+    "correct": true,
+    "clue": 0,
+    "linkValid": true
+   },
+   {
+    "t": 1794502256269,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 10471,
+    "hint": 0,
+    "i": 1,
     "correct": true,
     "clue": "keeper"
    },
    {
-    "t": 1794499635313,
+    "t": 1794502263884,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "exclude",
-    "ms": 5340,
+    "ms": 7615,
     "hint": 0,
     "i": 2,
     "correct": true,
@@ -1818,35 +1888,21 @@
     "linkValid": true
    },
    {
-    "t": 1794499663811,
+    "t": 1794502280879,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "check_clue",
-    "ms": 28498,
+    "ms": 16995,
     "hint": 0,
-    "i": 1,
+    "i": 3,
     "k": 0,
     "answer": true,
     "correct": true
    },
    {
-    "t": 1794499669855,
-    "lock": 0,
-    "type": "detective",
-    "player": "max",
-    "role": "scout",
-    "action": "check_clue",
-    "ms": 6044,
-    "hint": 0,
-    "i": 1,
-    "k": 1,
-    "answer": true,
-    "correct": true
-   },
-   {
-    "t": 1794499669855,
+    "t": 1794502280879,
     "lock": 0,
     "type": "detective",
     "player": "max",
@@ -1854,32 +1910,32 @@
     "action": "accuse",
     "ms": 0,
     "hint": 0,
-    "i": 1,
+    "i": 3,
     "correct": true,
     "checked": true
    },
    {
-    "t": 1794499669855,
+    "t": 1794502280879,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 70575,
+    "ms": 59893,
     "hint": 0,
     "errors": 0,
     "hints": 0,
-    "level": 4
+    "level": 3
    },
    {
-    "t": 1794499691991,
+    "t": 1794502302816,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "predict",
-    "ms": 19127,
+    "ms": 18018,
     "hint": 0,
     "correct": true,
     "changes": [
@@ -1893,136 +1949,136 @@
     ]
    },
    {
-    "t": 1794499703899,
+    "t": 1794502320755,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "press",
-    "ms": 11908,
+    "ms": 17939,
     "hint": 0,
     "correct": true,
-    "button": 0
+    "button": 2
    },
    {
-    "t": 1794499703899,
+    "t": 1794502320755,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 31035,
+    "ms": 35957,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 5
    },
    {
-    "t": 1794499710813,
+    "t": 1794502328637,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "mom",
     "role": "keeper",
     "action": "branch",
-    "ms": 37949,
-    "hint": 0,
-    "correct": true,
-    "choice": "then"
-   },
-   {
-    "t": 1794499710813,
-    "lock": 1,
-    "type": "cipher",
-    "round": 0,
-    "player": "mom",
-    "role": "keeper",
-    "action": "part_solved",
-    "ms": 37949,
-    "hint": 0,
-    "errors": 0,
-    "hints": 0,
-    "level": 7
-   },
-   {
-    "t": 1794499733123,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "max",
-    "role": "scout",
-    "action": "press",
-    "ms": 22310,
-    "hint": 0,
-    "correct": true,
-    "button": 1
-   },
-   {
-    "t": 1794499733123,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "max",
-    "role": "scout",
-    "action": "part_solved",
-    "ms": 22310,
-    "hint": 0,
-    "errors": 0,
-    "hints": 0,
-    "level": 5
-   },
-   {
-    "t": 1794499746611,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "mom",
-    "role": "keeper",
-    "action": "branch",
-    "ms": 35798,
+    "ms": 43839,
     "hint": 0,
     "correct": true,
     "choice": "else"
    },
    {
-    "t": 1794499746611,
+    "t": 1794502328637,
     "lock": 1,
     "type": "cipher",
-    "round": 1,
+    "round": 0,
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 35798,
+    "ms": 43839,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 7
    },
    {
-    "t": 1794499765293,
+    "t": 1794502335965,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "max",
+    "role": "scout",
+    "action": "press",
+    "ms": 7328,
+    "hint": 0,
+    "correct": true,
+    "button": 3
+   },
+   {
+    "t": 1794502335965,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "max",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 7328,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 5
+   },
+   {
+    "t": 1794502349659,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 21022,
+    "hint": 0,
+    "correct": true,
+    "choice": "then"
+   },
+   {
+    "t": 1794502349659,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 21022,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 7
+   },
+   {
+    "t": 1794502370950,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "max",
     "role": "scout",
     "action": "branch",
-    "ms": 18682,
+    "ms": 21291,
     "hint": 0,
     "correct": true,
-    "choice": "else",
+    "choice": "then",
     "swapped": true
    },
    {
-    "t": 1794499765293,
+    "t": 1794502370950,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 18682,
+    "ms": 21291,
     "hint": 0,
     "errors": 0,
     "hints": 0,
@@ -2030,28 +2086,28 @@
     "swapped": true
    },
    {
-    "t": 1794499771022,
+    "t": 1794502379339,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "mom",
     "role": "keeper",
     "action": "press",
-    "ms": 24411,
+    "ms": 29680,
     "hint": 0,
     "correct": true,
-    "button": 1,
+    "button": 4,
     "swapped": true
    },
    {
-    "t": 1794499771022,
+    "t": 1794502379339,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 24411,
+    "ms": 29680,
     "hint": 0,
     "errors": 0,
     "hints": 0,
@@ -2059,152 +2115,145 @@
     "swapped": true
    },
    {
-    "t": 1794499787919,
+    "t": 1794502391158,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "predict_view",
-    "ms": 13283,
+    "ms": 8814,
     "hint": 0,
     "correct": true,
     "rotationsBefore": 0
    },
    {
-    "t": 1794499793396,
+    "t": 1794502393490,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "rotate",
-    "ms": 5477,
+    "ms": 2332,
     "hint": 0,
     "n": 1
    },
    {
-    "t": 1794499797571,
-    "lock": 2,
-    "type": "blueprint",
-    "player": "max",
-    "role": "scout",
-    "action": "rotate",
-    "ms": 4175,
-    "hint": 0,
-    "n": 2
-   },
-   {
-    "t": 1794499810389,
+    "t": 1794502414103,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
     "role": "keeper",
     "action": "mark",
-    "ms": 35753,
+    "ms": 31759,
     "hint": 0,
     "correct": true,
-    "marked": 1
+    "marked": 2
    },
    {
-    "t": 1794499810389,
+    "t": 1794502414103,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 35753,
+    "ms": 31759,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 6
    },
    {
-    "t": 1794499812399,
+    "t": 1794502420222,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "max",
+    "role": "scout",
+    "action": "edit",
+    "ms": 26732,
+    "hint": 0,
+    "z": 2,
+    "x": 0,
+    "delta": -1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794502423266,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "check",
-    "ms": 14828,
+    "ms": 3044,
     "hint": 0,
     "correct": false,
-    "rotations": 2
+    "rotations": 1
    },
    {
-    "t": 1794499812399,
-    "lock": 2,
-    "type": "blueprint",
-    "player": "max",
-    "role": "scout",
-    "action": "hint",
-    "ms": 0,
-    "hint": 1,
-    "level": 1
-   },
-   {
-    "t": 1794499828121,
+    "t": 1794502434101,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "rotate",
-    "ms": 15722,
-    "hint": 1,
-    "n": 3
+    "ms": 10835,
+    "hint": 0,
+    "n": 2
    },
    {
-    "t": 1794499828121,
+    "t": 1794502434101,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "edit",
     "ms": 0,
-    "hint": 1,
-    "z": 0,
-    "x": 1,
-    "delta": 1,
+    "hint": 0,
+    "z": 1,
+    "x": 0,
+    "delta": -1,
     "correct": true,
     "brokeRight": false
    },
    {
-    "t": 1794499833452,
+    "t": 1794502440024,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "check",
-    "ms": 5331,
-    "hint": 1,
+    "ms": 5923,
+    "hint": 0,
     "correct": true,
-    "rotations": 3
+    "rotations": 2
    },
    {
-    "t": 1794499833452,
+    "t": 1794502440024,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 58816,
-    "hint": 1,
+    "ms": 57680,
+    "hint": 0,
     "errors": 1,
-    "hints": 1,
-    "level": 3,
-    "rotations": 3
+    "hints": 0,
+    "level": 4,
+    "rotations": 2
    }
   ],
   "ratings": {
    "mom": {
     "before": {
      "spatial": 1267,
-     "patterns": 1400,
+     "patterns": 1394,
      "logic": 1267,
      "critical": 1267,
      "communication": 1200
     },
     "after": {
      "spatial": 1293,
-     "patterns": 1467,
+     "patterns": 1462,
      "logic": 1293,
      "critical": 1293,
      "communication": 1200
@@ -2212,24 +2261,24 @@
    },
    "max": {
     "before": {
-     "spatial": 1044,
-     "patterns": 1177,
-     "logic": 1057,
-     "critical": 1057,
+     "spatial": 1061,
+     "patterns": 1191,
+     "logic": 1027,
+     "critical": 1027,
      "communication": 1000
     },
     "after": {
-     "spatial": 1046,
-     "patterns": 1249,
-     "logic": 1084,
-     "critical": 1084,
+     "spatial": 1080,
+     "patterns": 1260,
+     "logic": 1049,
+     "critical": 1049,
      "communication": 1000
     }
    }
   },
   "parentRating": 2,
   "solo": {
-   "level": 4,
+   "level": 3,
    "suspects": 4,
    "clues": 2,
    "state": "solved",
@@ -2237,28 +2286,28 @@
    "tries": 1,
    "helped": false,
    "wrongs": [],
-   "ms": 23084,
+   "ms": 39669,
    "robot": {
-    "state": "skipped",
-    "fixed": false,
-    "stepTries": 0,
-    "thiefTries": 0
+    "state": "done",
+    "fixed": true,
+    "stepTries": 1,
+    "thiefTries": 1
    }
   },
   "offscreen": {
    "type": "detective",
    "title": "Two-Clue Hide and Seek",
-   "t": 1794499859586
+   "t": 1794502515663
   },
   "simulated": true
  },
  {
   "id": "demo-5",
   "familyId": "demo",
-  "code": "2411",
+  "code": "3979",
   "mode": "multi",
-  "startedAt": 1794587478681,
-  "endedAt": 1794587728562,
+  "startedAt": 1794586904701,
+  "endedAt": 1794587170808,
   "story": {
    "title": "The Mystery of the Golden Egg",
    "region": "Dino Valley",
@@ -2284,359 +2333,332 @@
    {
     "type": "detective",
     "levels": {
-     "scout": 4,
+     "scout": 3,
      "keeper": 6
     },
     "opened": true,
     "errors": 0,
     "hints": 0,
-    "ms": 65234,
+    "ms": 80862,
     "focus": {
      "id": "two_clues",
      "stage": "independent",
      "reason": {
-      "name": "Rocket Penguin",
+      "name": "Laika the Pup",
       "fits": "the thief had no umbrella",
-      "breaks": "the thief wears green",
-      "solo": true
+      "breaks": "the thief is not wearing blue",
+      "solo": false
      }
     }
    },
    {
     "type": "cipher",
     "levels": {
-     "scout": 5,
+     "scout": 6,
      "keeper": 8
     },
     "opened": true,
-    "errors": 1,
+    "errors": 0,
     "hints": 0,
-    "ms": 97376
+    "ms": 80800
    },
    {
     "type": "blueprint",
     "levels": {
-     "scout": 3,
+     "scout": 4,
      "keeper": 6
     },
     "opened": true,
     "errors": 1,
-    "hints": 1,
-    "ms": 54993
+    "hints": 0,
+    "ms": 78445
    }
   ],
   "attempts": [
    {
-    "t": 1794587511944,
+    "t": 1794586943613,
     "lock": 0,
     "type": "detective",
     "player": "mom",
     "role": "keeper",
     "action": "accuse",
-    "ms": 11114,
+    "ms": 22914,
     "hint": 0,
-    "i": 0,
+    "i": 3,
     "correct": true
    },
    {
-    "t": 1794587511944,
+    "t": 1794586943613,
     "lock": 0,
     "type": "detective",
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 11114,
+    "ms": 22914,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 6
    },
    {
-    "t": 1794587521643,
+    "t": 1794586949535,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "exclude",
-    "ms": 20813,
+    "ms": 28836,
+    "hint": 0,
+    "i": 0,
+    "correct": true,
+    "clue": "keeper"
+   },
+   {
+    "t": 1794586961038,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 11503,
     "hint": 0,
     "i": 1,
-    "correct": true,
-    "clue": "keeper"
-   },
-   {
-    "t": 1794587533555,
-    "lock": 0,
-    "type": "detective",
-    "player": "max",
-    "role": "scout",
-    "action": "exclude",
-    "ms": 11912,
-    "hint": 0,
-    "i": 2,
-    "correct": true,
-    "clue": "keeper"
-   },
-   {
-    "t": 1794587542820,
-    "lock": 0,
-    "type": "detective",
-    "player": "max",
-    "role": "scout",
-    "action": "exclude",
-    "ms": 9265,
-    "hint": 0,
-    "i": 3,
     "correct": true,
     "clue": 0,
     "linkValid": true
    },
    {
-    "t": 1794587546159,
+    "t": 1794586965578,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "exclude",
-    "ms": 3339,
+    "ms": 4540,
     "hint": 0,
-    "i": 0,
+    "i": 3,
     "correct": false,
     "clue": null
    },
    {
-    "t": 1794587548279,
+    "t": 1794586968026,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "unexclude",
-    "ms": 2120,
+    "ms": 2448,
     "hint": 0,
-    "i": 0
+    "i": 3
    },
    {
-    "t": 1794587566064,
+    "t": 1794587001561,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "accuse",
-    "ms": 17785,
+    "ms": 33535,
     "hint": 0,
-    "i": 0,
+    "i": 3,
     "correct": true
    },
    {
-    "t": 1794587566064,
+    "t": 1794587001561,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 65234,
+    "ms": 80862,
     "hint": 0,
     "errors": 0,
     "hints": 0,
-    "level": 4
+    "level": 3
    },
    {
-    "t": 1794587584204,
+    "t": 1794587018904,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "predict",
-    "ms": 15040,
+    "ms": 13904,
     "hint": 0,
     "correct": true,
     "changes": [
      "shape",
-     "color"
+     "color",
+     "dots"
     ],
     "changesCorrect": true,
     "actual": [
      "shape",
-     "color"
+     "color",
+     "dots"
     ]
    },
    {
-    "t": 1794587608023,
+    "t": 1794587028414,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "press",
-    "ms": 23819,
+    "ms": 9510,
     "hint": 0,
     "correct": true,
-    "button": 3
+    "button": 4
    },
    {
-    "t": 1794587608023,
+    "t": 1794587028414,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 38859,
+    "ms": 23414,
     "hint": 0,
     "errors": 0,
     "hints": 0,
-    "level": 5
+    "level": 6
    },
    {
-    "t": 1794587615264,
+    "t": 1794587036359,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "mom",
     "role": "keeper",
     "action": "branch",
-    "ms": 46100,
-    "hint": 0,
-    "correct": true,
-    "choice": "then"
-   },
-   {
-    "t": 1794587615264,
-    "lock": 1,
-    "type": "cipher",
-    "round": 0,
-    "player": "mom",
-    "role": "keeper",
-    "action": "part_solved",
-    "ms": 46100,
-    "hint": 0,
-    "errors": 0,
-    "hints": 0,
-    "level": 8
-   },
-   {
-    "t": 1794587631990,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "max",
-    "role": "scout",
-    "action": "press",
-    "ms": 16726,
-    "hint": 0,
-    "correct": false,
-    "button": 0,
-    "off": [
-     "color"
-    ]
-   },
-   {
-    "t": 1794587635779,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "max",
-    "role": "scout",
-    "action": "press",
-    "ms": 3789,
-    "hint": 0,
-    "correct": true,
-    "button": 5
-   },
-   {
-    "t": 1794587635779,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "max",
-    "role": "scout",
-    "action": "part_solved",
-    "ms": 20515,
-    "hint": 0,
-    "errors": 1,
-    "hints": 0,
-    "level": 5
-   },
-   {
-    "t": 1794587648337,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "mom",
-    "role": "keeper",
-    "action": "branch",
-    "ms": 33073,
+    "ms": 31359,
     "hint": 0,
     "correct": true,
     "choice": "else"
    },
    {
-    "t": 1794587648337,
+    "t": 1794587036359,
     "lock": 1,
     "type": "cipher",
-    "round": 1,
+    "round": 0,
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 33073,
+    "ms": 31359,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 8
    },
    {
-    "t": 1794587661343,
+    "t": 1794587051911,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "max",
+    "role": "scout",
+    "action": "press",
+    "ms": 15552,
+    "hint": 0,
+    "correct": true,
+    "button": 1
+   },
+   {
+    "t": 1794587051911,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "max",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 15552,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794587066700,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 30341,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794587066700,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 30341,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 8
+   },
+   {
+    "t": 1794587080141,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "max",
     "role": "scout",
     "action": "branch",
-    "ms": 13006,
+    "ms": 13441,
     "hint": 0,
     "correct": true,
     "choice": "then",
     "swapped": true
    },
    {
-    "t": 1794587661343,
+    "t": 1794587080141,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 13006,
+    "ms": 13441,
     "hint": 0,
     "errors": 0,
     "hints": 0,
-    "level": 5,
+    "level": 6,
     "swapped": true
    },
    {
-    "t": 1794587666540,
+    "t": 1794587085800,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "mom",
     "role": "keeper",
     "action": "press",
-    "ms": 18203,
+    "ms": 19100,
     "hint": 0,
     "correct": true,
-    "button": 2,
+    "button": 5,
     "swapped": true
    },
    {
-    "t": 1794587666540,
+    "t": 1794587085800,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 18203,
+    "ms": 19100,
     "hint": 0,
     "errors": 0,
     "hints": 0,
@@ -2644,152 +2666,167 @@
     "swapped": true
    },
    {
-    "t": 1794587679243,
+    "t": 1794587100385,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "predict_view",
-    "ms": 9235,
+    "ms": 11468,
     "hint": 0,
-    "correct": false,
+    "correct": true,
     "rotationsBefore": 0
    },
    {
-    "t": 1794587682523,
+    "t": 1794587103488,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "rotate",
-    "ms": 3280,
+    "ms": 3103,
     "hint": 0,
     "n": 1
    },
    {
-    "t": 1794587685863,
+    "t": 1794587107730,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "rotate",
-    "ms": 3340,
+    "ms": 4242,
     "hint": 0,
     "n": 2
    },
    {
-    "t": 1794587693627,
+    "t": 1794587112362,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "max",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 4632,
+    "hint": 0,
+    "n": 3
+   },
+   {
+    "t": 1794587135494,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
     "role": "keeper",
     "action": "mark",
-    "ms": 23619,
+    "ms": 46577,
     "hint": 0,
     "correct": true,
-    "marked": 1
+    "marked": 2
    },
    {
-    "t": 1794587693627,
+    "t": 1794587135494,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 23619,
+    "ms": 46577,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 6
    },
    {
-    "t": 1794587696921,
-    "lock": 2,
-    "type": "blueprint",
-    "player": "max",
-    "role": "scout",
-    "action": "check",
-    "ms": 11058,
-    "hint": 0,
-    "correct": false,
-    "rotations": 2
-   },
-   {
-    "t": 1794587696921,
-    "lock": 2,
-    "type": "blueprint",
-    "player": "max",
-    "role": "scout",
-    "action": "hint",
-    "ms": 0,
-    "hint": 1,
-    "level": 1
-   },
-   {
-    "t": 1794587720623,
-    "lock": 2,
-    "type": "blueprint",
-    "player": "max",
-    "role": "scout",
-    "action": "rotate",
-    "ms": 23702,
-    "hint": 1,
-    "n": 3
-   },
-   {
-    "t": 1794587720623,
+    "t": 1794587147713,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "edit",
-    "ms": 0,
-    "hint": 1,
-    "z": 0,
+    "ms": 35351,
+    "hint": 0,
+    "z": 2,
     "x": 1,
     "delta": -1,
     "correct": true,
     "brokeRight": false
    },
    {
-    "t": 1794587725001,
+    "t": 1794587149742,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "check",
-    "ms": 4378,
-    "hint": 1,
-    "correct": true,
+    "ms": 2029,
+    "hint": 0,
+    "correct": false,
     "rotations": 3
    },
    {
-    "t": 1794587725001,
+    "t": 1794587162382,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "max",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 12640,
+    "hint": 0,
+    "n": 4
+   },
+   {
+    "t": 1794587162382,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "max",
+    "role": "scout",
+    "action": "edit",
+    "ms": 0,
+    "hint": 0,
+    "z": 2,
+    "x": 2,
+    "delta": -1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794587167362,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "max",
+    "role": "scout",
+    "action": "check",
+    "ms": 4980,
+    "hint": 0,
+    "correct": true,
+    "rotations": 4
+   },
+   {
+    "t": 1794587167362,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 54993,
-    "hint": 1,
+    "ms": 78445,
+    "hint": 0,
     "errors": 1,
-    "hints": 1,
-    "level": 3,
-    "rotations": 3
+    "hints": 0,
+    "level": 4,
+    "rotations": 4
    }
   ],
   "ratings": {
    "mom": {
     "before": {
      "spatial": 1293,
-     "patterns": 1467,
+     "patterns": 1462,
      "logic": 1293,
      "critical": 1293,
      "communication": 1200
     },
     "after": {
      "spatial": 1317,
-     "patterns": 1540,
+     "patterns": 1537,
      "logic": 1317,
      "critical": 1317,
      "communication": 1200
@@ -2797,53 +2834,53 @@
    },
    "max": {
     "before": {
-     "spatial": 1046,
-     "patterns": 1249,
-     "logic": 1084,
-     "critical": 1084,
+     "spatial": 1080,
+     "patterns": 1260,
+     "logic": 1049,
+     "critical": 1049,
      "communication": 1000
     },
     "after": {
-     "spatial": 1048,
-     "patterns": 1300,
-     "logic": 1109,
-     "critical": 1109,
+     "spatial": 1098,
+     "patterns": 1335,
+     "logic": 1070,
+     "critical": 1070,
      "communication": 1000
     }
    }
   },
   "parentRating": 3,
   "solo": {
-   "level": 4,
+   "level": 3,
    "suspects": 4,
    "clues": 2,
    "state": "solved",
    "solved": true,
    "tries": 1,
-   "helped": false,
+   "helped": true,
    "wrongs": [],
-   "ms": 30267,
+   "ms": 16284,
    "robot": {
     "state": "done",
     "fixed": true,
-    "stepTries": 1,
+    "stepTries": 2,
     "thiefTries": 1
    }
   },
   "offscreen": {
    "type": "detective",
    "title": "Two-Clue Hide and Seek",
-   "t": 1794587794336
+   "t": 1794587222120
   },
   "simulated": true
  },
  {
   "id": "demo-6",
   "familyId": "demo",
-  "code": "2171",
+  "code": "8614",
   "mode": "multi",
-  "startedAt": 1794673425607,
-  "endedAt": 1794673634558,
+  "startedAt": 1794674653160,
+  "endedAt": 1794674979734,
   "story": {
    "title": "The Sunken Octopus Temple",
    "region": "Undersea Kingdom",
@@ -2873,9 +2910,9 @@
      "keeper": 6
     },
     "opened": true,
-    "errors": 0,
-    "hints": 0,
-    "ms": 33457
+    "errors": 2,
+    "hints": 1,
+    "ms": 136380
    },
    {
     "type": "cipher",
@@ -2886,108 +2923,219 @@
     "opened": true,
     "errors": 0,
     "hints": 0,
-    "ms": 89802
+    "ms": 85345
    },
    {
     "type": "blueprint",
     "levels": {
-     "scout": 3,
+     "scout": 4,
      "keeper": 6
     },
     "opened": true,
     "errors": 0,
     "hints": 0,
-    "ms": 54817
+    "ms": 70771
    }
   ],
   "attempts": [
    {
-    "t": 1794673459133,
+    "t": 1794674693253,
     "lock": 0,
     "type": "detective",
     "player": "mom",
     "role": "keeper",
     "action": "accuse",
-    "ms": 14062,
+    "ms": 16604,
     "hint": 0,
-    "i": 1,
+    "i": 5,
     "correct": true
    },
    {
-    "t": 1794673459133,
+    "t": 1794674693253,
     "lock": 0,
     "type": "detective",
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 14062,
+    "ms": 16604,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 6
    },
    {
-    "t": 1794673463521,
+    "t": 1794674697885,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "exclude",
-    "ms": 18450,
+    "ms": 21236,
     "hint": 0,
     "i": 0,
+    "correct": true,
+    "clue": "keeper"
+   },
+   {
+    "t": 1794674705971,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "exclude_link",
+    "ms": 8086,
+    "hint": 0,
+    "i": 1,
+    "clue": 0,
+    "valid": false,
+    "name": "Puff the Blowfish",
+    "short": "the thief had no umbrella"
+   },
+   {
+    "t": 1794674710988,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 5017,
+    "hint": 0,
+    "i": 1,
+    "correct": true,
+    "clue": "keeper"
+   },
+   {
+    "t": 1794674719439,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "exclude",
+    "ms": 8451,
+    "hint": 0,
+    "i": 2,
     "correct": true,
     "clue": 0,
     "linkValid": true
    },
    {
-    "t": 1794673467900,
+    "t": 1794674723103,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "exclude",
-    "ms": 4379,
+    "ms": 3664,
     "hint": 0,
-    "i": 2,
-    "correct": true,
-    "clue": 1,
-    "linkValid": true
+    "i": 5,
+    "correct": false,
+    "clue": null
    },
    {
-    "t": 1794673478528,
+    "t": 1794674726199,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "unexclude",
+    "ms": 3096,
+    "hint": 0,
+    "i": 5
+   },
+   {
+    "t": 1794674751552,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "accuse",
-    "ms": 10628,
+    "ms": 25353,
     "hint": 0,
-    "i": 1,
+    "i": 3,
+    "correct": false,
+    "name": "Pinch the Crab",
+    "fits": [
+     "right next to the thief stood someone in blue",
+     "the thief stood somewhere right of a neighbor wearing a crown"
+    ],
+    "breaks": [
+     "the thief had no umbrella",
+     "the thief wore a crown"
+    ],
+    "breaksWho": [
+     "scout"
+    ]
+   },
+   {
+    "t": 1794674782312,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 30760,
+    "hint": 0,
+    "i": 6,
+    "correct": false,
+    "name": "Shelly Turtle",
+    "fits": [
+     "the thief stood somewhere right of a neighbor wearing a crown"
+    ],
+    "breaks": [
+     "the thief had no umbrella",
+     "the thief wore a crown",
+     "right next to the thief stood someone in blue"
+    ],
+    "breaksWho": [
+     "scout",
+     "keeper"
+    ]
+   },
+   {
+    "t": 1794674813029,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "hint",
+    "ms": 30717,
+    "hint": 1,
+    "level": 1
+   },
+   {
+    "t": 1794674813029,
+    "lock": 0,
+    "type": "detective",
+    "player": "max",
+    "role": "scout",
+    "action": "accuse",
+    "ms": 0,
+    "hint": 1,
+    "i": 5,
     "correct": true
    },
    {
-    "t": 1794673478528,
+    "t": 1794674813029,
     "lock": 0,
     "type": "detective",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 33457,
-    "hint": 0,
-    "errors": 0,
-    "hints": 0,
+    "ms": 136380,
+    "hint": 1,
+    "errors": 2,
+    "hints": 1,
     "level": 4
    },
    {
-    "t": 1794673500149,
+    "t": 1794674831328,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "predict",
-    "ms": 17884,
+    "ms": 14561,
     "hint": 0,
     "correct": true,
     "changes": [
@@ -3003,136 +3151,136 @@
     ]
    },
    {
-    "t": 1794673501365,
+    "t": 1794674835175,
     "lock": 1,
     "type": "cipher",
     "round": 0,
     "player": "max",
     "role": "scout",
     "action": "press",
-    "ms": 1216,
-    "hint": 0,
-    "correct": true,
-    "button": 4
-   },
-   {
-    "t": 1794673501365,
-    "lock": 1,
-    "type": "cipher",
-    "round": 0,
-    "player": "max",
-    "role": "scout",
-    "action": "part_solved",
-    "ms": 19100,
-    "hint": 0,
-    "errors": 0,
-    "hints": 0,
-    "level": 6
-   },
-   {
-    "t": 1794673513731,
-    "lock": 1,
-    "type": "cipher",
-    "round": 0,
-    "player": "mom",
-    "role": "keeper",
-    "action": "branch",
-    "ms": 31466,
-    "hint": 0,
-    "correct": true,
-    "choice": "else"
-   },
-   {
-    "t": 1794673513731,
-    "lock": 1,
-    "type": "cipher",
-    "round": 0,
-    "player": "mom",
-    "role": "keeper",
-    "action": "part_solved",
-    "ms": 31466,
-    "hint": 0,
-    "errors": 0,
-    "hints": 0,
-    "level": 8
-   },
-   {
-    "t": 1794673534787,
-    "lock": 1,
-    "type": "cipher",
-    "round": 1,
-    "player": "max",
-    "role": "scout",
-    "action": "press",
-    "ms": 21056,
+    "ms": 3847,
     "hint": 0,
     "correct": true,
     "button": 3
    },
    {
-    "t": 1794673534787,
+    "t": 1794674835175,
     "lock": 1,
     "type": "cipher",
-    "round": 1,
+    "round": 0,
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 21056,
+    "ms": 18408,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 6
    },
    {
-    "t": 1794673545269,
+    "t": 1794674846473,
     "lock": 1,
     "type": "cipher",
-    "round": 1,
+    "round": 0,
     "player": "mom",
     "role": "keeper",
     "action": "branch",
-    "ms": 31538,
+    "ms": 29706,
     "hint": 0,
     "correct": true,
     "choice": "else"
    },
    {
-    "t": 1794673545269,
+    "t": 1794674846473,
     "lock": 1,
     "type": "cipher",
-    "round": 1,
+    "round": 0,
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 31538,
+    "ms": 29706,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 8
    },
    {
-    "t": 1794673564585,
+    "t": 1794674861967,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "max",
+    "role": "scout",
+    "action": "press",
+    "ms": 15494,
+    "hint": 0,
+    "correct": true,
+    "button": 4
+   },
+   {
+    "t": 1794674861967,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "max",
+    "role": "scout",
+    "action": "part_solved",
+    "ms": 15494,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 6
+   },
+   {
+    "t": 1794674876343,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "branch",
+    "ms": 29870,
+    "hint": 0,
+    "correct": true,
+    "choice": "else"
+   },
+   {
+    "t": 1794674876343,
+    "lock": 1,
+    "type": "cipher",
+    "round": 1,
+    "player": "mom",
+    "role": "keeper",
+    "action": "part_solved",
+    "ms": 29870,
+    "hint": 0,
+    "errors": 0,
+    "hints": 0,
+    "level": 8
+   },
+   {
+    "t": 1794674892417,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "max",
     "role": "scout",
     "action": "branch",
-    "ms": 19316,
+    "ms": 16074,
     "hint": 0,
     "correct": true,
-    "choice": "else",
+    "choice": "then",
     "swapped": true
    },
    {
-    "t": 1794673564585,
+    "t": 1794674892417,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 19316,
+    "ms": 16074,
     "hint": 0,
     "errors": 0,
     "hints": 0,
@@ -3140,28 +3288,28 @@
     "swapped": true
    },
    {
-    "t": 1794673572067,
+    "t": 1794674902112,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "mom",
     "role": "keeper",
     "action": "press",
-    "ms": 26798,
+    "ms": 25769,
     "hint": 0,
     "correct": true,
-    "button": 1,
+    "button": 5,
     "swapped": true
    },
    {
-    "t": 1794673572067,
+    "t": 1794674902112,
     "lock": 1,
     "type": "cipher",
     "round": 2,
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 26798,
+    "ms": 25769,
     "hint": 0,
     "errors": 0,
     "hints": 0,
@@ -3169,129 +3317,155 @@
     "swapped": true
    },
    {
-    "t": 1794673586473,
+    "t": 1794674919442,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "predict_view",
-    "ms": 10522,
+    "ms": 14058,
     "hint": 0,
     "correct": false,
     "rotationsBefore": 0
    },
    {
-    "t": 1794673591424,
+    "t": 1794674922264,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "rotate",
-    "ms": 4951,
+    "ms": 2822,
     "hint": 0,
     "n": 1
    },
    {
-    "t": 1794673595870,
+    "t": 1794674927092,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "rotate",
-    "ms": 4446,
+    "ms": 4828,
     "hint": 0,
     "n": 2
    },
    {
-    "t": 1794673599092,
+    "t": 1794674930108,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "rotate",
-    "ms": 3222,
+    "ms": 3016,
     "hint": 0,
     "n": 3
    },
    {
-    "t": 1794673608502,
+    "t": 1794674933683,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "max",
+    "role": "scout",
+    "action": "rotate",
+    "ms": 3575,
+    "hint": 0,
+    "n": 4
+   },
+   {
+    "t": 1794674947168,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
     "role": "keeper",
     "action": "mark",
-    "ms": 32551,
+    "ms": 41784,
     "hint": 0,
     "correct": true,
-    "marked": 1
+    "marked": 2
    },
    {
-    "t": 1794673608502,
+    "t": 1794674947168,
     "lock": 2,
     "type": "blueprint",
     "player": "mom",
     "role": "keeper",
     "action": "part_solved",
-    "ms": 32551,
+    "ms": 41784,
     "hint": 0,
     "errors": 0,
     "hints": 0,
     "level": 6
    },
    {
-    "t": 1794673622993,
+    "t": 1794674957205,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "edit",
-    "ms": 23901,
+    "ms": 23522,
     "hint": 0,
-    "z": 2,
+    "z": 0,
     "x": 1,
-    "delta": 1,
+    "delta": -1,
     "correct": true,
     "brokeRight": false
    },
    {
-    "t": 1794673630768,
+    "t": 1794674972187,
+    "lock": 2,
+    "type": "blueprint",
+    "player": "max",
+    "role": "scout",
+    "action": "edit",
+    "ms": 14982,
+    "hint": 0,
+    "z": 1,
+    "x": 0,
+    "delta": -1,
+    "correct": true,
+    "brokeRight": false
+   },
+   {
+    "t": 1794674976155,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "check",
-    "ms": 7775,
+    "ms": 3968,
     "hint": 0,
     "correct": true,
-    "rotations": 3
+    "rotations": 4
    },
    {
-    "t": 1794673630768,
+    "t": 1794674976155,
     "lock": 2,
     "type": "blueprint",
     "player": "max",
     "role": "scout",
     "action": "part_solved",
-    "ms": 54817,
+    "ms": 70771,
     "hint": 0,
     "errors": 0,
     "hints": 0,
-    "level": 3,
-    "rotations": 3
+    "level": 4,
+    "rotations": 4
    }
   ],
   "ratings": {
    "mom": {
     "before": {
      "spatial": 1317,
-     "patterns": 1540,
+     "patterns": 1537,
      "logic": 1317,
      "critical": 1317,
      "communication": 1200
     },
     "after": {
      "spatial": 1340,
-     "patterns": 1600,
+     "patterns": 1597,
      "logic": 1340,
      "critical": 1340,
      "communication": 1200
@@ -3299,17 +3473,17 @@
    },
    "max": {
     "before": {
-     "spatial": 1048,
-     "patterns": 1300,
-     "logic": 1109,
-     "critical": 1109,
+     "spatial": 1098,
+     "patterns": 1335,
+     "logic": 1070,
+     "critical": 1070,
      "communication": 1000
     },
     "after": {
-     "spatial": 1069,
-     "patterns": 1367,
-     "logic": 1132,
-     "critical": 1132,
+     "spatial": 1122,
+     "patterns": 1396,
+     "logic": 1077,
+     "critical": 1077,
      "communication": 1000
     }
    }
@@ -3321,22 +3495,28 @@
    "clues": 2,
    "state": "solved",
    "solved": true,
-   "tries": 1,
+   "tries": 2,
    "helped": false,
-   "wrongs": [],
-   "ms": 13831,
+   "wrongs": [
+    {
+     "name": "Big Blue Whale",
+     "fits": [
+      "the thief had no umbrella"
+     ],
+     "breaks": [
+      "the thief wears yellow"
+     ]
+    }
+   ],
+   "ms": 52006,
    "robot": {
-    "state": "done",
-    "fixed": true,
-    "stepTries": 1,
-    "thiefTries": 1
+    "state": "skipped",
+    "fixed": false,
+    "stepTries": 0,
+    "thiefTries": 0
    }
   },
-  "offscreen": {
-   "type": "blueprint",
-   "title": "Describe and Build",
-   "t": 1794673690130
-  },
+  "offscreen": null,
   "simulated": true
  }
 ]

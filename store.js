@@ -77,7 +77,9 @@ function getSession(id) {
 function loadSeed() { return readJson(SEED, []); }
 function familySessions(familyId) {
   if (familyId === 'demo') return loadSeed();
-  const out = [];
+  // A judge's copy of the demo family starts with the bot-played demo week as its history.
+  const fam = getFamily(familyId);
+  const out = fam && fam.historyFrom === 'demo' ? loadSeed().map((s) => ({ ...s, inherited: true })) : [];
   for (const f of fs.readdirSync(SESS_DIR)) {
     if (!f.endsWith('.json')) continue;
     const s = readJson(path.join(SESS_DIR, f), null);
@@ -86,7 +88,31 @@ function familySessions(familyId) {
   return out.sort((a, b) => a.startedAt - b.startedAt);
 }
 
+// ---------- plans ----------
+// Kinquest Family unlocks next missions and the weekly report. The demo family is always unlocked.
+function isPaid(familyId) {
+  if (familyId === 'demo') return true;
+  const fam = getFamily(familyId);
+  return Boolean(fam && fam.plan && ['trialing', 'active'].includes(fam.plan.status));
+}
+function setPlan(familyId, plan) {
+  const fam = getFamily(familyId);
+  if (!fam) return null;
+  fam.plan = plan;
+  saveFamily(fam);
+  return fam;
+}
+// A judge's own copy of the demo family: its history is the demo week, and the plan is unlocked as a demo.
+function createDemoCopy(parentName) {
+  const fam = { id: newId(), name: 'Demo Family', createdAt: Date.now(), members: {}, historyFrom: 'demo', plan: { status: 'trialing', plan: 'demo', source: 'demo' } };
+  // Carry over the demo kid's and grown-up's ratings so today's puzzles start at the level the demo week reached.
+  for (const s of loadSeed()) for (const p of s.players) fam.members[p.key] = { nickname: p.nickname, kind: p.kind, ageBand: p.ageBand, ratings: { ...s.ratings[p.key].after } };
+  saveFamily(fam);
+  return fam;
+}
+
 module.exports = {
+  isPaid, setPlan, createDemoCopy,
   SKILL_KEYS, START_RATING, newId,
   getFamily, saveFamily, ensureFamily, ensureMember,
   levelToRating, ratingToLevel, updateRating, partScore,

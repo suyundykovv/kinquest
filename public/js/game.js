@@ -215,8 +215,9 @@ function renderLobby(v) {
         <p class="muted">You’re the <b>Keeper</b>: rules, notes, and blueprints. Your child is the <b>Scout</b>: clues, symbols, and the 3D model.</p>
         <button class="btn block" id="go" ${ready ? '' : 'disabled'}>${ready ? 'Start the Expedition' : 'Waiting for the Second Player…'}</button>
       </div>
-    </div>`;
+    </div>${v.focusLocked ? upsellCard(`Kinquest has a next mission ready: <b>“${esc(v.focusLocked.title)}”</b>, built from your last expeditions. Unlock it before you start and today’s lock will practice it.`, `/game.html?room=${v.code}`) : ''}`;
     document.getElementById('go').onclick = (e) => { e.target.disabled = true; e.target.textContent = 'Starting…'; submit({ kind: 'start' }); };
+    bindUpsell(v);
   } else {
     app.innerHTML = `
     <div class="narrow stack">
@@ -224,6 +225,20 @@ function renderLobby(v) {
       <div class="card center"><div class="players">${playersHtml}</div><p class="muted" style="margin:16px 0 0">Waiting for the Keeper to start the expedition…</p></div>
     </div>`;
   }
+}
+
+// Kinquest Family upsell for the grown-up: one sentence of what's waiting, a trial button, test-mode note.
+function upsellCard(text, returnTo) {
+  return `<div class="card upsell" style="margin-top:16px"><span class="pill key">🎯 Kinquest Family</span><p style="margin:10px 0">${text}</p>
+    <div class="row"><button class="btn" data-upsell="monthly" data-return="${esc(returnTo)}">Start 7-Day Free Trial</button><a class="btn ghost" href="/pricing.html">See Plans</a></div>
+    <p class="small muted" style="margin:8px 0 0">Then $7.99/mo. Test mode: no real charge.</p></div>`;
+}
+function bindUpsell(v) {
+  app.querySelectorAll('[data-upsell]').forEach((b) => (b.onclick = () => {
+    b.disabled = true;
+    b.textContent = 'Opening checkout…';
+    window.kqCheckout(b.dataset.upsell, b.dataset.return, v.familyId).catch((e) => { b.disabled = false; b.textContent = e.message; });
+  }));
 }
 
 function roleCard(role) {
@@ -660,6 +675,9 @@ function renderChest(v) {
     ${adult || v.mode === 'single' ? `<label class="check-row" style="justify-content:flex-start"><input type="checkbox" id="missionDone" ${c.mission.done ? 'checked' : ''}> We did it</label>` : ''}</div>` : ''}
   <div class="convo-card narrow">💬 Talk about it, screens off:<span class="q">${child(c.card)}</span><button class="speak" id="sayCard" aria-label="Read the question aloud">🔊</button>
   <p class="small muted" style="margin:10px 0 0;font-weight:500">You can close the app now and chat about it at dinner.</p></div>
+  ${(adult || v.mode === 'single') && c.nextMission ? (c.nextMission.locked
+    ? `<div class="narrow">${upsellCard(`🎯 Next mission for ${esc(v.childName || 'your child')}: <b>“${esc(c.nextMission.title)}”</b> in the ${esc(c.nextMission.lock)}. ${c.nextMission.because ? `Because ${child(c.nextMission.because)}.` : ''} Unlock it and it’s in your next expedition.`, `/report.html?session=${encodeURIComponent(c.sessionId)}`)}</div>`
+    : `<div class="card narrow upsell" style="margin-top:16px"><span class="pill key">🎯 Next mission</span><p style="margin:10px 0 0"><b>“${esc(c.nextMission.title)}”</b> in the ${esc(c.nextMission.lock)} ${c.nextMission.stage === 'scaffold' ? 'with a helper' : 'without the helper'}. ${c.nextMission.because ? `Because ${child(c.nextMission.because)}.` : ''} It’s ready in your next expedition.</p><div class="row" style="margin-top:12px"><a class="btn ghost" href="/#start">Start the Next Expedition</a></div></div>`) : ''}
   ${adult ? `<div class="card narrow center" style="margin-top:16px">
     <h3>How well did ${esc(v.childName || 'your child')} explain things today?</h3>
     <div class="smileys" role="group" aria-label="Rate explaining">${[1, 2, 3].map((n) => `<button data-rate="${n}" aria-pressed="${c.parentRating === n}" aria-label="${['Needed help', 'Pretty good', 'Great'][n - 1]}">${['😕', '🙂', '🤩'][n - 1]}</button>`).join('')}</div>
@@ -670,6 +688,7 @@ function renderChest(v) {
   document.getElementById('sayCard').onclick = () => speak(c.card);
   app.querySelectorAll('[data-rate]').forEach((b) => (b.onclick = () => { S.activeRole = 'keeper'; submit({ kind: 'rating', value: Number(b.dataset.rate) }); }));
   bindSolo(v);
+  bindUpsell(v);
   if (adult) { try { localStorage.setItem('kq_familyId', v.familyId); } catch {} }
 }
 
